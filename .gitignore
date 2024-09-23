@@ -27,3 +27,9 @@ go.work.sum
 # IDEA
 .idea/
 
+# VSCode
+.vscode/
+
+
+
+
