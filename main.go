@@ -4,6 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	PORT = ":8080"
+)
+
 func main() {
 	ginServer := gin.Default()
 
@@ -13,7 +17,7 @@ func main() {
 		})
 	})
 
-	err := ginServer.Run()
+	err := ginServer.Run(PORT)
 	if err != nil {
 		return
 	}
