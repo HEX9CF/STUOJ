@@ -2,21 +2,31 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 const (
-	PORT = ":8080"
+	PORT = ":8080" // 端口
 )
 
 func main() {
 	ginServer := gin.Default()
 
+	// index
 	ginServer.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"msg": "STUOJ后端服务启动成功！",
 		})
 	})
 
+	// 404
+	ginServer.NoRoute(func(c *gin.Context) {
+		c.JSON(http.StatusNotFound, gin.H{
+			"msg": "404 Not Found",
+		})
+	})
+
+	// 启动服务
 	err := ginServer.Run(PORT)
 	if err != nil {
 		return
