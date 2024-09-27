@@ -7,7 +7,7 @@ type Config struct{
 	DateBase DatabaseConfig
 }
 
-// DatabaseConfig 数据库配置初始化
+// Config 初始化
 func InitConfig(){
 	InitEnv()
 	Conf=DefaultConfig()
