@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// 读取.env文件
 func InitEnv(){
 	err := godotenv.Load()
 	if err != nil {

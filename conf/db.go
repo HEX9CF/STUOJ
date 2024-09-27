@@ -16,13 +16,9 @@ type DatabaseConfig struct {
 	MaxIdle int
 }
 
+// DatabaseConfigFromEnv 从环境变量中获取数据库配置信息，并返回DatabaseConfig结构体
 func DatabaseConfigFromEnv() DatabaseConfig {
-	// err := godotenv.Load()
-	// if err != nil {
-	//   log.Fatal(err)
-	// }
-	// fmt.Println("Loaded .env file")
-
+	
 	MaxConn,_:=strconv.Atoi(os.Getenv("DB_MAXOPENCONNS"))
 	MaxIdle,_:=strconv.Atoi(os.Getenv("DB_MAXIDLECONNS"))
 
