@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"STUOJ/bootstrap"
 )
 
 const (
@@ -10,6 +11,7 @@ const (
 )
 
 func main() {
+	bootstrap.Init()
 	ginServer := gin.Default()
 
 	// index
