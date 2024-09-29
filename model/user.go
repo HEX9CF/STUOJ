@@ -3,10 +3,10 @@ package model
 type Role uint8
 
 const (
-	RoleBanned  Role = 1
-	RoleUser    Role = 2
-	RoleAdmin   Role = 3
-	RoleRoot    Role = 4
+	RoleBanned Role = 0
+	RoleUser   Role = 1
+	RoleAdmin  Role = 2
+	RoleRoot   Role = 3
 )
 
 func (r Role) String() string {
@@ -25,6 +25,9 @@ func (r Role) String() string {
 }
 
 type LoginUserReq struct {
+	Id       uint64 `json:"id"`
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Email    string `json:"email"`
+	Avatar   string `json:"avatar"`
 }
