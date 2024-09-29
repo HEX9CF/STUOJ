@@ -39,5 +39,4 @@ func InitUserRoute() {
 		userRoute.POST("/logout", UserLogout)
 		userRoute.POST("/data", UserData)
 	}
-
 }
