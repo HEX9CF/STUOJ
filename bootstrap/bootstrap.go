@@ -6,4 +6,6 @@ import (
 func Init(){
 	conf.InitConfig()
 	InitDatabase()
+	InitJudge()
+	InitHandlers()
 }

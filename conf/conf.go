@@ -5,6 +5,8 @@ import(
 
 type Config struct{
 	DateBase DatabaseConfig
+	Judge JudgeConf
+
 }
 
 // Config 初始化
@@ -18,5 +20,7 @@ func DefaultConfig() *Config {
 	return &Config{
 		// Database
 		DateBase: DatabaseConfigFromEnv(),
+		// Judge
+		Judge: JudgeConfigFromEnv(),	
 	}
 }
