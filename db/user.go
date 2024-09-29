@@ -2,15 +2,18 @@ package db
 
 import (
 	"STUOJ/model"
-	"fmt"
+	"log"
 )
 
 func GetAllUsers() []model.User {
 	rows, err := db.Query("SELECT * FROM tbl_user")
+	log.Println("SELECT * FROM tbl_user")
+	log.Println(rows)
 	if err != nil {
-		fmt.Println(err)
 		return nil
 	}
+	defer rows.Close()
+
 	users := make([]model.User, 0)
 	for rows.Next() {
 		var user model.User
