@@ -1,17 +1,15 @@
 package conf
 
 import (
-	"fmt"
-	"log"
 	"github.com/joho/godotenv"
+	"log"
 )
 
 // 读取.env文件
-func InitEnv(){
+func InitEnv() {
 	err := godotenv.Load()
 	if err != nil {
-	  log.Fatal(err)
+		log.Fatal(err)
 	}
-	fmt.Println("Loaded .env file")
+	log.Println("Loaded .env file")
 }
-
