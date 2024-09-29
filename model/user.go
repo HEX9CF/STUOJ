@@ -1,12 +1,14 @@
 package model
 
+import "time"
+
 type Role uint8
 
 const (
-	RoleBanned  Role = 1
-	RoleUser    Role = 2
-	RoleAdmin   Role = 3
-	RoleRoot    Role = 4
+	RoleBanned Role = 0
+	RoleUser   Role = 1
+	RoleAdmin  Role = 2
+	RoleRoot   Role = 3
 )
 
 func (r Role) String() string {
@@ -24,7 +26,19 @@ func (r Role) String() string {
 	}
 }
 
+type User struct {
+	Id         uint64    `json:"id"`
+	Username   string    `json:"username"`
+	Password   string    `json:"password"`
+	Role       Role      `json:"role"`
+	Email      string    `json:"email"`
+	Avatar     string    `json:"avatar"`
+	CreateTime time.Time `json:"create_time"`
+	UpdateTime time.Time `json:"update_time"`
+}
+
 type LoginUserReq struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Email    string `json:"email"`
 }
