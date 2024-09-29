@@ -26,7 +26,7 @@ func (r Role) String() string {
 	}
 }
 
-type LoginUserReq struct {
+type User struct {
 	Id         uint64    `json:"id"`
 	Username   string    `json:"username"`
 	Password   string    `json:"password"`
@@ -35,4 +35,10 @@ type LoginUserReq struct {
 	Avatar     string    `json:"avatar"`
 	CreateTime time.Time `json:"create_time"`
 	UpdateTime time.Time `json:"update_time"`
+}
+
+type LoginUserReq struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
 }
