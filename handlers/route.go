@@ -23,7 +23,11 @@ func InitRoute() {
 			"data": nil,
 		})
 	})
+
+	// 初始化路由
 	InitUserRoute()
+	InitTestRoute()
+
 	// 启动服务
 	err := ginServer.Run(PORT)
 	if err != nil {
@@ -38,5 +42,13 @@ func InitUserRoute() {
 		userRoute.POST("/register", UserRegister)
 		userRoute.POST("/logout", UserLogout)
 		userRoute.POST("/data", UserData)
+	}
+}
+
+func InitTestRoute() {
+	testRoute := ginServer.Group("/test")
+	{
+		testRoute.GET("/", Test)
+		testRoute.GET("/db", TestDb)
 	}
 }
