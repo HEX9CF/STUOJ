@@ -1,6 +1,6 @@
 package model
 
-type languageId unint8
+type languageId uint8
 
 type codeSource struct{
 	code string
