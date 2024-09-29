@@ -8,5 +8,6 @@ import (
 func Init() {
 	conf.InitConfig()
 	InitDatabase()
-	handlers.Init()
+	InitJudge()
+	InitHandlers()
 }
