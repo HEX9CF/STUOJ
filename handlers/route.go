@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -8,19 +9,19 @@ import (
 func InitRoute() {
 	// index
 	ginServer.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"code": 1,
-			"msg":  "STUOJ后端服务启动成功！",
-			"data": nil,
+		c.JSON(http.StatusOK, model.Response{
+			Code: 1,
+			Msg:  "OK",
+			Data: "STUOJ后端启动成功！",
 		})
 	})
 
 	// 404
 	ginServer.NoRoute(func(c *gin.Context) {
-		c.JSON(http.StatusNotFound, gin.H{
-			"code": 0,
-			"msg":  "404 Not Found",
-			"data": nil,
+		c.JSON(http.StatusNotFound, model.Response{
+			Code: 0,
+			Msg:  "404 Not Found",
+			Data: nil,
 		})
 	})
 
