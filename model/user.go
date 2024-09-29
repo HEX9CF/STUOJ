@@ -1,5 +1,7 @@
 package model
 
+import "time"
+
 type Role uint8
 
 const (
@@ -25,9 +27,12 @@ func (r Role) String() string {
 }
 
 type LoginUserReq struct {
-	Id       uint64 `json:"id"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
-	Avatar   string `json:"avatar"`
+	Id         uint64    `json:"id"`
+	Username   string    `json:"username"`
+	Password   string    `json:"password"`
+	Role       Role      `json:"role"`
+	Email      string    `json:"email"`
+	Avatar     string    `json:"avatar"`
+	CreateTime time.Time `json:"create_time"`
+	UpdateTime time.Time `json:"update_time"`
 }
