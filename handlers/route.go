@@ -22,10 +22,21 @@ func InitRoute() {
 			"msg": "404 Not Found",
 		})
 	})
-
+	InitUserRoute()
 	// 启动服务
 	err := ginServer.Run(PORT)
 	if err != nil {
 		return
 	}
+}
+
+func InitUserRoute() {
+	userRoute:=ginServer.Group("/user")
+	{
+		userRoute.POST("/login",UserLogin)
+		userRoute.POST("/register",UserRegister)
+		userRoute.POST("/logout",UserLogout)
+		userRoute.POST("/data",UserData)
+	}
+
 }
