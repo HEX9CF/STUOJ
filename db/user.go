@@ -3,51 +3,46 @@ package db
 import (
 	"STUOJ/model"
 	"log"
+	"time"
 )
 
 func GetAllUsers() []model.User {
-	rows, err := db.Query("SELECT * FROM tbl_user")
-	log.Println("SELECT * FROM tbl_user")
-	log.Println(rows)
+	// 查询所有用户
+	sql := "SELECT * FROM tbl_user"
+	rows, err := db.Query(sql)
+	log.Println(sql)
 	if err != nil {
 		return nil
 	}
 	defer rows.Close()
 
+	// 遍历查询结果
 	users := make([]model.User, 0)
 	for rows.Next() {
 		var user model.User
-		err := rows.Scan(&user.Id, &user.Username, &user.Password, &user.Role, &user.Email, &user.Avatar, &user.CreateTime, &user.UpdateTime)
+		var createTimeStr, updateTimeStr string
+
+		err := rows.Scan(&user.Id, &user.Username, &user.Password, &user.Role, &user.Email, &user.Avatar, &createTimeStr, &updateTimeStr)
 		if err != nil {
+			log.Println(err)
 			return nil
 		}
+
+		// 时间格式转换
+		timeLayout := "2006-01-02 15:04:05"
+		user.CreateTime, err = time.Parse(timeLayout, createTimeStr)
+		if err != nil {
+			log.Println(err)
+			return nil
+		}
+		user.UpdateTime, err = time.Parse(timeLayout, updateTimeStr)
+		if err != nil {
+			log.Println(err)
+			return nil
+		}
+
+		//log.Println(user)
 		users = append(users, user)
 	}
 	return users
-
-	//row, err := db.Query("SELECT * FROM tbl_user")
-	//if err != nil {
-	//log.Println("Error querying the database:", err)
-	//return nil
-	//}
-	////defer row.Close()
-	//
-	//for row.Next() {
-	//var id int
-	//var username string
-	//var password string
-	//var role int
-	//var email string
-	//var avatar string
-	//var create_time string
-	//var update_time string
-	//err = row.Scan(&id, &username, &password, &role, &email, &avatar, &create_time, &update_time)
-	//if err != nil {
-	//log.Println("Error scanning the database:", err)
-	//return nil
-	//}
-	//log.Println(id, username, password, role, email, avatar, create_time, update_time)
-	//}
-	//
-	//return nil
 }
