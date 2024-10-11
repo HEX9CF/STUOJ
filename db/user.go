@@ -24,4 +24,30 @@ func GetAllUsers() []model.User {
 		users = append(users, user)
 	}
 	return users
+
+	//row, err := db.Query("SELECT * FROM tbl_user")
+	//if err != nil {
+	//log.Println("Error querying the database:", err)
+	//return nil
+	//}
+	////defer row.Close()
+	//
+	//for row.Next() {
+	//var id int
+	//var username string
+	//var password string
+	//var role int
+	//var email string
+	//var avatar string
+	//var create_time string
+	//var update_time string
+	//err = row.Scan(&id, &username, &password, &role, &email, &avatar, &create_time, &update_time)
+	//if err != nil {
+	//log.Println("Error scanning the database:", err)
+	//return nil
+	//}
+	//log.Println(id, username, password, role, email, avatar, create_time, update_time)
+	//}
+	//
+	//return nil
 }

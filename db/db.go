@@ -16,7 +16,7 @@ func InitDatabase() {
 	data := conf.Conf.DateBase
 	var err error
 	db, err = sql.Open("mysql", data.User+":"+data.Pwd+"@tcp("+data.Host+":"+data.Port+")/"+data.Name)
-	log.Println("连接到MySQL数据库：", data.User+":"+data.Pwd+"@tcp("+data.Host+":"+data.Port+")/"+data.Name)
+	log.Println("Connecting to MySQL: ", data.User+":"+data.Pwd+"@tcp("+data.Host+":"+data.Port+")/"+data.Name)
 
 	if err != nil {
 		log.Println("Open db error:", err)
@@ -25,7 +25,7 @@ func InitDatabase() {
 		db.SetMaxIdleConns(data.MaxIdle)
 		db.SetMaxOpenConns(data.MaxConn)
 	}
-	defer db.Close()
+	//defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
