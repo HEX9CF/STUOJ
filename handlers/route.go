@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"STUOJ/middlewares"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -37,12 +38,16 @@ func InitRoute() {
 }
 
 func InitUserRoute() {
-	userRoute := ginServer.Group("/user")
+	userPublicRoute := ginServer.Group("/user")
 	{
-		userRoute.POST("/login", UserLogin)
-		userRoute.POST("/register", UserRegister)
-		userRoute.POST("/logout", UserLogout)
-		userRoute.POST("/data", UserData)
+		userPublicRoute.POST("/login", UserLogin)
+		userPublicRoute.POST("/register", UserRegister)
+	}
+	userProtectedRoute := ginServer.Group("/user")
+	{
+		userProtectedRoute.Use(middlewares.TokenAuth())
+		userProtectedRoute.GET("/logout", UserLogout)
+		userProtectedRoute.GET("/data", UserData)
 	}
 }
 
