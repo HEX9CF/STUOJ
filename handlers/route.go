@@ -43,6 +43,7 @@ func InitUserRoute() {
 		userPublicRoute.POST("/login", UserLogin)
 		userPublicRoute.POST("/register", UserRegister)
 		userPublicRoute.GET("/info/:id", UserInfo)
+		userPublicRoute.GET("/list", UserList)
 	}
 	userProtectedRoute := ginServer.Group("/user")
 	{
@@ -55,6 +56,5 @@ func InitTestRoute() {
 	testRoute := ginServer.Group("/test")
 	{
 		testRoute.GET("/", Test)
-		testRoute.GET("/db", TestDb)
 	}
 }

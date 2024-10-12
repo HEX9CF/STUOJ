@@ -186,3 +186,21 @@ func UserInfo(c *gin.Context) {
 		Data: user,
 	})
 }
+
+func UserList(c *gin.Context) {
+	users, err := db.GetAllUsers()
+	if err != nil || users == nil {
+		c.JSON(http.StatusOK, model.Response{
+			Code: 0,
+			Msg:  "获取失败",
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: 1,
+		Msg:  "OK",
+		Data: users,
+	})
+}
