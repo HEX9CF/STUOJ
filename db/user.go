@@ -74,12 +74,6 @@ func SaveUser(u model.User) error {
 }
 
 func LoginUserByEmail(u model.User) (uint64, error) {
-	// 预处理
-	err := u.HashPassword()
-	if err != nil {
-		return 0, err
-	}
-
 	//log.Println("用户登录：", u.Email, u.Password)
 
 	// 查询用户
@@ -87,12 +81,13 @@ func LoginUserByEmail(u model.User) (uint64, error) {
 	var hashedPassword string
 	sql := "SELECT id, password FROM tbl_user WHERE email = ? LIMIT 1"
 	log.Println(sql)
-	err = db.QueryRow(sql, &u.Email, &u.Password).Scan(&id, &hashedPassword)
+	err := db.QueryRow(sql, &u.Email).Scan(&id, &hashedPassword)
 	if err != nil {
 		return 0, err
 	}
 
 	// 验证密码
+	log.Println("验证密码：", u.Password, hashedPassword)
 	err = u.VerifyByHashedPassword(hashedPassword)
 	if err != nil {
 		return 0, err
