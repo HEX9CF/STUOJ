@@ -72,3 +72,31 @@ func SaveUser(u model.User) error {
 
 	return nil
 }
+
+func LoginUserByEmail(u model.User) (uint64, error) {
+	// 预处理
+	err := u.HashPassword()
+	if err != nil {
+		return 0, err
+	}
+
+	//log.Println("用户登录：", u.Email, u.Password)
+
+	// 查询用户
+	var id uint64
+	var hashedPassword string
+	sql := "SELECT id, password FROM tbl_user WHERE email = ? LIMIT 1"
+	log.Println(sql)
+	err = db.QueryRow(sql, &u.Email, &u.Password).Scan(&id, &hashedPassword)
+	if err != nil {
+		return 0, err
+	}
+
+	// 验证密码
+	err = u.VerifyByHashedPassword(hashedPassword)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
