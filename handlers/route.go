@@ -42,12 +42,12 @@ func InitUserRoute() {
 	{
 		userPublicRoute.POST("/login", UserLogin)
 		userPublicRoute.POST("/register", UserRegister)
+		userPublicRoute.GET("/info/:id", UserInfo)
 	}
 	userProtectedRoute := ginServer.Group("/user")
 	{
 		userProtectedRoute.Use(middlewares.TokenAuth())
-		userProtectedRoute.GET("/logout", UserLogout)
-		userProtectedRoute.GET("/data", UserData)
+		userProtectedRoute.GET("/current", CurrentUserId)
 	}
 }
 

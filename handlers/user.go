@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type ReqUserRegister struct {
@@ -137,8 +138,51 @@ func UserLogin(c *gin.Context) {
 	})
 }
 
-func UserLogout(c *gin.Context) {
+func CurrentUserId(c *gin.Context) {
+	id, err := utils.ExtractTokenUid(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusUnauthorized, model.Response{
+			Code: 0,
+			Msg:  "用户未登录",
+			Data: nil,
+		})
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: 1,
+		Msg:  "OK",
+		Data: id,
+	})
 }
 
-func UserData(c *gin.Context) {
+func UserInfo(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: 0,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	uid := uint64(id)
+	user, err := db.GetUserById(uid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: 0,
+			Msg:  "获取用户信息失败",
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: 1,
+		Msg:  "OK",
+		Data: user,
+	})
 }
