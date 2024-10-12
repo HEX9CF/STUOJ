@@ -3,6 +3,7 @@ package handlers
 import (
 	"STUOJ/db"
 	"STUOJ/model"
+	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -100,12 +101,12 @@ func UserLogin(c *gin.Context) {
 		Password: req.Password,
 	}
 
-	id, err := db.LoginUserByEmail(u)
-	if err != nil || id == 0 {
+	u.Id, err = db.LoginUserByEmail(u)
+	if err != nil || u.Id == 0 {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusInternalServerError, model.Response{
+		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
 			Msg:  "登录失败，用户名或密码错误",
 			Data: nil,
@@ -114,7 +115,19 @@ func UserLogin(c *gin.Context) {
 	}
 
 	// 生成token
-	token := "test token"
+	//token := "{test token}"
+	token, err := utils.GenerateToken(u.Id)
+	if err != nil || token == "" {
+		if err != nil {
+			log.Println(err)
+		}
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: 0,
+			Msg:  "登录失败，生成token失败",
+			Data: nil,
+		})
+		return
+	}
 
 	// 登录成功，返回token
 	c.JSON(http.StatusOK, model.Response{

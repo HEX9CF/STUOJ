@@ -87,7 +87,7 @@ func LoginUserByEmail(u model.User) (uint64, error) {
 	}
 
 	// 验证密码
-	log.Println("验证密码：", u.Password, hashedPassword)
+	//log.Println("验证密码：", u.Password, hashedPassword)
 	err = u.VerifyByHashedPassword(hashedPassword)
 	if err != nil {
 		return 0, err
