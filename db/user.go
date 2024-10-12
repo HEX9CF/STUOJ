@@ -8,6 +8,31 @@ import (
 	"time"
 )
 
+func GetUserById(id uint64) (model.User, error) {
+	// 查询用户
+	var user model.User
+	var createTimeStr, updateTimeStr string
+	sql := "SELECT id, username, role, email, avatar, create_time, update_time FROM tbl_user WHERE id = ? LIMIT 1"
+	log.Println(sql)
+	err := db.QueryRow(sql, id).Scan(&user.Id, &user.Username, &user.Role, &user.Email, &user.Avatar, &createTimeStr, &updateTimeStr)
+	if err != nil {
+		return model.User{}, err
+	}
+
+	// 时间格式转换
+	timeLayout := "2006-01-02 15:04:05"
+	user.CreateTime, err = time.Parse(timeLayout, createTimeStr)
+	if err != nil {
+		return model.User{}, err
+	}
+	user.UpdateTime, err = time.Parse(timeLayout, updateTimeStr)
+	if err != nil {
+		return model.User{}, err
+	}
+
+	return user, nil
+}
+
 func GetAllUsers() ([]model.User, error) {
 	// 查询所有用户
 	sql := "SELECT * FROM tbl_user"
