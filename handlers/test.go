@@ -16,9 +16,8 @@ func Test(c *gin.Context) {
 }
 
 func TestDb(c *gin.Context) {
-	users := db.GetAllUsers()
-
-	if users == nil {
+	users, err := db.GetAllUsers()
+	if err != nil || users == nil {
 		c.JSON(http.StatusOK, model.Response{
 			Code: 0,
 			Msg:  "获取失败",

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"STUOJ/handlers/user"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -39,10 +40,10 @@ func InitRoute() {
 func InitUserRoute() {
 	userRoute := ginServer.Group("/user")
 	{
-		userRoute.POST("/login", UserLogin)
-		userRoute.POST("/register", UserRegister)
-		userRoute.POST("/logout", UserLogout)
-		userRoute.POST("/data", UserData)
+		userRoute.POST("/login", user.UserLogin)
+		userRoute.POST("/register", user.UserRegister)
+		userRoute.POST("/logout", user.UserLogout)
+		userRoute.POST("/data", user.UserData)
 	}
 }
 
