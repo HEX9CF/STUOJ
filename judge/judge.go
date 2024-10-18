@@ -1,12 +1,13 @@
 package judge
 
-import(
+import (
 	"STUOJ/conf"
-	"net/http"
 	"log"
+	"net/http"
 	"STUOJ/model"
 )
-var(
+
+var (
 	config conf.JudgeConf
 	preUrl string
 )
