@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func GetUserById(id uint64) (model.User, error) {
+func SelectUserById(id uint64) (model.User, error) {
 	// 查询用户
 	var user model.User
 	var createTimeStr, updateTimeStr string
@@ -33,7 +33,7 @@ func GetUserById(id uint64) (model.User, error) {
 	return user, nil
 }
 
-func GetAllUsers() ([]model.User, error) {
+func SelectAllUsers() ([]model.User, error) {
 	// 查询所有用户
 	sql := "SELECT id, username, role, email, avatar, create_time, update_time FROM tbl_user"
 	rows, err := db.Query(sql)
@@ -71,7 +71,7 @@ func GetAllUsers() ([]model.User, error) {
 	return users, nil
 }
 
-func SaveUser(u model.User) error {
+func InsertUser(u model.User) error {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 	err := u.HashPassword()
@@ -98,7 +98,72 @@ func SaveUser(u model.User) error {
 	return nil
 }
 
-func LoginUserByEmail(u model.User) (uint64, error) {
+func UpdateUserById(u model.User) error {
+	// 预处理
+	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
+
+	// 插入用户
+	sql := "UPDATE tbl_user SET username = ?, email = ?, update_time = ? WHERE id = ?"
+	log.Println(sql)
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	// 获取当前时间
+	updateTime := time.Now().Format("2006-01-02 15:04:05")
+	_, err = stmt.Exec(u.Username, u.Email, updateTime, u.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func UpdateUserPasswordById(u model.User) error {
+	// 预处理
+	err := u.HashPassword()
+	if err != nil {
+		return err
+	}
+
+	// 插入用户
+	sql := "UPDATE tbl_user SET password = ?, update_time = ? WHERE id = ?"
+	log.Println(sql)
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	// 获取当前时间
+	createTime := time.Now().Format("2006-01-02 15:04:05")
+	updateTime := createTime
+	_, err = stmt.Exec(u.Password, updateTime, u.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteUserById(id uint64) error {
+	// 删除用户
+	sql := "DELETE FROM tbl_user WHERE id = ?"
+	log.Println(sql)
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func VerifyUserByEmail(u model.User) (uint64, error) {
 	//log.Println("用户登录：", u.Email, u.Password)
 
 	// 查询用户
@@ -113,6 +178,29 @@ func LoginUserByEmail(u model.User) (uint64, error) {
 
 	// 验证密码
 	//log.Println("验证密码：", u.Password, hashedPassword)
+	err = u.VerifyByHashedPassword(hashedPassword)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func VerifyUserById(u model.User) (uint64, error) {
+	//log.Println("用户登录：", u.Email, u.Password)
+
+	// 查询用户
+	var id uint64
+	var hashedPassword string
+	sql := "SELECT id, password FROM tbl_user WHERE id = ? LIMIT 1"
+	log.Println(sql)
+	err := db.QueryRow(sql, &u.Id).Scan(&id, &hashedPassword)
+	if err != nil {
+		return 0, err
+	}
+
+	// 验证密码
+	log.Println("验证密码：", u.Password, hashedPassword)
 	err = u.VerifyByHashedPassword(hashedPassword)
 	if err != nil {
 		return 0, err
