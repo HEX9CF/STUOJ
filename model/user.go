@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"golang.org/x/crypto/bcrypt"
+	"time"
+)
 
 type Role uint8
 
@@ -37,8 +40,22 @@ type User struct {
 	UpdateTime time.Time `json:"update_time"`
 }
 
-type LoginUserReq struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Email    string `json:"email"`
+// 对密码进行哈希
+func (u *User) HashPassword() error {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	u.Password = string(hashedPassword)
+	return nil
+}
+
+// 验证密码
+func (u *User) VerifyByPassword(pw string) error {
+	return bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(pw))
+}
+
+// 验证密码
+func (u *User) VerifyByHashedPassword(hpw string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hpw), []byte(u.Password))
 }
