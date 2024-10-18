@@ -12,7 +12,7 @@ func SelectProblemById(id uint64) (model.Problem, error) {
 	var createTimeStr, updateTimeStr string
 	sql := "SELECT title, source, difficulty, create_time, update_time FROM tbl_problem WHERE id = ? LIMIT 1"
 	err := db.QueryRow(sql, id).Scan(&problem.Title, &problem.Source, &problem.Difficulty, &createTimeStr, &updateTimeStr)
-	log.Println(sql)
+	log.Println(sql, id)
 	if err != nil {
 		return model.Problem{}, err
 	}
@@ -72,7 +72,6 @@ func SelectAllProblems() ([]model.Problem, error) {
 // 插入题目
 func InsertProblem(p model.Problem) error {
 	sql := "INSERT INTO tbl_problem(title, source, difficulty, create_time, update_time) VALUES(?, ?, ?, ?, ?)"
-	log.Println(sql)
 	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
@@ -82,6 +81,7 @@ func InsertProblem(p model.Problem) error {
 	createTime := time.Now().Format("2006-01-02 15:04:05")
 	updateTime := createTime
 	_, err = stmt.Exec(p.Title, p.Source, p.Difficulty, createTime, updateTime)
+	log.Println(sql, p.Title, p.Source, p.Difficulty, createTime, updateTime)
 	if err != nil {
 		return err
 	}
@@ -92,7 +92,6 @@ func InsertProblem(p model.Problem) error {
 // 根据ID更新题目
 func UpdateProblemById(p model.Problem) error {
 	sql := "UPDATE tbl_problem SET title = ?, source = ?, difficulty = ?, update_time = ? WHERE id = ?"
-	log.Println(sql)
 	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
@@ -101,6 +100,7 @@ func UpdateProblemById(p model.Problem) error {
 	// 获取当前时间
 	updateTime := time.Now().Format("2006-01-02 15:04:05")
 	_, err = stmt.Exec(p.Title, p.Source, p.Difficulty, updateTime, p.Id)
+	log.Println(sql, p.Title, p.Source, p.Difficulty, updateTime, p.Id)
 	if err != nil {
 		return err
 	}
@@ -111,13 +111,13 @@ func UpdateProblemById(p model.Problem) error {
 // 根据ID删除题目
 func DeleteProblemById(id uint64) error {
 	sql := "DELETE FROM tbl_problem WHERE id = ?"
-	log.Println(sql)
 	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	_, err = stmt.Exec(id)
+	log.Println(sql, id)
 	if err != nil {
 		return err
 	}
