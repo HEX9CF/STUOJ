@@ -5,5 +5,10 @@ import (
 )
 
 func About() (*http.Response,error){
-	return http.Get(config.Host+":"+config.Port)
+	url:=preUrl+"/about"
+	req,_:=http.NewRequest("GET",url,nil)
+	req.Header.Set("X-Auth-Token",config.Token)
+	res,_:=http.DefaultClient.Do(req)
+	defer res.Body.Close()
+	return res,nil
 }
