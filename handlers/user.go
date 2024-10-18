@@ -275,5 +275,53 @@ type ReqUserChangePassword struct {
 }
 
 func UserChangePassword(c *gin.Context) {
-	// TODO
+	var req ReqUserChangePassword
+
+	// 参数绑定
+	err := c.ShouldBindBodyWithJSON(&req)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: 0,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	// 校验参数
+	if req.Password == "" {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: 0,
+			Msg:  "参数错误，密码不能为空",
+			Data: nil,
+		})
+		return
+	}
+
+	// 获取用户id
+	id, err := utils.ExtractTokenUid(c)
+
+	// 初始化用户
+	u := model.User{
+		Id:       id,
+		Password: req.Password,
+	}
+	err = db.UpdateUserPasswordById(u)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: 0,
+			Msg:  "修改失败",
+			Data: nil,
+		})
+		return
+	}
+
+	// 返回结果
+	c.JSON(http.StatusOK, model.Response{
+		Code: 1,
+		Msg:  "修改成功",
+		Data: nil,
+	})
 }

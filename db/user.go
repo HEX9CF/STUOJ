@@ -98,29 +98,6 @@ func InsertUser(u model.User) error {
 	return nil
 }
 
-func VerifyUserByEmail(u model.User) (uint64, error) {
-	//log.Println("用户登录：", u.Email, u.Password)
-
-	// 查询用户
-	var id uint64
-	var hashedPassword string
-	sql := "SELECT id, password FROM tbl_user WHERE email = ? LIMIT 1"
-	log.Println(sql)
-	err := db.QueryRow(sql, &u.Email).Scan(&id, &hashedPassword)
-	if err != nil {
-		return 0, err
-	}
-
-	// 验证密码
-	//log.Println("验证密码：", u.Password, hashedPassword)
-	err = u.VerifyByHashedPassword(hashedPassword)
-	if err != nil {
-		return 0, err
-	}
-
-	return id, nil
-}
-
 func UpdateUserById(u model.User) error {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
@@ -167,4 +144,50 @@ func UpdateUserPasswordById(u model.User) error {
 	}
 
 	return nil
+}
+
+func VerifyUserByEmail(u model.User) (uint64, error) {
+	//log.Println("用户登录：", u.Email, u.Password)
+
+	// 查询用户
+	var id uint64
+	var hashedPassword string
+	sql := "SELECT id, password FROM tbl_user WHERE email = ? LIMIT 1"
+	log.Println(sql)
+	err := db.QueryRow(sql, &u.Email).Scan(&id, &hashedPassword)
+	if err != nil {
+		return 0, err
+	}
+
+	// 验证密码
+	//log.Println("验证密码：", u.Password, hashedPassword)
+	err = u.VerifyByHashedPassword(hashedPassword)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func VerifyUserById(u model.User) (uint64, error) {
+	//log.Println("用户登录：", u.Email, u.Password)
+
+	// 查询用户
+	var id uint64
+	var hashedPassword string
+	sql := "SELECT id, password FROM tbl_user WHERE id = ? LIMIT 1"
+	log.Println(sql)
+	err := db.QueryRow(sql, &u.Id).Scan(&id, &hashedPassword)
+	if err != nil {
+		return 0, err
+	}
+
+	// 验证密码
+	log.Println("验证密码：", u.Password, hashedPassword)
+	err = u.VerifyByHashedPassword(hashedPassword)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
