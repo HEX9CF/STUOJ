@@ -27,13 +27,21 @@ func InitRoute() {
 	})
 
 	// 初始化路由
-	InitUserRoute()
 	InitTestRoute()
+	InitUserRoute()
+	InitProblemRoute()
 
 	// 启动服务
 	err := ginServer.Run(PORT)
 	if err != nil {
 		return
+	}
+}
+
+func InitTestRoute() {
+	testRoute := ginServer.Group("/test")
+	{
+		testRoute.GET("/", Test)
 	}
 }
 
@@ -54,9 +62,10 @@ func InitUserRoute() {
 	}
 }
 
-func InitTestRoute() {
-	testRoute := ginServer.Group("/test")
+func InitProblemRoute() {
+	problemPublicRoute := ginServer.Group("/problem")
 	{
-		testRoute.GET("/", Test)
+		problemPublicRoute.GET("/list", ProblemList)
+		problemPublicRoute.GET("/info/:id", ProblemInfo)
 	}
 }
