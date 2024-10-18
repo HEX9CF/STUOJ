@@ -47,7 +47,7 @@ func UserRegister(c *gin.Context) {
 		Password: req.Password,
 		Email:    req.Email,
 	}
-	err = db.SaveUser(u)
+	err = db.InsertUser(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -102,7 +102,7 @@ func UserLogin(c *gin.Context) {
 		Password: req.Password,
 	}
 
-	u.Id, err = db.LoginUserByEmail(u)
+	u.Id, err = db.VerifyUserByEmail(u)
 	if err != nil || u.Id == 0 {
 		if err != nil {
 			log.Println(err)
@@ -169,7 +169,7 @@ func UserInfo(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	user, err := db.GetUserById(uid)
+	user, err := db.SelectUserById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -188,7 +188,7 @@ func UserInfo(c *gin.Context) {
 }
 
 func UserList(c *gin.Context) {
-	users, err := db.GetAllUsers()
+	users, err := db.SelectAllUsers()
 	if err != nil || users == nil {
 		c.JSON(http.StatusOK, model.Response{
 			Code: 0,

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func GetUserById(id uint64) (model.User, error) {
+func SelectUserById(id uint64) (model.User, error) {
 	// 查询用户
 	var user model.User
 	var createTimeStr, updateTimeStr string
@@ -33,7 +33,7 @@ func GetUserById(id uint64) (model.User, error) {
 	return user, nil
 }
 
-func GetAllUsers() ([]model.User, error) {
+func SelectAllUsers() ([]model.User, error) {
 	// 查询所有用户
 	sql := "SELECT id, username, role, email, avatar, create_time, update_time FROM tbl_user"
 	rows, err := db.Query(sql)
@@ -71,7 +71,7 @@ func GetAllUsers() ([]model.User, error) {
 	return users, nil
 }
 
-func SaveUser(u model.User) error {
+func InsertUser(u model.User) error {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 	err := u.HashPassword()
@@ -98,7 +98,7 @@ func SaveUser(u model.User) error {
 	return nil
 }
 
-func LoginUserByEmail(u model.User) (uint64, error) {
+func VerifyUserByEmail(u model.User) (uint64, error) {
 	//log.Println("用户登录：", u.Email, u.Password)
 
 	// 查询用户
