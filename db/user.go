@@ -121,12 +121,12 @@ func VerifyUserByEmail(u model.User) (uint64, error) {
 	return id, nil
 }
 
-func UpdateUser(u model.User) error {
+func UpdateUserById(u model.User) error {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 
 	// 插入用户
-	sql := "UPDATE tbl_user SET (username, email, update_time) VALUES (?, ?, ?) WHERE id = ?"
+	sql := "UPDATE tbl_user SET username = ?, email = ?, update_time = ? WHERE id = ?"
 	log.Println(sql)
 	stmt, err := db.Prepare(sql)
 	if err != nil {
@@ -143,7 +143,7 @@ func UpdateUser(u model.User) error {
 	return nil
 }
 
-func UpdateUserPassword(u model.User) error {
+func UpdateUserPasswordById(u model.User) error {
 	// 预处理
 	err := u.HashPassword()
 	if err != nil {
@@ -151,7 +151,7 @@ func UpdateUserPassword(u model.User) error {
 	}
 
 	// 插入用户
-	sql := "UPDATE tbl_user (password, update_time) VALUES (?, ?) WHERE id = ?"
+	sql := "UPDATE tbl_user SET password = ?, update_time = ? WHERE id = ?"
 	log.Println(sql)
 	stmt, err := db.Prepare(sql)
 	if err != nil {

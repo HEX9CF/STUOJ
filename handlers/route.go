@@ -48,7 +48,9 @@ func InitUserRoute() {
 	userProtectedRoute := ginServer.Group("/user")
 	{
 		userProtectedRoute.Use(middlewares.TokenAuth())
-		userProtectedRoute.GET("/current", CurrentUserId)
+		userProtectedRoute.GET("/current", UserCurrentId)
+		userProtectedRoute.PUT("/modify", UserModify)
+		userProtectedRoute.PUT("/password", UserChangePassword)
 	}
 }
 

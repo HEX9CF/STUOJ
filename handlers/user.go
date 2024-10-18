@@ -10,6 +10,7 @@ import (
 	"strconv"
 )
 
+// 用户注册
 type ReqUserRegister struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
@@ -52,7 +53,7 @@ func UserRegister(c *gin.Context) {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: 0,
-			Msg:  "注册失败",
+			Msg:  "注册失败，用户名或邮箱已存在",
 			Data: nil,
 		})
 		return
@@ -66,6 +67,7 @@ func UserRegister(c *gin.Context) {
 	})
 }
 
+// 用户登录
 type ReqUserLogin struct {
 	Password string `json:"password" binding:"required"`
 	Email    string `json:"email" binding:"required"`
@@ -138,7 +140,8 @@ func UserLogin(c *gin.Context) {
 	})
 }
 
-func CurrentUserId(c *gin.Context) {
+// 获取当前用户id
+func UserCurrentId(c *gin.Context) {
 	id, err := utils.ExtractTokenUid(c)
 	if err != nil {
 		log.Println(err)
@@ -156,6 +159,7 @@ func CurrentUserId(c *gin.Context) {
 	})
 }
 
+// 获取用户信息
 func UserInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -187,6 +191,7 @@ func UserInfo(c *gin.Context) {
 	})
 }
 
+// 获取用户列表
 func UserList(c *gin.Context) {
 	users, err := db.SelectAllUsers()
 	if err != nil || users == nil {
@@ -203,4 +208,72 @@ func UserList(c *gin.Context) {
 		Msg:  "OK",
 		Data: users,
 	})
+}
+
+// 修改用户信息
+type ReqUserModify struct {
+	Username string `json:"username" binding:"required"`
+	Email    string `json:"email" binding:"required"`
+}
+
+func UserModify(c *gin.Context) {
+	var req ReqUserModify
+
+	// 参数绑定
+	err := c.ShouldBindBodyWithJSON(&req)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: 0,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	// 校验参数
+	if req.Username == "" || req.Email == "" {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: 0,
+			Msg:  "参数错误，用户名或邮箱不能为空",
+			Data: nil,
+		})
+		return
+	}
+
+	// 获取用户id
+	id, err := utils.ExtractTokenUid(c)
+
+	// 初始化用户
+	u := model.User{
+		Id:       id,
+		Username: req.Username,
+		Email:    req.Email,
+	}
+	err = db.UpdateUserById(u)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: 0,
+			Msg:  "修改失败, 用户名或邮箱已存在",
+			Data: nil,
+		})
+		return
+	}
+
+	// 返回结果
+	c.JSON(http.StatusOK, model.Response{
+		Code: 1,
+		Msg:  "修改成功",
+		Data: nil,
+	})
+}
+
+// 修改用户密码
+type ReqUserChangePassword struct {
+	Password string `json:"password" binding:"required"`
+}
+
+func UserChangePassword(c *gin.Context) {
+	// TODO
 }
