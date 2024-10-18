@@ -146,6 +146,23 @@ func UpdateUserPasswordById(u model.User) error {
 	return nil
 }
 
+func DeleteUserById(id uint64) error {
+	// 删除用户
+	sql := "DELETE FROM tbl_user WHERE id = ?"
+	log.Println(sql)
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func VerifyUserByEmail(u model.User) (uint64, error) {
 	//log.Println("用户登录：", u.Email, u.Password)
 
