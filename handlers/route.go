@@ -27,8 +27,9 @@ func InitRoute() {
 	})
 
 	// 初始化路由
-	InitUserRoute()
 	InitTestRoute()
+	InitUserRoute()
+	InitProblemRoute()
 
 	// 启动服务
 	err := ginServer.Run(PORT)
@@ -37,13 +38,20 @@ func InitRoute() {
 	}
 }
 
+func InitTestRoute() {
+	testRoute := ginServer.Group("/test")
+	{
+		testRoute.GET("/", Test)
+	}
+}
+
 func InitUserRoute() {
 	userPublicRoute := ginServer.Group("/user")
 	{
+		userPublicRoute.GET("/", UserList)
+		userPublicRoute.GET("/:id", UserInfo)
 		userPublicRoute.POST("/login", UserLogin)
 		userPublicRoute.POST("/register", UserRegister)
-		userPublicRoute.GET("/info/:id", UserInfo)
-		userPublicRoute.GET("/list", UserList)
 	}
 	userProtectedRoute := ginServer.Group("/user")
 	{
@@ -54,9 +62,10 @@ func InitUserRoute() {
 	}
 }
 
-func InitTestRoute() {
-	testRoute := ginServer.Group("/test")
+func InitProblemRoute() {
+	problemPublicRoute := ginServer.Group("/problem")
 	{
-		testRoute.GET("/", Test)
+		problemPublicRoute.GET("/", ProblemList)
+		problemPublicRoute.GET("/:id", ProblemInfo)
 	}
 }
