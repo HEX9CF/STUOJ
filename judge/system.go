@@ -9,14 +9,23 @@ import (
 
 func GetLanguage() ([]model.Language, error) {
 	url := preUrl + "/languages"
-	req, _ := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil,err
+	}
 	req.Header.Set("X-Auth-Token", config.Token)
-	res, _ := http.DefaultClient.Do(req)
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil,err
+	}
 	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return nil,err
+	}
 	bodystr := string(body)
 	var languages []model.Language
-	err:=json.Unmarshal([]byte(bodystr), &languages)
+	err=json.Unmarshal([]byte(bodystr), &languages)
 	if err != nil {
 		return nil, err
 	}
