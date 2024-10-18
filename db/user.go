@@ -8,13 +8,13 @@ import (
 	"time"
 )
 
-// 查询用户
+// 根据ID查询用户
 func SelectUserById(id uint64) (model.User, error) {
 	var user model.User
 	var createTimeStr, updateTimeStr string
 	sql := "SELECT id, username, role, email, avatar, create_time, update_time FROM tbl_user WHERE id = ? LIMIT 1"
-	log.Println(sql)
 	err := db.QueryRow(sql, id).Scan(&user.Id, &user.Username, &user.Role, &user.Email, &user.Avatar, &createTimeStr, &updateTimeStr)
+	log.Println(sql, id)
 	if err != nil {
 		return model.User{}, err
 	}
@@ -81,7 +81,6 @@ func InsertUser(u model.User) error {
 	}
 
 	sql := "INSERT INTO tbl_user (username, password, email, create_time, update_time) VALUES (?, ?, ?, ?, ?)"
-	log.Println(sql)
 	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
@@ -91,6 +90,7 @@ func InsertUser(u model.User) error {
 	createTime := time.Now().Format("2006-01-02 15:04:05")
 	updateTime := createTime
 	_, err = stmt.Exec(u.Username, u.Password, u.Email, createTime, updateTime)
+	log.Println(sql, u.Username, u.Password, u.Email, createTime, updateTime)
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,6 @@ func UpdateUserById(u model.User) error {
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 
 	sql := "UPDATE tbl_user SET username = ?, email = ?, update_time = ? WHERE id = ?"
-	log.Println(sql)
 	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
@@ -113,6 +112,7 @@ func UpdateUserById(u model.User) error {
 	// 获取当前时间
 	updateTime := time.Now().Format("2006-01-02 15:04:05")
 	_, err = stmt.Exec(u.Username, u.Email, updateTime, u.Id)
+	log.Println(sql, u.Username, u.Email, updateTime, u.Id)
 	if err != nil {
 		return err
 	}
@@ -129,7 +129,6 @@ func UpdateUserPasswordById(u model.User) error {
 	}
 
 	sql := "UPDATE tbl_user SET password = ?, update_time = ? WHERE id = ?"
-	log.Println(sql)
 	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
@@ -139,6 +138,7 @@ func UpdateUserPasswordById(u model.User) error {
 	createTime := time.Now().Format("2006-01-02 15:04:05")
 	updateTime := createTime
 	_, err = stmt.Exec(u.Password, updateTime, u.Id)
+	log.Println(sql, u.Password, updateTime, u.Id)
 	if err != nil {
 		return err
 	}
@@ -149,13 +149,13 @@ func UpdateUserPasswordById(u model.User) error {
 // 根据ID删除用户
 func DeleteUserById(id uint64) error {
 	sql := "DELETE FROM tbl_user WHERE id = ?"
-	log.Println(sql)
 	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 	_, err = stmt.Exec(id)
+	log.Println(sql, id)
 	if err != nil {
 		return err
 	}
@@ -170,8 +170,8 @@ func VerifyUserByEmail(u model.User) (uint64, error) {
 	var id uint64
 	var hashedPassword string
 	sql := "SELECT id, password FROM tbl_user WHERE email = ? LIMIT 1"
-	log.Println(sql)
 	err := db.QueryRow(sql, &u.Email).Scan(&id, &hashedPassword)
+	log.Println(sql, u.Email)
 	if err != nil {
 		return 0, err
 	}
@@ -193,8 +193,8 @@ func VerifyUserById(u model.User) (uint64, error) {
 	var id uint64
 	var hashedPassword string
 	sql := "SELECT id, password FROM tbl_user WHERE id = ? LIMIT 1"
-	log.Println(sql)
 	err := db.QueryRow(sql, &u.Id).Scan(&id, &hashedPassword)
+	log.Println(sql, u.Id)
 	if err != nil {
 		return 0, err
 	}
