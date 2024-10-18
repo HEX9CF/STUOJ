@@ -120,3 +120,51 @@ func LoginUserByEmail(u model.User) (uint64, error) {
 
 	return id, nil
 }
+
+func UpdateUser(u model.User) error {
+	// 预处理
+	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
+
+	// 插入用户
+	sql := "UPDATE tbl_user SET (username, email, update_time) VALUES (?, ?, ?) WHERE id = ?"
+	log.Println(sql)
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	// 获取当前时间
+	updateTime := time.Now().Format("2006-01-02 15:04:05")
+	_, err = stmt.Exec(u.Username, u.Email, updateTime, u.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func UpdateUserPassword(u model.User) error {
+	// 预处理
+	err := u.HashPassword()
+	if err != nil {
+		return err
+	}
+
+	// 插入用户
+	sql := "UPDATE tbl_user (password, update_time) VALUES (?, ?) WHERE id = ?"
+	log.Println(sql)
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	// 获取当前时间
+	createTime := time.Now().Format("2006-01-02 15:04:05")
+	updateTime := createTime
+	_, err = stmt.Exec(u.Password, updateTime, u.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
