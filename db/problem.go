@@ -6,13 +6,13 @@ import (
 	"time"
 )
 
-func GetProblemById(id uint64) (model.Problem, error) {
-	// 查询题目
+// 根据ID查询题目
+func SelectProblemById(id uint64) (model.Problem, error) {
 	var problem model.Problem
 	var createTimeStr, updateTimeStr string
-	sql := "SELECT id, title, source, difficulty, create_time, update_time FROM tbl_problem WHERE id = ? LIMIT 1"
+	sql := "SELECT title, source, difficulty, create_time, update_time FROM tbl_problem WHERE id = ? LIMIT 1"
+	err := db.QueryRow(sql, id).Scan(&problem.Title, &problem.Source, &problem.Difficulty, createTimeStr, updateTimeStr)
 	log.Println(sql)
-	err := db.QueryRow(sql, id).Scan(&problem.Id, &problem.Title, &problem.Source, &problem.Difficulty, &createTimeStr, &updateTimeStr)
 	if err != nil {
 		return model.Problem{}, err
 	}
@@ -31,8 +31,8 @@ func GetProblemById(id uint64) (model.Problem, error) {
 	return problem, nil
 }
 
-func GetAllProblems() ([]model.Problem, error) {
-	// 查询所有题目
+// 查询所有题目
+func SelectAllProblems() ([]model.Problem, error) {
 	sql := "SELECT id, title, source, difficulty, create_time, update_time FROM tbl_problem"
 	rows, err := db.Query(sql)
 	log.Println(sql)
@@ -47,7 +47,7 @@ func GetAllProblems() ([]model.Problem, error) {
 		var problem model.Problem
 		var createTimeStr, updateTimeStr string
 
-		err := rows.Scan(&problem.Id, &problem.Title, &problem.Source, &problem.Difficulty, &createTimeStr, &updateTimeStr)
+		err := rows.Scan(&problem.Id, &problem.Title, &problem.Source, &problem.Difficulty, createTimeStr, updateTimeStr)
 		if err != nil {
 			return nil, err
 		}
@@ -66,13 +66,12 @@ func GetAllProblems() ([]model.Problem, error) {
 		//log.Println(problem)
 		problems = append(problems, problem)
 	}
-
 	return problems, nil
 }
 
-func SaveProblem(p model.Problem) error {
-	// 插入题目
-	sql := "INSERT INTO tbl_problem (title, source, difficulty, create_time, update_time) VALUES (?, ?, ?, ?, ?)"
+// 插入题目
+func InsertProblem(p model.Problem) error {
+	sql := "INSERT INTO tbl_problem(title, source, difficulty, create_time, update_time) VALUES(?, ?, ?, ?, ?)"
 	log.Println(sql)
 	stmt, err := db.Prepare(sql)
 	if err != nil {
@@ -83,6 +82,42 @@ func SaveProblem(p model.Problem) error {
 	createTime := time.Now().Format("2006-01-02 15:04:05")
 	updateTime := createTime
 	_, err = stmt.Exec(p.Title, p.Source, p.Difficulty, createTime, updateTime)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// 根据ID更新题目
+func UpdateProblemById(p model.Problem) error {
+	sql := "UPDATE tbl_problem SET title = ?, source = ?, difficulty = ?, update_time = ? WHERE id = ?"
+	log.Println(sql)
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	// 获取当前时间
+	updateTime := time.Now().Format("2006-01-02 15:04:05")
+	_, err = stmt.Exec(p.Title, p.Source, p.Difficulty, updateTime, p.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// 根据ID删除题目
+func DeleteProblemById(id uint64) error {
+	sql := "DELETE FROM tbl_problem WHERE id = ?"
+	log.Println(sql)
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(id)
 	if err != nil {
 		return err
 	}
