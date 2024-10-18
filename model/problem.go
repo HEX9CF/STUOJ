@@ -2,8 +2,8 @@ package model
 
 import "time"
 
-type Question struct {
-	ID         uint64    `json:"id"`
+type Problem struct {
+	Id         uint64    `json:"id"`
 	Title      string    `json:"title"`
 	Source     string    `json:"source"`
 	Difficulty uint64    `json:"difficulty"`
