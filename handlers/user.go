@@ -195,6 +195,9 @@ func UserInfo(c *gin.Context) {
 func UserList(c *gin.Context) {
 	users, err := db.SelectAllUsers()
 	if err != nil || users == nil {
+		if err != nil {
+			log.Println(err)
+		}
 		c.JSON(http.StatusOK, model.Response{
 			Code: 0,
 			Msg:  "获取失败",
