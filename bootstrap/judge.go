@@ -3,7 +3,7 @@ package bootstrap
 import (
 	"STUOJ/db"
 	"STUOJ/judge"
-	"STUOJ/model"
+	// "STUOJ/model"
 	"log"
 )
 
@@ -31,14 +31,14 @@ func InitJudgeLanguages() {
 	}
 
 	// 插入数据库语言表
-	for _, v := range languages {
+	for _,language := range languages {
 		//log.Println(v)
 
 		// 初始化对象
-		language := model.Language{
-			Id:   uint64(v["id"].(float64)),
-			Name: v["name"].(string),
-		}
+		// language := model.Language{
+		// 	Id:   uint64(v["id"].(float64)),
+		// 	Name: v["name"].(string),
+		// }
 
 		err := db.InsertLanguage(language)
 		if err != nil {
