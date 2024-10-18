@@ -22,8 +22,8 @@ func ProblemInfo(c *gin.Context) {
 		return
 	}
 
-	uid := uint64(id)
-	problem, err := db.SelectUserById(uid)
+	pid := uint64(id)
+	problem, err := db.SelectProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -45,6 +45,9 @@ func ProblemInfo(c *gin.Context) {
 func ProblemList(c *gin.Context) {
 	problems, err := db.SelectAllProblems()
 	if err != nil || problems == nil {
+		if err != nil {
+			log.Println(err)
+		}
 		c.JSON(http.StatusOK, model.Response{
 			Code: 0,
 			Msg:  "获取失败",
