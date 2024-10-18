@@ -3,7 +3,7 @@ package model
 import "time"
 
 type Submission struct {
-	ID         uint64    `json:"id"`
+	Id         uint64    `json:"id"`
 	UserID     uint64    `json:"user_id"`
 	QuestionID uint64    `json:"question_id"`
 	Status     uint64    `json:"status"`
