@@ -11,7 +11,7 @@ func SelectProblemById(id uint64) (model.Problem, error) {
 	var problem model.Problem
 	var createTimeStr, updateTimeStr string
 	sql := "SELECT title, source, difficulty, create_time, update_time FROM tbl_problem WHERE id = ? LIMIT 1"
-	err := db.QueryRow(sql, id).Scan(&problem.Title, &problem.Source, &problem.Difficulty, createTimeStr, updateTimeStr)
+	err := db.QueryRow(sql, id).Scan(&problem.Title, &problem.Source, &problem.Difficulty, &createTimeStr, &updateTimeStr)
 	log.Println(sql)
 	if err != nil {
 		return model.Problem{}, err
@@ -47,7 +47,7 @@ func SelectAllProblems() ([]model.Problem, error) {
 		var problem model.Problem
 		var createTimeStr, updateTimeStr string
 
-		err := rows.Scan(&problem.Id, &problem.Title, &problem.Source, &problem.Difficulty, createTimeStr, updateTimeStr)
+		err := rows.Scan(&problem.Id, &problem.Title, &problem.Source, &problem.Difficulty, &createTimeStr, &updateTimeStr)
 		if err != nil {
 			return nil, err
 		}
