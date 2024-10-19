@@ -9,27 +9,27 @@ type JudgeSubmission struct {
 	MemoryLimit uint64 `json:"memory_limit"`
 }
 
-type JudgeResult struct{
+type JudgeSubmissionResult struct{
 	Stdout string `json:"stdout"`
 	Time string `json:"time"`
 	Memory float64 `json:"memory"`
 	Stderr string `json:"stderr"`
 	Token string `json:"token"`
 	Message string `json:"message"`
-	Status JudgeStatus `json:"status"`
+	Status JudgeSubmissionStatus `json:"status"`
 }
 
-type JudgeStatus struct{
+type JudgeSubmissionStatus struct{
 	Id uint64 `json:"id"`
 	Description string `json:"description"`
 }
 
-type JudgeResults struct{
-	Submissions []JudgeResult `json:"submissions"`
-	Meta JudgeResultsMeta `json:"meta"`
+type JudgeSubmissionResults struct{
+	Submissions []JudgeSubmissionResult `json:"submissions"`
+	Meta JudgeSubmissionResultsMeta `json:"meta"`
 }
 
-type JudgeResultsMeta struct{
+type JudgeSubmissionResultsMeta struct{
 	CurrentPage uint64 `json:"current_page"`
 	NextPage uint64 `json:"next_page"`
 	PrevPage uint64 `json:"prev_page"`
@@ -106,4 +106,44 @@ type JudgeSystemInfo struct {
 	Flags string `json:"Flags"`
 	Mem string `json:"Mem"`
 	Swap string `json:"Swap"`
+}
+
+type JudgeStatistics struct{
+	CreatedAt string `json:"created_at"`
+	CachedUntil string `json:"cached_until"`
+	Submissions JudgeSubmissionsStatistics `json:"submissions"`
+	Languages []JudgeLanguageStatistics `json:"languages"`
+	Statuses []JudgeStatusStatistics `json:"statuses"`
+	Database JudgeDatabaseStatistics `json:"database"`
+}
+
+type JudgeSubmissionsStatistics struct{
+	Total uint64 `json:"total"`
+	Today uint64 `json:"today"`
+	Last30Days map[string]interface{} `json:"last_30_days"`
+}
+
+type JudgeLanguageStatistics struct{
+	Language JudgeLanguageInfo `json:"language"`
+	Count int32 `json:"count"`
+}
+
+type JudgeLanguageInfo struct{
+	Id int32 `json:"id"`
+	Name string `json:"name"`
+}
+
+type JudgeStatusStatistics struct{
+	Status JudgeStatus `json:"status"`
+	Count uint64 `json:"count"`
+}
+
+type JudgeStatus struct{
+	Id uint64 `json:"id"`
+	Name string `json:"name"`
+}
+
+type JudgeDatabaseStatistics struct {
+	SizePretty string `json:"size_pretty"`
+	SizeInBytes uint64 `json:"size_in_bytes"`
 }

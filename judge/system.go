@@ -43,3 +43,16 @@ func GetSystemInfo()(model.JudgeSystemInfo,error){
 	}
 	return system, nil
 }
+
+func GetStatistics()(model.JudgeStatistics,error){
+	bodystr,err:= httpInteraction("/statistics","GET",nil)
+	if err != nil {
+		return model.JudgeStatistics{},err
+	}
+	var statistics model.JudgeStatistics
+	err=json.Unmarshal([]byte(bodystr), &statistics)
+	if err != nil {
+		return model.JudgeStatistics{}, err
+	}
+	return statistics, nil
+}
