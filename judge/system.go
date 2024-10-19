@@ -69,3 +69,16 @@ func GetAbout()(model.JudgeAbout,error){
 	}
 	return about, nil
 }
+
+func GetWorkers()([]model.JudgeWorker,error){
+	bodystr,err:= httpInteraction("/workers","GET",nil)
+	if err != nil {
+		return nil,err
+	}
+	var workers []model.JudgeWorker
+	err=json.Unmarshal([]byte(bodystr), &workers)
+	if err != nil {
+		return nil, err
+	}
+	return workers, nil
+}

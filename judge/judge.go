@@ -21,7 +21,7 @@ func InitJudge(){
 	}else{
 		log.Println("Judge server is available.")
 	}
-	log.Println(GetAbout())
+	log.Println(GetWorkers())
 }
 
 func httpInteraction(route string,httpMethod string,reader *bytes.Reader)(string,error){
