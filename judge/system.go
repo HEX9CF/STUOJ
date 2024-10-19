@@ -17,3 +17,16 @@ func GetLanguage() ([]model.Language, error) {
 	}
 	return languages, nil
 }
+
+func GetConfigInfo()(model.ConfigInfo,error){
+	bodystr,err:= httpInteraction("/config_info","GET",nil)
+	if err != nil {
+		return model.ConfigInfo{},err
+	}
+	var config model.ConfigInfo
+	err=json.Unmarshal([]byte(bodystr), &config)
+	if err != nil {
+		return model.ConfigInfo{}, err
+	}
+	return config, nil
+}
