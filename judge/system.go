@@ -82,3 +82,11 @@ func GetWorkers()([]model.JudgeWorker,error){
 	}
 	return workers, nil
 }
+
+func GetLicense()(string,error){
+	bodystr,err:= httpInteraction("/license","GET",nil)
+	if err != nil {
+		return "",err
+	}
+	return bodystr, nil
+}
