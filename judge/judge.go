@@ -37,6 +37,7 @@ func httpInteraction(route string,httpMethod string,reader *bytes.Reader)(string
 		return "",err
 	}
 	req.Header.Set("X-Auth-Token",config.Token)
+	req.Header.Set("X-Auth-User",config.Token)
 	req.Header.Set("Content-Type","application/json")
 	res,err:=http.DefaultClient.Do(req)
 	if err != nil {
