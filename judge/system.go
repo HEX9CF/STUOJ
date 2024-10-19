@@ -98,3 +98,11 @@ func GetIsolate()(string,error){
 	}
 	return bodystr, nil
 }
+
+func GetVersion()(string,error){
+	bodystr,err:= httpInteraction("/version","GET",nil)
+	if err != nil {
+		return "",err
+	}
+	return bodystr, nil
+}
