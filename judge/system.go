@@ -90,3 +90,11 @@ func GetLicense()(string,error){
 	}
 	return bodystr, nil
 }
+
+func GetIsolate()(string,error){
+	bodystr,err:= httpInteraction("/isolate","GET",nil)
+	if err != nil {
+		return "",err
+	}
+	return bodystr, nil
+}
