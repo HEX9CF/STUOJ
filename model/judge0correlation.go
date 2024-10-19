@@ -147,3 +147,10 @@ type JudgeDatabaseStatistics struct {
 	SizePretty string `json:"size_pretty"`
 	SizeInBytes uint64 `json:"size_in_bytes"`
 }
+
+type JudgeAbout struct {
+	Version string `json:"version"`
+	Homepage string `json:"homepage"`
+	SourceCode string `json:"source_code"`
+	Maintainer string `json:"maintainer"`
+}

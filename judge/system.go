@@ -56,3 +56,16 @@ func GetStatistics()(model.JudgeStatistics,error){
 	}
 	return statistics, nil
 }
+
+func GetAbout()(model.JudgeAbout,error){
+	bodystr,err:= httpInteraction("/about","GET",nil)
+	if err != nil {
+		return model.JudgeAbout{},err
+	}
+	var about model.JudgeAbout
+	err=json.Unmarshal([]byte(bodystr), &about)
+	if err != nil {
+		return model.JudgeAbout{}, err
+	}
+	return about, nil
+}
