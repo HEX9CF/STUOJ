@@ -18,15 +18,28 @@ func GetLanguage() ([]model.Language, error) {
 	return languages, nil
 }
 
-func GetConfigInfo()(model.ConfigInfo,error){
+func GetConfigInfo()(model.JudgeConfigInfo,error){
 	bodystr,err:= httpInteraction("/config_info","GET",nil)
 	if err != nil {
-		return model.ConfigInfo{},err
+		return model.JudgeConfigInfo{},err
 	}
-	var config model.ConfigInfo
+	var config model.JudgeConfigInfo
 	err=json.Unmarshal([]byte(bodystr), &config)
 	if err != nil {
-		return model.ConfigInfo{}, err
+		return model.JudgeConfigInfo{}, err
 	}
 	return config, nil
+}
+
+func GetSystemInfo()(model.JudgeSystemInfo,error){
+	bodystr,err:= httpInteraction("/system_info","GET",nil)
+	if err != nil {
+		return model.JudgeSystemInfo{},err
+	}
+	var system model.JudgeSystemInfo
+	err=json.Unmarshal([]byte(bodystr), &system)
+	if err != nil {
+		return model.JudgeSystemInfo{}, err
+	}
+	return system, nil
 }

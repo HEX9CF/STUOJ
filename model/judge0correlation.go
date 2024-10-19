@@ -37,7 +37,7 @@ type JudgeResultsMeta struct{
 	TotalCount uint64 `json:"total_count"`
 }
 
-type ConfigInfo struct {
+type JudgeConfigInfo struct {
 	MaintenanceMode bool `json:"maintenance_mode"`
 	EnableWaitResult bool `json:"enable_wait_result"`
 	EnableCompilerOptions bool `json:"enable_compiler_options"`
@@ -77,4 +77,33 @@ type ConfigInfo struct {
 	UseDocsAsHomepage bool `json:"use_docs_as_homepage"`
 	AllowEnableNetwork bool `json:"allow_enable_network"`
 	EnableNetwork bool `json:"enable_network"`
+}
+
+type JudgeSystemInfo struct {
+	Architecture string `json:"Architecture"`
+	CPUOpModeS string `json:"CPU op-mode(s)"`
+	ByteOrder string `json:"Byte Order"`
+	AddressSizes string `json:"Address sizes"`
+	CPUS string `json:"CPU(s)"`
+	OnLineCPUSList string `json:"On-line CPU(s) list"`
+	ThreadSPerCore string `json:"Thread(s) per core"`
+	CoreSPerSocket string `json:"Core(s) per socket"`
+	SocketS string `json:"Socket(s)"`
+	VendorID string `json:"Vendor ID"`
+	CPUFamily string `json:"CPU family"`
+	Model string `json:"Model"`
+	ModelName string `json:"Model name"`
+	Stepping string `json:"Stepping"`
+	CPUMHz string `json:"CPU MHz"`
+	BogoMIPS string `json:"BogoMIPS"`
+	Virtualization string `json:"Virtualization"`
+	HypervisorVendor string `json:"Hypervisor vendor"`
+	VirtualizationType string `json:"Virtualization type"`
+	L1dCache string `json:"L1d cache"`
+	L1iCache string `json:"L1i cache"`
+	L2Cache string `json:"L2 cache"`
+	L3Cache string `json:"L3 cache"`
+	Flags string `json:"Flags"`
+	Mem string `json:"Mem"`
+	Swap string `json:"Swap"`
 }
