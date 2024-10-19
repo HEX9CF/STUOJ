@@ -23,3 +23,16 @@ type JudgeStatus struct{
 	Id uint64 `json:"id"`
 	Description string `json:"description"`
 }
+
+type JudgeResults struct{
+	Submissions []JudgeResult `json:"submissions"`
+	Meta JudgeResultsMeta `json:"meta"`
+}
+
+type JudgeResultsMeta struct{
+	CurrentPage uint64 `json:"current_page"`
+	NextPage uint64 `json:"next_page"`
+	PrevPage uint64 `json:"prev_page"`
+	TotalPages uint64 `json:"total_pages"`
+	TotalCount uint64 `json:"total_count"`
+}

@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"io/ioutil"
 	"log"
-	"STUOJ/model"
 )
 
 var (

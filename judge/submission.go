@@ -4,6 +4,7 @@ import (
 	"STUOJ/model"
 	"encoding/json"
 	"bytes"
+	"strconv"
 )
 
 func Submit(submission model.JudgeSubmission)(string,error){
@@ -15,7 +16,7 @@ func Submit(submission model.JudgeSubmission)(string,error){
 	return bodystr,nil
 }
 
-func Query(token string)(model.JudgeResult,error){
+func QueryResult(token string)(model.JudgeResult,error){
 	bodystr,err:= httpInteraction("/submissions"+"/"+token,"GET",nil)
 	if err != nil {
 		return model.JudgeResult{},err
@@ -26,4 +27,17 @@ func Query(token string)(model.JudgeResult,error){
 		return model.JudgeResult{},err
 	}
 	return result,nil
+}
+
+func QueryResults(page uint64,per_page uint64)(model.JudgeResults,error){
+	bodystr,err:= httpInteraction("/submissions"+"/?page="+strconv.FormatUint(page, 10)+"&per_page="+strconv.FormatUint(per_page, 10),"GET",nil)
+	if err != nil {
+		return model.JudgeResults{},err
+	}
+	var results model.JudgeResults
+	err=json.Unmarshal([]byte(bodystr),&results)
+	if err != nil {
+		return model.JudgeResults{},err
+	}
+	return results,nil
 }
