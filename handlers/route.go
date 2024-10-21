@@ -30,6 +30,7 @@ func InitRoute() {
 	InitTestRoute()
 	InitUserRoute()
 	InitProblemRoute()
+	InitJudgeRoute()
 
 	// 启动服务
 	err := ginServer.Run(PORT)
@@ -73,6 +74,6 @@ func InitProblemRoute() {
 func InitJudgeRoute() {
 	judgePublicRoute := ginServer.Group("/judge")
 	{
-		judgePublicRoute.POST("/language", JudgeLanguageList)
+		judgePublicRoute.GET("/language", JudgeLanguageList)
 	}
 }
