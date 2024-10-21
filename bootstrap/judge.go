@@ -7,16 +7,24 @@ import (
 	"log"
 )
 
-func InitJudge() {
-	judge.InitJudge()
-	InitJudgeLanguages()
+func InitJudge() error {
+	var err error
+	err = judge.InitJudge()
+	if err != nil {
+		return err
+	}
+	err = InitJudgeLanguages()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func InitJudgeLanguages() {
+func InitJudgeLanguages() error {
 	// 读取评测机语言列表
 	languages, err := judge.GetLanguage()
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 
 	log.Println("Judge support languages:")
@@ -31,7 +39,7 @@ func InitJudgeLanguages() {
 	}
 
 	// 插入数据库语言表
-	for _,language := range languages {
+	for _, language := range languages {
 		//log.Println(v)
 
 		// 初始化对象
@@ -42,7 +50,9 @@ func InitJudgeLanguages() {
 
 		err := db.InsertLanguage(language)
 		if err != nil {
-			log.Println(err)
+			return err
 		}
 	}
+
+	return nil
 }

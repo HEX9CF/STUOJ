@@ -1,18 +1,21 @@
 package conf
 
-import(
-)
-
-type Config struct{
-	DateBase DatabaseConfig
-	Judge JudgeConf
-
+type Config struct {
+	DateBase DatabaseConf
+	Judge    JudgeConf
+	Server   ServerConf
+	Token    TokenConf
 }
 
 // Config 初始化
-func InitConfig(){
-	InitEnv()
-	Conf=DefaultConfig()
+func InitConfig() error {
+	err := InitEnv()
+	if err != nil {
+		return err
+	}
+	Conf = DefaultConfig()
+
+	return nil
 }
 
 // DefaultConfig 初始化Config并返回一个默认的Config指针
@@ -21,6 +24,10 @@ func DefaultConfig() *Config {
 		// Database
 		DateBase: DatabaseConfigFromEnv(),
 		// Judge
-		Judge: JudgeConfigFromEnv(),	
+		Judge: JudgeConfigFromEnv(),
+		// Server
+		Server: ServerConfigFromEnv(),
+		// Token
+		Token: TokenConfigFromEnv(),
 	}
 }

@@ -4,6 +4,11 @@ import (
 	"STUOJ/db"
 )
 
-func InitDatabase(){
-	db.InitDatabase()
+func InitDatabase() error {
+	err := db.InitDatabase()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -1,18 +1,19 @@
 package handlers
 
-import(
+import (
 	"github.com/gin-gonic/gin"
-)
-
-const (
-	PORT = ":8080" // 端口
 )
 
 var (
 	ginServer *gin.Engine
 )
 
-func Init(){
+func Init() error {
 	ginServer = gin.Default()
-	InitRoute()
+	err := InitRoute()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

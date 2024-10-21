@@ -12,26 +12,28 @@ var (
 )
 
 // InitDatabase 函数用于初始化数据库连接
-func InitDatabase() {
+func InitDatabase() error {
 	data := conf.Conf.DateBase
 	var err error
-	db, err = sql.Open("mysql", data.User+":"+data.Pwd+"@tcp("+data.Host+":"+data.Port+")/"+data.Name)
-	log.Println("Connecting to MySQL: ", data.User+":"+data.Pwd+"@tcp("+data.Host+":"+data.Port+")/"+data.Name)
+
+	dsn := data.User + ":" + data.Pwd + "@tcp(" + data.Host + ":" + data.Port + ")/" + data.Name
+	db, err = sql.Open("mysql", dsn)
+	log.Println("Connecting to MySQL:", dsn)
 
 	if err != nil {
-		log.Println("Open db error:", err)
-		return
-	} else {
-		db.SetMaxIdleConns(data.MaxIdle)
-		db.SetMaxOpenConns(data.MaxConn)
+		log.Println("Open database error!")
+		return err
 	}
+	db.SetMaxIdleConns(data.MaxIdle)
+	db.SetMaxOpenConns(data.MaxConn)
 	//defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
-		log.Println("Error pinging the database:", err)
-		return
+		log.Println("Error pinging the database!")
+		return err
 	}
 
 	log.Println("Successfully connected to MySQL!")
+	return nil
 }

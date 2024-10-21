@@ -1,13 +1,16 @@
 package handlers
 
 import (
+	"STUOJ/conf"
 	"STUOJ/middlewares"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
-func InitRoute() {
+func InitRoute() error {
+	config := conf.Conf.Server
+
 	// index
 	ginServer.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, model.Response{
@@ -30,12 +33,15 @@ func InitRoute() {
 	InitTestRoute()
 	InitUserRoute()
 	InitProblemRoute()
+	InitJudgeRoute()
 
 	// 启动服务
-	err := ginServer.Run(PORT)
+	err := ginServer.Run(":" + config.Port)
 	if err != nil {
-		return
+		return err
 	}
+
+	return nil
 }
 
 func InitTestRoute() {
@@ -67,5 +73,12 @@ func InitProblemRoute() {
 	{
 		problemPublicRoute.GET("/", ProblemList)
 		problemPublicRoute.GET("/:id", ProblemInfo)
+	}
+}
+
+func InitJudgeRoute() {
+	judgePublicRoute := ginServer.Group("/judge")
+	{
+		judgePublicRoute.GET("/language", JudgeLanguageList)
 	}
 }
