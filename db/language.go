@@ -22,6 +22,7 @@ func InsertLanguage(l model.Language) error {
 	return nil
 }
 
+// 删除所有语言
 func DeleteAllLanguages() error {
 	sql := "DELETE FROM tbl_language"
 	stmt, err := db.Prepare(sql)
@@ -36,4 +37,30 @@ func DeleteAllLanguages() error {
 	}
 
 	return nil
+}
+
+// 查询所有语言
+func SelectAllLanguages() ([]model.Language, error) {
+	sql := "SELECT id, name FROM tbl_language"
+	rows, err := db.Query(sql)
+	log.Println(sql)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// 遍历查询结果
+	languages := make([]model.Language, 0)
+	for rows.Next() {
+		var language model.Language
+
+		err := rows.Scan(&language.Id, &language.Name)
+		if err != nil {
+			return nil, err
+		}
+
+		//log.Println(language)
+		languages = append(languages, language)
+	}
+	return languages, nil
 }
