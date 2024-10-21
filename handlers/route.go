@@ -69,3 +69,10 @@ func InitProblemRoute() {
 		problemPublicRoute.GET("/:id", ProblemInfo)
 	}
 }
+
+func InitJudgeRoute() {
+	judgePublicRoute := ginServer.Group("/judge")
+	{
+		judgePublicRoute.POST("/language", JudgeLanguageList)
+	}
+}
