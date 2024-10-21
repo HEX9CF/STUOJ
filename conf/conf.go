@@ -1,18 +1,15 @@
 package conf
 
-import(
-)
-
-type Config struct{
+type Config struct {
 	DateBase DatabaseConfig
-	Judge JudgeConf
-
+	Judge    JudgeConf
+	Server   ServerConf
 }
 
 // Config 初始化
-func InitConfig(){
+func InitConfig() {
 	InitEnv()
-	Conf=DefaultConfig()
+	Conf = DefaultConfig()
 }
 
 // DefaultConfig 初始化Config并返回一个默认的Config指针
@@ -21,6 +18,8 @@ func DefaultConfig() *Config {
 		// Database
 		DateBase: DatabaseConfigFromEnv(),
 		// Judge
-		Judge: JudgeConfigFromEnv(),	
+		Judge: JudgeConfigFromEnv(),
+		// Server
+		Server: ServerConfigFromEnv(),
 	}
 }
