@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// 生成token
 func GenerateToken(id uint64) (string, error) {
 	lifespan, err := strconv.Atoi(os.Getenv("TOKEN_EXPIRE"))
 	if err != nil {
@@ -25,6 +26,7 @@ func GenerateToken(id uint64) (string, error) {
 	return token.SignedString([]byte(os.Getenv("API_SECRET")))
 }
 
+// 提取token
 func ExtractToken(c *gin.Context) string {
 	bearerToken := c.GetHeader("Authorization")
 	if len(strings.Split(bearerToken, " ")) == 2 {
@@ -33,6 +35,7 @@ func ExtractToken(c *gin.Context) string {
 	return ""
 }
 
+// 验证token
 func VerifyToken(c *gin.Context) error {
 	tokenString := ExtractToken(c)
 	_, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
@@ -48,6 +51,7 @@ func VerifyToken(c *gin.Context) error {
 	return nil
 }
 
+// 提取token中的uid
 func ExtractTokenUid(c *gin.Context) (uint64, error) {
 	tokenString := ExtractToken(c)
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
