@@ -6,10 +6,12 @@ import (
 )
 
 // 读取.env文件
-func InitEnv() {
+func InitEnv() error {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+
 	log.Println("Loaded .env file")
+	return nil
 }

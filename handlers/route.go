@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-func InitRoute() {
+func InitRoute() error {
 	config := conf.Conf.Server
 
 	// index
@@ -38,8 +38,10 @@ func InitRoute() {
 	// 启动服务
 	err := ginServer.Run(":" + config.Port)
 	if err != nil {
-		return
+		return err
 	}
+
+	return nil
 }
 
 func InitTestRoute() {

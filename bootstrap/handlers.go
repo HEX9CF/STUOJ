@@ -1,9 +1,14 @@
 package bootstrap
 
-import(
+import (
 	"STUOJ/handlers"
 )
 
-func InitHandlers(){
-	handlers.Init()
+func InitHandlers() error {
+	err := handlers.Init()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
