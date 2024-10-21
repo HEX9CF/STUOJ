@@ -30,6 +30,9 @@ go.work.sum
 # VSCode
 .vscode/
 
+# dist
+dist/
+
 
 
 
