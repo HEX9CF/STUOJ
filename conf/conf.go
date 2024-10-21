@@ -1,9 +1,10 @@
 package conf
 
 type Config struct {
-	DateBase DatabaseConfig
+	DateBase DatabaseConf
 	Judge    JudgeConf
 	Server   ServerConf
+	Token    TokenConf
 }
 
 // Config 初始化
@@ -21,5 +22,7 @@ func DefaultConfig() *Config {
 		Judge: JudgeConfigFromEnv(),
 		// Server
 		Server: ServerConfigFromEnv(),
+		// Token
+		Token: TokenConfigFromEnv(),
 	}
 }
