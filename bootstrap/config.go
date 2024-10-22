@@ -1,11 +1,11 @@
 package bootstrap
 
 import (
-	"STUOJ/handlers"
+	"STUOJ/conf"
 )
 
-func InitHandlers() error {
-	err := handlers.InitHandlers()
+func InitConfig() error {
+	err := conf.InitConfig()
 	if err != nil {
 		return err
 	}

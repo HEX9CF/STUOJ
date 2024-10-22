@@ -8,7 +8,7 @@ var (
 	ginServer *gin.Engine
 )
 
-func Init() error {
+func InitHandlers() error {
 	ginServer = gin.Default()
 	err := InitRoute()
 	if err != nil {
