@@ -3,6 +3,7 @@ package conf
 type Config struct {
 	DateBase DatabaseConf
 	Judge    JudgeConf
+	Lskypro  LskyproConf
 	Server   ServerConf
 	Token    TokenConf
 }
@@ -25,6 +26,8 @@ func DefaultConfig() *Config {
 		DateBase: DatabaseConfigFromEnv(),
 		// Judge
 		Judge: JudgeConfigFromEnv(),
+		// Lskypro
+		Lskypro: LskyproConfigFromEnv(),
 		// Server
 		Server: ServerConfigFromEnv(),
 		// Token

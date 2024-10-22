@@ -25,9 +25,16 @@ func Init() {
 		panic(err)
 	}
 
+	err = InitLskypro()
+	if err != nil {
+		log.Println("Init lskypro failed!")
+		panic(err)
+	}
+
 	err = InitHandlers()
 	if err != nil {
 		log.Println("Init handlers failed!")
 		panic(err)
 	}
+
 }
