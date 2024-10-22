@@ -45,3 +45,56 @@ type LskyproUploadResponsesLinks struct {
 	MarkdownWithLink string `json:"markdown_with_link"`
 	ThumbnailUrl     string `json:"thumbnail_url"`
 }
+
+type LskyproImageList struct {
+	Status  bool                 `json:"status"`
+	Message string               `json:"message"`
+	Data    LskyproImageListData `json:"data"`
+}
+
+type LskyproImageListData struct {
+	CurrentPage  uint64                 `json:"current_page"`
+	Data         []LskyproImageData     `json:"data"`
+	FirstPageUrl string                 `json:"first_page_url"`
+	From         uint64                 `json:"from"`
+	LastPage     uint64                 `json:"last_page"`
+	LastPageUrl  string                 `json:"last_page_url"`
+	Links        []LskyproImageListLink `json:"links"`
+	NextPageUrl  string                 `json:"next_page_url"`
+	Path         string                 `json:"path"`
+	PerPage      uint64                 `json:"per_page"`
+	PrevPageUrl  uint64                 `json:"prev_page_url"`
+	To           uint64                 `json:"to"`
+	Total        uint64                 `json:"total"`
+}
+
+type LskyproImageListLink struct {
+	Url    string `json:"url"`
+	Label  string `json:"label"`
+	Active bool   `json:"active"`
+}
+type LskyproImageData struct {
+	Key        string               `json:"key,omitempty"`
+	Name       string               `json:"name,omitempty"`
+	OriginName string               `json:"origin_name,omitempty"`
+	Size       float32              `json:"size,omitempty"`
+	Mimetype   string               `json:"mimetype,omitempty"`
+	Extension  string               `json:"extension,omitempty"`
+	Md5        string               `json:"md5,omitempty"`
+	Sha1       string               `json:"sha1,omitempty"`
+	Width      uint64               `json:"width,omitempty"`
+	Height     uint64               `json:"height,omitempty"`
+	HumanDate  string               `json:"human_date,omitempty"`
+	Date       string               `json:"date,omitempty"`
+	Pathname   string               `json:"pathname,omitempty"`
+	Links      LskyproImageDataLink `json:"links,omitempty"`
+}
+
+type LskyproImageDataLink struct {
+	Url              string `json:"url"`
+	Html             string `json:"html"`
+	Bbcode           string `json:"bbcode"`
+	Markdown         string `json:"markdown"`
+	MarkdownWithLink string `json:"markdown_with_link"`
+	ThumbnailUrl     string `json:"thumbnail_url"`
+}
