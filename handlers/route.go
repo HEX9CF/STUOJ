@@ -34,6 +34,7 @@ func InitRoute() error {
 	InitUserRoute()
 	InitProblemRoute()
 	InitJudgeRoute()
+	InitRecordRoute()
 
 	// 启动服务
 	err := ginServer.Run(":" + config.Port)
@@ -80,5 +81,15 @@ func InitJudgeRoute() {
 	judgePublicRoute := ginServer.Group("/judge")
 	{
 		judgePublicRoute.GET("/language", JudgeLanguageList)
+	}
+}
+
+func InitRecordRoute() {
+	recordPublicRoute := ginServer.Group("/record")
+	{
+		recordPublicRoute.GET("/", RecordList)
+		recordPublicRoute.GET("/:id", RecordInfo)
+		recordPublicRoute.GET("/user/:id", RecordListOfUser)
+		recordPublicRoute.GET("/problem/:id", RecordListOfProblem)
 	}
 }

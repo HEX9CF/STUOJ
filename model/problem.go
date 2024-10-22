@@ -2,6 +2,7 @@ package model
 
 import "time"
 
+// 题目
 type Problem struct {
 	Id           uint64    `json:"id"`
 	Title        string    `json:"title"`

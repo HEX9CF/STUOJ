@@ -29,6 +29,7 @@ func (r Role) String() string {
 	}
 }
 
+// 用户
 type User struct {
 	Id         uint64    `json:"id"`
 	Username   string    `json:"username"`
