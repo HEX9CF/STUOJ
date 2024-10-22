@@ -10,6 +10,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -74,4 +75,18 @@ func Upload(c *gin.Context) (model.LskyproUploadResponses, error) {
 		return model.LskyproUploadResponses{}, err
 	}
 	return responses, nil
+}
+
+func GetImageList(page uint64) (model.LskyproImageList, error) {
+	bodystr, err := httpInteraction("/images"+"/?page="+strconv.FormatUint(page, 10), "GET", nil)
+	if err != nil {
+		return model.LskyproImageList{}, err
+	}
+	var list model.LskyproImageList
+	err = json.Unmarshal([]byte(bodystr), &list)
+	if err != nil {
+		return model.LskyproImageList{}, err
+	}
+	return list, nil
+
 }
