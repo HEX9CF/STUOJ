@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"STUOJ/model"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Test(c *gin.Context) {
