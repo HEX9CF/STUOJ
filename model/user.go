@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// 角色：0 封禁，1 普通用户，2 管理员，3 超级管理员
 type Role uint8
 
 const (
@@ -17,15 +18,15 @@ const (
 func (r Role) String() string {
 	switch r {
 	case RoleBanned:
-		return "banned"
+		return "被封禁"
 	case RoleUser:
-		return "user"
+		return "普通用户"
 	case RoleAdmin:
-		return "admin"
+		return "管理员"
 	case RoleRoot:
-		return "root"
+		return "超级管理员"
 	default:
-		return "unknown"
+		return "未知角色"
 	}
 }
 
