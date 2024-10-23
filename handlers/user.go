@@ -2,12 +2,14 @@ package handlers
 
 import (
 	"STUOJ/db"
+	"STUOJ/lskypro"
 	"STUOJ/model"
 	"STUOJ/utils"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 用户注册
@@ -326,5 +328,37 @@ func UserChangePassword(c *gin.Context) {
 		Code: 1,
 		Msg:  "修改成功",
 		Data: nil,
+	})
+}
+
+func UpdateUserAvatar(c *gin.Context) {
+	uploadData, err := lskypro.Upload(c, model.RoleAvatar)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: 0,
+			Msg:  "上传失败",
+			Data: nil,
+		})
+	}
+	id, err := utils.ExtractTokenUid(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: 0,
+			Msg:  "获取用户id失败",
+			Data: nil,
+		})
+	}
+	err = db.UpdateUserAvatar(id, uploadData.Links.ThumbnailUrl)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: 0,
+			Msg:  "更新用户头像失败",
+			Data: nil,
+		})
+	}
+	c.JSON(http.StatusOK, model.Response{
+		Code: 1,
+		Msg:  "更新成功",
+		Data: uploadData.Links.ThumbnailUrl,
 	})
 }

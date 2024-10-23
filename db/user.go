@@ -208,3 +208,20 @@ func VerifyUserById(u model.User) (uint64, error) {
 
 	return id, nil
 }
+
+func UpdateUserAvatar(id uint64, avatarUrl string) error {
+	sql := "UPDATE tbl_user SET avatar=? ,update_time=? WHERE id=?"
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	createTime := time.Now().Format("2006-01-02 15:04:05")
+	updateTime := createTime
+	_, err = stmt.Exec(avatarUrl, updateTime, id)
+	log.Println(sql, avatarUrl, updateTime, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
