@@ -4,6 +4,7 @@ import (
 	"STUOJ/model"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -15,29 +16,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Upload(c *gin.Context) (model.LskyproUploadResponses, error) {
+func Upload(c *gin.Context) (model.LskyproUploadData, error) {
 	url := preUrl + "/upload"
 
 	var fileJson model.UploadImageData
 	if err := c.ShouldBind(&fileJson); err != nil {
-		return model.LskyproUploadResponses{}, err
+		return model.LskyproUploadData{}, err
 	}
 
 	file, err := c.FormFile("file")
 	if err != nil {
-		return model.LskyproUploadResponses{}, err
+		return model.LskyproUploadData{}, err
 	}
 
 	// 保存文件到临时位置
 	dst := fmt.Sprintf("tmp/%s", file.Filename)
 
 	if err := c.SaveUploadedFile(file, dst); err != nil {
-		return model.LskyproUploadResponses{}, err
+		return model.LskyproUploadData{}, err
 	}
 
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
-		return model.LskyproUploadResponses{}, err
+		return model.LskyproUploadData{}, err
 	}
 	if fileJson.Role == model.RoleProblem {
 		req.Header.Set("Authorization", "Bearer "+config.ProblemToken)
@@ -49,22 +50,22 @@ func Upload(c *gin.Context) (model.LskyproUploadResponses, error) {
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile("file", file.Filename)
 	if err != nil {
-		return model.LskyproUploadResponses{}, err
+		return model.LskyproUploadData{}, err
 	}
 
 	src, err := os.Open(dst)
 	if err != nil {
-		return model.LskyproUploadResponses{}, err
+		return model.LskyproUploadData{}, err
 	}
 	defer src.Close()
 
 	_, err = io.Copy(part, src)
 	if err != nil {
-		return model.LskyproUploadResponses{}, err
+		return model.LskyproUploadData{}, err
 	}
 	err = writer.Close()
 	if err != nil {
-		return model.LskyproUploadResponses{}, err
+		return model.LskyproUploadData{}, err
 	}
 	req.Body = io.NopCloser(body)
 	req.ContentLength = int64(body.Len())
@@ -73,21 +74,24 @@ func Upload(c *gin.Context) (model.LskyproUploadResponses, error) {
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		// 如果发送请求失败，返回错误信息
-		return model.LskyproUploadResponses{}, err
+		return model.LskyproUploadData{}, err
 	}
 	defer resp.Body.Close()
 
 	bodys, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return model.LskyproUploadResponses{}, err
+		return model.LskyproUploadData{}, err
 	}
 	bodystr := string(bodys)
 	var responses model.LskyproUploadResponses
 	err = json.Unmarshal([]byte(bodystr), &responses)
 	if err != nil {
-		return model.LskyproUploadResponses{}, err
+		return model.LskyproUploadData{}, err
 	}
-	return responses, nil
+	if responses.Status == false {
+		return model.LskyproUploadData{}, errors.New(responses.Message)
+	}
+	return responses.Data, nil
 }
 
 func GetImageList(page uint64, role uint8) (model.LskyproImageList, error) {
@@ -95,10 +99,13 @@ func GetImageList(page uint64, role uint8) (model.LskyproImageList, error) {
 	if err != nil {
 		return model.LskyproImageList{}, err
 	}
-	var list model.LskyproImageList
-	err = json.Unmarshal([]byte(bodystr), &list)
+	var responses model.LskyproImageListResponses
+	err = json.Unmarshal([]byte(bodystr), &responses)
 	if err != nil {
 		return model.LskyproImageList{}, err
 	}
-	return list, nil
+	if responses.Status == false {
+		return model.LskyproImageList{}, errors.New(responses.Message)
+	}
+	return responses.Data, nil
 }

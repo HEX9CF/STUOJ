@@ -5,13 +5,13 @@ const (
 	RoleAvatar  uint8 = 2
 )
 
-type LskyproProfile struct {
-	Status  bool               `json:"status"`
-	Message string             `json:"message"`
-	Data    LskyproProfileData `json:"data"`
+type LskyproProfileResponses struct {
+	Status  bool           `json:"status"`
+	Message string         `json:"message"`
+	Data    LskyproProfile `json:"data"`
 }
 
-type LskyproProfileData struct {
+type LskyproProfile struct {
 	Name          string  `json:"name"`
 	Avatar        string  `json:"avatar"`
 	Email         string  `json:"email"`
@@ -51,13 +51,13 @@ type LskyproUploadResponsesLinks struct {
 	ThumbnailUrl     string `json:"thumbnail_url"`
 }
 
-type LskyproImageList struct {
-	Status  bool                 `json:"status"`
-	Message string               `json:"message"`
-	Data    LskyproImageListData `json:"data"`
+type LskyproImageListResponses struct {
+	Status  bool             `json:"status"`
+	Message string           `json:"message"`
+	Data    LskyproImageList `json:"data"`
 }
 
-type LskyproImageListData struct {
+type LskyproImageList struct {
 	CurrentPage  uint64                 `json:"current_page"`
 	Data         []LskyproImageData     `json:"data"`
 	FirstPageUrl string                 `json:"first_page_url"`
