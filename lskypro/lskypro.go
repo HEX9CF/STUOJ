@@ -12,8 +12,8 @@ import (
 func InitLskypro() error {
 	config = conf.Conf.Lskypro
 	preUrl = config.Host + ":" + config.Port + "/api/v1"
-	profile, err := GetProfile(1)
-	if err != nil || profile.Status == false {
+	_, err := GetProfile(1)
+	if err != nil {
 		return err
 	}
 	log.Println("Successfully connected to LskyPro.")

@@ -3,6 +3,7 @@ package lskypro
 import (
 	"STUOJ/model"
 	"encoding/json"
+	"errors"
 )
 
 func GetProfile(role uint8) (model.LskyproProfile, error) {
@@ -10,10 +11,13 @@ func GetProfile(role uint8) (model.LskyproProfile, error) {
 	if err != nil {
 		return model.LskyproProfile{}, err
 	}
-	var profile model.LskyproProfile
-	err = json.Unmarshal([]byte(bodystr), &profile)
+	var responses model.LskyproProfileResponses
+	err = json.Unmarshal([]byte(bodystr), &responses)
 	if err != nil {
 		return model.LskyproProfile{}, err
 	}
-	return profile, nil
+	if responses.Status == false {
+		return model.LskyproProfile{}, errors.New(responses.Message)
+	}
+	return responses.Data, nil
 }
