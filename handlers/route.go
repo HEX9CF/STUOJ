@@ -67,7 +67,7 @@ func InitUserRoute() {
 		userProtectedRoute.GET("/current", UserCurrentId)
 		userProtectedRoute.PUT("/modify", UserModify)
 		userProtectedRoute.PUT("/password", UserChangePassword)
-		userProtectedRoute.POST("/uploadavatar", UpdateUserAvatar)
+		userProtectedRoute.POST("/avatar", UpdateUserAvatar)
 	}
 }
 
