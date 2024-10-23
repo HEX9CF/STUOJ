@@ -16,13 +16,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Upload(c *gin.Context) (model.LskyproUploadData, error) {
+func Upload(c *gin.Context, role uint8) (model.LskyproUploadData, error) {
 	url := preUrl + "/upload"
-
-	var fileJson model.UploadImageData
-	if err := c.ShouldBind(&fileJson); err != nil {
-		return model.LskyproUploadData{}, err
-	}
 
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -40,9 +35,9 @@ func Upload(c *gin.Context) (model.LskyproUploadData, error) {
 	if err != nil {
 		return model.LskyproUploadData{}, err
 	}
-	if fileJson.Role == model.RoleProblem {
+	if role == model.RoleProblem {
 		req.Header.Set("Authorization", "Bearer "+config.ProblemToken)
-	} else if fileJson.Role == model.RoleAvatar {
+	} else if role == model.RoleAvatar {
 		req.Header.Set("Authorization", "Bearer "+config.AvatarToken)
 	}
 
