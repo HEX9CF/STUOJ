@@ -1,5 +1,10 @@
 package model
 
+const (
+	RoleProblem uint8 = 1
+	RoleAvatar  uint8 = 2
+)
+
 type LskyproProfile struct {
 	Status  bool               `json:"status"`
 	Message string             `json:"message"`

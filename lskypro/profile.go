@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 )
 
-func GetProfile() (model.LskyproProfile, error) {
-	bodystr, err := httpInteraction("/profile", "GET", nil)
+func GetProfile(role uint8) (model.LskyproProfile, error) {
+	bodystr, err := httpInteraction("/profile", "GET", nil, role)
 	if err != nil {
 		return model.LskyproProfile{}, err
 	}
