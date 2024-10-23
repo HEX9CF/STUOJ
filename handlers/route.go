@@ -82,6 +82,11 @@ func InitJudgeRoute() {
 	{
 		judgePublicRoute.GET("/language", JudgeLanguageList)
 	}
+	judgePrivateRoute := ginServer.Group("/judge")
+	{
+		judgePrivateRoute.Use(middlewares.TokenAuth())
+		judgePrivateRoute.POST("/submit", JudgeSubmit)
+	}
 }
 
 func InitRecordRoute() {
