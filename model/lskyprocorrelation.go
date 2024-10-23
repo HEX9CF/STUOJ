@@ -40,7 +40,7 @@ type LskyproUploadData struct {
 	Name       string                      `json:"name"`
 	Pathname   string                      `json:"pathname"`
 	OriginName string                      `json:"origin_name"`
-	Size       float32                     `json:"size"`
+	Size       float64                     `json:"size"`
 	Mimetype   string                      `json:"mimetype"`
 	Extension  string                      `json:"extension"`
 	Md5        string                      `json:"md5"`
@@ -88,7 +88,7 @@ type LskyproImageData struct {
 	Key        string               `json:"key,omitempty"`
 	Name       string               `json:"name,omitempty"`
 	OriginName string               `json:"origin_name,omitempty"`
-	Size       float32              `json:"size,omitempty"`
+	Size       float64              `json:"size,omitempty"`
 	Mimetype   string               `json:"mimetype,omitempty"`
 	Extension  string               `json:"extension,omitempty"`
 	Md5        string               `json:"md5,omitempty"`

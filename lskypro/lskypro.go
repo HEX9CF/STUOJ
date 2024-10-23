@@ -17,7 +17,6 @@ func InitLskypro() error {
 		return err
 	}
 	log.Println("Successfully connected to LskyPro.")
-	log.Println(Delete("FwciBH", 2))
 	return nil
 }
 
