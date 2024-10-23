@@ -109,3 +109,19 @@ func GetImageList(page uint64, role uint8) (model.LskyproImageList, error) {
 	}
 	return responses.Data, nil
 }
+
+func Delete(key string, role uint8) error {
+	bodeystr, err := httpInteraction("/images"+"/"+key, "DELETE", nil, role)
+	if err != nil {
+		return err
+	}
+	var responses model.LskyproDeleteResponses
+	err = json.Unmarshal([]byte(bodeystr), &responses)
+	if err != nil {
+		return err
+	}
+	if responses.Status == false {
+		return errors.New(responses.Message)
+	}
+	return nil
+}

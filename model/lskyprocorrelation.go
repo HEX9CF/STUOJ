@@ -5,6 +5,12 @@ const (
 	RoleAvatar  uint8 = 2
 )
 
+type LskyproDeleteResponses struct {
+	Status  bool                   `json:"status"`
+	Message string                 `json:"message"`
+	Data    map[string]interface{} `json:"data"`
+}
+
 type LskyproProfileResponses struct {
 	Status  bool           `json:"status"`
 	Message string         `json:"message"`
