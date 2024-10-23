@@ -225,3 +225,14 @@ func UpdateUserAvatar(id uint64, avatarUrl string) error {
 	}
 	return nil
 }
+
+func QueryUserAvatar(id uint64) (string, error) {
+	var avatar string
+	sql := "SELECT avatar FROM tbl_user WHERE id=?"
+	err := db.QueryRow(sql, id).Scan(&avatar)
+	log.Println(sql, id)
+	if err != nil {
+		return "", err
+	}
+	return avatar, nil
+}
