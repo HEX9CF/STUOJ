@@ -2,6 +2,7 @@ package lskypro
 
 import (
 	"STUOJ/conf"
+	"STUOJ/model"
 	"bytes"
 	"io/ioutil"
 	"log"
@@ -11,7 +12,7 @@ import (
 func InitLskypro() error {
 	config = conf.Conf.Lskypro
 	preUrl = config.Host + ":" + config.Port + "/api/v1"
-	profile, err := GetProfile()
+	profile, err := GetProfile(1)
 	if err != nil || profile.Status == false {
 		return err
 	}
@@ -19,7 +20,7 @@ func InitLskypro() error {
 	return nil
 }
 
-func httpInteraction(route string, httpMethod string, reader *bytes.Reader) (string, error) {
+func httpInteraction(route string, httpMethod string, reader *bytes.Reader, role uint8) (string, error) {
 	url := preUrl + route
 	var req *http.Request
 	var err error
@@ -31,7 +32,11 @@ func httpInteraction(route string, httpMethod string, reader *bytes.Reader) (str
 	if err != nil {
 		return "", err
 	}
-	req.Header.Set("Authorization", "Bearer "+config.Token)
+	if role == model.RoleProblem {
+		req.Header.Set("Authorization", "Bearer "+config.ProblemToken)
+	} else if role == model.RoleAvatar {
+		req.Header.Set("Authorization", "Bearer "+config.AvatarToken)
+	}
 	req.Header.Set("Content-Type", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {

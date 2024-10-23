@@ -33,6 +33,7 @@ go.work.sum
 # dist
 dist/
 
+tmp/
 
 
 

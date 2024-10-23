@@ -17,6 +17,12 @@ import (
 
 func Upload(c *gin.Context) (model.LskyproUploadResponses, error) {
 	url := preUrl + "/upload"
+
+	var fileJson model.UploadImageData
+	if err := c.ShouldBind(&fileJson); err != nil {
+		return model.LskyproUploadResponses{}, err
+	}
+
 	file, err := c.FormFile("file")
 	if err != nil {
 		return model.LskyproUploadResponses{}, err
@@ -30,7 +36,14 @@ func Upload(c *gin.Context) (model.LskyproUploadResponses, error) {
 	}
 
 	req, err := http.NewRequest("POST", url, nil)
-	req.Header.Set("Authorization", "Bearer "+config.Token)
+	if err != nil {
+		return model.LskyproUploadResponses{}, err
+	}
+	if fileJson.Role == model.RoleProblem {
+		req.Header.Set("Authorization", "Bearer "+config.ProblemToken)
+	} else if fileJson.Role == model.RoleAvatar {
+		req.Header.Set("Authorization", "Bearer "+config.AvatarToken)
+	}
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
@@ -77,8 +90,8 @@ func Upload(c *gin.Context) (model.LskyproUploadResponses, error) {
 	return responses, nil
 }
 
-func GetImageList(page uint64) (model.LskyproImageList, error) {
-	bodystr, err := httpInteraction("/images"+"/?page="+strconv.FormatUint(page, 10), "GET", nil)
+func GetImageList(page uint64, role uint8) (model.LskyproImageList, error) {
+	bodystr, err := httpInteraction("/images"+"/?page="+strconv.FormatUint(page, 10), "GET", nil, role)
 	if err != nil {
 		return model.LskyproImageList{}, err
 	}
@@ -88,5 +101,4 @@ func GetImageList(page uint64) (model.LskyproImageList, error) {
 		return model.LskyproImageList{}, err
 	}
 	return list, nil
-
 }
