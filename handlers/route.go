@@ -57,6 +57,7 @@ func InitUserRoute() {
 	userPublicRoute := ginServer.Group("/user")
 	{
 		userPublicRoute.GET("/", UserList)
+		userPublicRoute.GET("/avatar/:id", UserAvatar)
 		userPublicRoute.GET("/:id", UserInfo)
 		userPublicRoute.POST("/login", UserLogin)
 		userPublicRoute.POST("/register", UserRegister)
@@ -65,6 +66,7 @@ func InitUserRoute() {
 	{
 		userProtectedRoute.Use(middlewares.TokenAuth())
 		userProtectedRoute.GET("/current", UserCurrentId)
+		userPublicRoute.GET("/avatar", ThisUserAvatar)
 		userProtectedRoute.PUT("/modify", UserModify)
 		userProtectedRoute.PUT("/password", UserChangePassword)
 		userProtectedRoute.POST("/avatar", UpdateUserAvatar)
