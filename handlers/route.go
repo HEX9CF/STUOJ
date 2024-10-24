@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"STUOJ/conf"
+	"STUOJ/handlers/judge"
+	"STUOJ/handlers/user"
 	"STUOJ/middlewares"
 	"STUOJ/model"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func InitRoute() error {
@@ -56,20 +57,20 @@ func InitTestRoute() {
 func InitUserRoute() {
 	userPublicRoute := ginServer.Group("/user")
 	{
-		userPublicRoute.GET("/", UserList)
-		userPublicRoute.GET("/avatar/:id", UserAvatar)
-		userPublicRoute.GET("/:id", UserInfo)
-		userPublicRoute.POST("/login", UserLogin)
-		userPublicRoute.POST("/register", UserRegister)
+		userPublicRoute.GET("/", user.UserList)
+		userPublicRoute.GET("/avatar/:id", user.UserAvatar)
+		userPublicRoute.GET("/:id", user.UserInfo)
+		userPublicRoute.POST("/login", user.UserLogin)
+		userPublicRoute.POST("/register", user.UserRegister)
 	}
 	userProtectedRoute := ginServer.Group("/user")
 	{
 		userProtectedRoute.Use(middlewares.TokenAuth())
-		userProtectedRoute.GET("/current", UserCurrentId)
-		userPublicRoute.GET("/avatar", ThisUserAvatar)
-		userProtectedRoute.PUT("/modify", UserModify)
-		userProtectedRoute.PUT("/password", UserChangePassword)
-		userProtectedRoute.POST("/avatar", UpdateUserAvatar)
+		userProtectedRoute.GET("/current", user.UserCurrentId)
+		userPublicRoute.GET("/avatar", user.ThisUserAvatar)
+		userProtectedRoute.PUT("/modify", user.UserModify)
+		userProtectedRoute.PUT("/password", user.UserChangePassword)
+		userProtectedRoute.POST("/avatar", user.UpdateUserAvatar)
 	}
 }
 
@@ -84,12 +85,12 @@ func InitProblemRoute() {
 func InitJudgeRoute() {
 	judgePublicRoute := ginServer.Group("/judge")
 	{
-		judgePublicRoute.GET("/language", JudgeLanguageList)
+		judgePublicRoute.GET("/language", judge.JudgeLanguageList)
 	}
 	judgePrivateRoute := ginServer.Group("/judge")
 	{
 		judgePrivateRoute.Use(middlewares.TokenAuth())
-		judgePrivateRoute.POST("/submit", JudgeSubmit)
+		judgePrivateRoute.POST("/submit", judge.JudgeSubmit)
 	}
 }
 

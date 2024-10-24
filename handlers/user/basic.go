@@ -1,4 +1,4 @@
-package handlers
+package user
 
 import (
 	"STUOJ/db"
@@ -9,14 +9,15 @@ import (
 	"net/http"
 )
 
-// 修改用户信息
-type ReqUserModify struct {
+// 用户注册
+type ReqUserRegister struct {
 	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
 	Email    string `json:"email" binding:"required"`
 }
 
-func UserModify(c *gin.Context) {
-	var req ReqUserModify
+func UserRegister(c *gin.Context) {
+	var req ReqUserRegister
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
@@ -31,22 +32,10 @@ func UserModify(c *gin.Context) {
 	}
 
 	// 校验参数
-	if req.Username == "" || req.Email == "" {
+	if req.Username == "" || req.Password == "" || req.Email == "" {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
-			Msg:  "参数错误，用户名或邮箱不能为空",
-			Data: nil,
-		})
-		return
-	}
-
-	// 获取用户id
-	id, err := utils.ExtractTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusUnauthorized, model.Response{
-			Code: 0,
-			Msg:  "用户未登录",
+			Msg:  "参数错误，用户名、邮箱或密码不能为空",
 			Data: nil,
 		})
 		return
@@ -54,16 +43,16 @@ func UserModify(c *gin.Context) {
 
 	// 初始化用户
 	u := model.User{
-		Id:       id,
 		Username: req.Username,
+		Password: req.Password,
 		Email:    req.Email,
 	}
-	err = db.UpdateUserById(u)
+	err = db.InsertUser(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: 0,
-			Msg:  "修改失败, 用户名或邮箱已存在",
+			Msg:  "注册失败，用户名或邮箱已存在",
 			Data: nil,
 		})
 		return
@@ -72,18 +61,19 @@ func UserModify(c *gin.Context) {
 	// 返回结果
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,
-		Msg:  "修改成功",
+		Msg:  "注册成功",
 		Data: nil,
 	})
 }
 
-// 修改用户密码
-type ReqUserChangePassword struct {
+// 用户登录
+type ReqUserLogin struct {
 	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required"`
 }
 
-func UserChangePassword(c *gin.Context) {
-	var req ReqUserChangePassword
+func UserLogin(c *gin.Context) {
+	var req ReqUserLogin
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
@@ -98,22 +88,10 @@ func UserChangePassword(c *gin.Context) {
 	}
 
 	// 校验参数
-	if req.Password == "" {
+	if req.Password == "" || req.Email == "" {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
-			Msg:  "参数错误，密码不能为空",
-			Data: nil,
-		})
-		return
-	}
-
-	// 获取用户id
-	id, err := utils.ExtractTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusUnauthorized, model.Response{
-			Code: 0,
-			Msg:  "用户未登录",
+			Msg:  "参数错误，邮箱或密码不能为空",
 			Data: nil,
 		})
 		return
@@ -121,24 +99,42 @@ func UserChangePassword(c *gin.Context) {
 
 	// 初始化用户
 	u := model.User{
-		Id:       id,
+		Email:    req.Email,
 		Password: req.Password,
 	}
-	err = db.UpdateUserPasswordById(u)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
+
+	u.Id, err = db.VerifyUserByEmail(u)
+	if err != nil || u.Id == 0 {
+		if err != nil {
+			log.Println(err)
+		}
+		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
-			Msg:  "修改失败",
+			Msg:  "登录失败，用户名或密码错误",
 			Data: nil,
 		})
 		return
 	}
 
-	// 返回结果
+	// 生成token
+	//token := "{test token}"
+	token, err := utils.GenerateToken(u.Id)
+	if err != nil || token == "" {
+		if err != nil {
+			log.Println(err)
+		}
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: 0,
+			Msg:  "登录失败，生成token失败",
+			Data: nil,
+		})
+		return
+	}
+
+	// 登录成功，返回token
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,
-		Msg:  "修改成功",
-		Data: nil,
+		Msg:  "登录成功",
+		Data: token,
 	})
 }
