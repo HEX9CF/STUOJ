@@ -3,6 +3,7 @@ package judge
 import (
 	"STUOJ/conf"
 	"bytes"
+	"errors"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -30,6 +31,10 @@ func httpInteraction(route string, httpMethod string, reader *bytes.Reader) (str
 	url := preUrl + route
 	var req *http.Request
 	var err error
+	if route == "/submissions" && httpMethod == "POST" {
+		log.Println("wait for judge server to finish checking...")
+		url = url + "/?wait=true"
+	}
 	if reader == nil {
 		req, err = http.NewRequest(httpMethod, url, nil)
 	} else {
@@ -38,6 +43,7 @@ func httpInteraction(route string, httpMethod string, reader *bytes.Reader) (str
 	if err != nil {
 		return "", err
 	}
+
 	req.Header.Set("X-Auth-Token", config.Token)
 	req.Header.Set("X-Auth-User", config.Token)
 	req.Header.Set("Content-Type", "application/json")
@@ -46,10 +52,14 @@ func httpInteraction(route string, httpMethod string, reader *bytes.Reader) (str
 		return "", err
 	}
 	defer res.Body.Close()
+
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		return "", err
 	}
 	bodystr := string(body)
+	if res.StatusCode != http.StatusCreated && res.StatusCode != http.StatusOK {
+		return "", errors.New(bodystr)
+	}
 	return bodystr, nil
 }
