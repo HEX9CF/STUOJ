@@ -47,7 +47,7 @@ func UserRegister(c *gin.Context) {
 		Password: req.Password,
 		Email:    req.Email,
 	}
-	err = db.InsertUser(u)
+	u.Id, err = db.InsertUser(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -61,8 +61,8 @@ func UserRegister(c *gin.Context) {
 	// 返回结果
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,
-		Msg:  "注册成功",
-		Data: nil,
+		Msg:  "注册成功，返回用户ID",
+		Data: u.Id,
 	})
 }
 
