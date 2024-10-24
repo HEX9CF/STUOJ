@@ -1,4 +1,4 @@
-package handlers
+package judge
 
 import (
 	"STUOJ/db"

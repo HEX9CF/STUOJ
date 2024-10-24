@@ -6,20 +6,26 @@ import (
 )
 
 // 插入语言
-func InsertLanguage(l model.Language) error {
+func InsertLanguage(l model.Language) (uint64, error) {
 	sql := "INSERT INTO tbl_language (id, name) VALUES (?, ?)"
 	stmt, err := db.Prepare(sql)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(l.Id, l.Name)
+	result, err := stmt.Exec(l.Id, l.Name)
 	log.Println(sql, l.Id, l.Name)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	// 获取插入ID
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(id), nil
 }
 
 // 删除所有语言
