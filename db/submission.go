@@ -65,7 +65,7 @@ func SelectAllSubmissions() ([]model.Submission, error) {
 }
 
 // 根据用户ID查询提交记录
-func SelectSubmissionByUserId(user_id uint64) ([]model.Submission, error) {
+func SelectSubmissionsByUserId(user_id uint64) ([]model.Submission, error) {
 	sql := "SELECT id, problem_id, status, score, submit_time, language_id, length, memory, time, source_code FROM tbl_submission WHERE user_id = ?"
 	rows, err := db.Query(sql, user_id)
 	log.Println(sql, user_id)
@@ -100,7 +100,8 @@ func SelectSubmissionByUserId(user_id uint64) ([]model.Submission, error) {
 	return submissions, nil
 }
 
-func SelectSubmissionByProblemId(problem_id uint64) ([]model.Submission, error) {
+// 根据题目ID查询提交记录
+func SelectSubmissionsByProblemId(problem_id uint64) ([]model.Submission, error) {
 	sql := "SELECT id, user_id, status, score, submit_time, language_id, length, memory, time, source_code FROM tbl_submission WHERE problem_id = ?"
 	rows, err := db.Query(sql, problem_id)
 	log.Println(sql, problem_id)

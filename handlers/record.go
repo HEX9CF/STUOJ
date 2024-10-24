@@ -77,7 +77,7 @@ func RecordListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	submisssions, err := db.SelectSubmissionByProblemId(pid)
+	submisssions, err := db.SelectSubmissionsByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -109,7 +109,7 @@ func RecordListOfUser(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	submisssions, err := db.SelectSubmissionByUserId(uid)
+	submisssions, err := db.SelectSubmissionsByUserId(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
