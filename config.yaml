@@ -1,0 +1,23 @@
+server:
+  port: 14514
+  token: 
+token:
+  token_expire: 864000
+  secret: stuoj
+db:
+  host: 8.134.48.192
+  port: 3306
+  name: stuoj_db
+  user: stuoj
+  password: 12345678
+  max_open_conns: 10
+  maxIdleConns: 5
+judge:
+  host: http://10.143.50.21
+  port: 2358
+  token: q2yBnVYCtteEWJGBa69bPCDV78duxxYM
+lskypro:
+  host: http://10.143.50.21
+  port: 7791
+  problem_token: 5|X5JCFwdqF4lNN6fr2GZ0Gr7tEAjD1nbxntcc3DFC
+  avatar_token: 6|Pb9mL6jIzw6D5BrHSgaorT47tZsldCeoDoWsYtxR
