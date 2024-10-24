@@ -137,22 +137,28 @@ func SelectSubmissionsByProblemId(problem_id uint64) ([]model.Submission, error)
 }
 
 // 插入提交记录
-func InsertSubmission(s model.Submission) error {
+func InsertSubmission(s model.Submission) (uint64, error) {
 	sql := "INSERT INTO tbl_submission (user_id, problem_id, status, score, submit_time, language_id, length, memory, time, source_code) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	stmt, err := db.Prepare(sql)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer stmt.Close()
 	// 获取当前时间
 	submitTime := time.Now().Format("2006-01-02 15:04:05")
-	_, err = stmt.Exec(s.UserId, s.ProblemId, s.Status, s.Score, submitTime, s.LanguageId, s.Length, s.Memory, s.Time, s.SourceCode)
+	result, err := stmt.Exec(s.UserId, s.ProblemId, s.Status, s.Score, submitTime, s.LanguageId, s.Length, s.Memory, s.Time, s.SourceCode)
 	log.Println(sql, s.UserId, s.ProblemId, s.Status, s.Score, submitTime, s.LanguageId, s.Length, s.Memory, s.Time, s.SourceCode)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	// 获取插入ID
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(id), nil
 }
 
 // 根据ID删除提交记录
