@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"STUOJ/db"
+	"STUOJ/judge"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
@@ -68,7 +69,71 @@ func JudgeSubmit(c *gin.Context) {
 		return
 	}
 
-	// TODO: 提交评测
+	// 获取题目信息
+	problem, err := db.SelectProblemById(req.ProblemId)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: 0,
+			Msg:  "获取题目信息失败",
+			Data: nil,
+		})
+		return
+	}
+
+	// 获取评测点
+	points, err := db.SelectTestPointsByProblemId(req.ProblemId)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: 0,
+			Msg:  "获取评测点失败",
+			Data: nil,
+		})
+		return
+	}
+
+	// 提交评测点
+	for _, point := range points {
+		// 初始化评测点评测对象
+		judgeSubmission := model.JudgeSubmission{
+			SourceCode:     req.SourceCode,
+			LanguageId:     req.LanguageId,
+			Stdin:          point.TestInput,
+			ExpectedOutput: point.TestOutput,
+			CPUTimeLimit:   problem.TimeLimit,
+			MemoryLimit:    problem.MemoryLimit,
+		}
+		//log.Println(judgeSubmission)
+
+		// 发送评测点评测请求
+		token, err := judge.Submit(judgeSubmission)
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusInternalServerError, model.Response{
+				Code: 0,
+				Msg:  "评测失败",
+				Data: nil,
+			})
+			return
+		}
+		log.Println(token)
+
+		// 查询评测点结果
+		result, err := judge.QueryResult(token)
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusInternalServerError, model.Response{
+				Code: 0,
+				Msg:  "查询评测结果失败",
+				Data: nil,
+			})
+			return
+		}
+		log.Println(result)
+
+		// 更新评测点结果
+	}
 
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,
