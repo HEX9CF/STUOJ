@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"STUOJ/db"
 	"STUOJ/judge"
+	"STUOJ/utils"
 	"log"
 )
 
@@ -70,19 +71,34 @@ func InitJudgePrintInfo() error {
 	if err != nil {
 		return err
 	}
-	log.Println("Judge config info:", config)
+	if configtmp, err := utils.PrettyStruct(config); err != nil {
+		log.Println("Struct formatting failed:", err)
+		log.Println("Judge config info:", config)
+	} else {
+		log.Println("Judge config info:", configtmp)
+	}
 
 	system, err := judge.GetSystemInfo()
 	if err != nil {
 		return err
 	}
-	log.Println("Judge system info:", system)
+	if systemtmp, err := utils.PrettyStruct(system); err != nil {
+		log.Println("Struct formatting failed:", err)
+		log.Println("Judge system info:", system)
+	} else {
+		log.Println("Judge system info:", systemtmp)
+	}
 
 	statistics, err := judge.GetStatistics()
 	if err != nil {
 		return err
 	}
-	log.Println("Judge statistics:", statistics)
+	if statstmp, err := utils.PrettyStruct(statistics); err != nil {
+		log.Println("Struct formatting failed:", err)
+		log.Println("Judge statistics:", statistics)
+	} else {
+		log.Println("Judge statistics:", statstmp)
+	}
 
 	/*	about, err := judge.GetAbout()
 		if err != nil {
@@ -96,7 +112,12 @@ func InitJudgePrintInfo() error {
 	}
 	log.Println("Judge workers:")
 	for _, worker := range workers {
-		log.Println(worker)
+		if workerstmp, err := utils.PrettyStruct(worker); err != nil {
+			log.Println("Struct formatting failed:", err)
+			log.Println(worker)
+		} else {
+			log.Println(workerstmp)
+		}
 	}
 
 	/*	license, err := judge.GetLicense()
