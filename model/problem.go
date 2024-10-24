@@ -67,8 +67,8 @@ type Problem struct {
 	Title        string     `json:"title"`
 	Source       string     `json:"source"`
 	Difficulty   Difficulty `json:"difficulty"`
-	TimeLimit    uint64     `json:"time_limit"`
-	MemoryLimit  uint64     `json:"memory_limit"`
+	TimeLimit    float64    `json:"time_limit"`
+	MemoryLimit  float64    `json:"memory_limit"`
 	Description  string     `json:"description"`
 	Input        string     `json:"input"`
 	Output       string     `json:"output"`
