@@ -56,7 +56,7 @@ func InitJudgeLanguages() error {
 		// 	Name: v["name"].(string),
 		// }
 
-		err := db.InsertLanguage(language)
+		_, err := db.InsertLanguage(language)
 		if err != nil {
 			return err
 		}

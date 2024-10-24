@@ -73,23 +73,29 @@ func SelectAllProblems() ([]model.Problem, error) {
 }
 
 // 插入题目
-func InsertProblem(p model.Problem) error {
+func InsertProblem(p model.Problem) (uint64, error) {
 	sql := "INSERT INTO tbl_problem(title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, status, create_time, update_time) VALUES(?, ?. ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	stmt, err := db.Prepare(sql)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer stmt.Close()
 	// 获取当前时间
 	createTime := time.Now().Format("2006-01-02 15:04:05")
 	updateTime := createTime
-	_, err = stmt.Exec(p.Title, p.Source, p.Difficulty, p.TimeLimit, p.MemoryLimit, p.Description, p.Input, p.Output, p.SampleInput, p.SampleOutput, p.Hint, p.Status, createTime, updateTime)
+	result, err := stmt.Exec(p.Title, p.Source, p.Difficulty, p.TimeLimit, p.MemoryLimit, p.Description, p.Input, p.Output, p.SampleInput, p.SampleOutput, p.Hint, p.Status, createTime, updateTime)
 	log.Println(sql, p.Title, p.Source, p.Difficulty, p.TimeLimit, p.MemoryLimit, p.Description, p.Input, p.Output, p.SampleInput, p.SampleOutput, p.Hint, p.Status, createTime, updateTime)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	// 获取插入ID
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(id), nil
 }
 
 // 根据ID更新题目

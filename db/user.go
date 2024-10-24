@@ -72,30 +72,36 @@ func SelectAllUsers() ([]model.User, error) {
 }
 
 // 插入用户
-func InsertUser(u model.User) error {
+func InsertUser(u model.User) (uint64, error) {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 	err := u.HashPassword()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	sql := "INSERT INTO tbl_user (username, password, email, create_time, update_time) VALUES (?, ?, ?, ?, ?)"
 	stmt, err := db.Prepare(sql)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	defer stmt.Close()
 	// 获取当前时间
 	createTime := time.Now().Format("2006-01-02 15:04:05")
 	updateTime := createTime
-	_, err = stmt.Exec(u.Username, u.Password, u.Email, createTime, updateTime)
+	result, err := stmt.Exec(u.Username, u.Password, u.Email, createTime, updateTime)
 	log.Println(sql, u.Username, u.Password, u.Email, createTime, updateTime)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	// 获取插入ID
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(id), nil
 }
 
 // 更新用户
