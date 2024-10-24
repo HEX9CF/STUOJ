@@ -1,36 +1,32 @@
 package conf
 
+import (
+	"os"
+
+	"gopkg.in/yaml.v3"
+)
+
 type Config struct {
-	DateBase DatabaseConf
-	Judge    JudgeConf
-	Lskypro  LskyproConf
-	Server   ServerConf
-	Token    TokenConf
+	DateBase DatabaseConf `yaml:"db"`
+	Judge    JudgeConf    `yaml:"judge"`
+	Lskypro  LskyproConf  `yaml:"lskypro"`
+	Server   ServerConf   `yaml:"server"`
+	Token    TokenConf    `yaml:"token"`
 }
 
 // Config 初始化
 func InitConfig() error {
-	err := InitEnv()
+	file, err := os.Open("config.yaml")
 	if err != nil {
 		return err
 	}
-	Conf = DefaultConfig()
+	defer file.Close()
 
-	return nil
-}
-
-// DefaultConfig 初始化Config并返回一个默认的Config指针
-func DefaultConfig() *Config {
-	return &Config{
-		// Database
-		DateBase: DatabaseConfigFromEnv(),
-		// Judge
-		Judge: JudgeConfigFromEnv(),
-		// Lskypro
-		Lskypro: LskyproConfigFromEnv(),
-		// Server
-		Server: ServerConfigFromEnv(),
-		// Token
-		Token: TokenConfigFromEnv(),
+	decoder := yaml.NewDecoder(file)
+	Conf = &Config{}
+	err = decoder.Decode(Conf)
+	if err != nil {
+		return err
 	}
+	return nil
 }
