@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 // 提交评测
@@ -58,7 +59,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 插入提交
-	err = db.InsertSubmission(submission)
+	submission.Id, err = db.InsertSubmission(submission)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -107,7 +108,7 @@ func JudgeSubmit(c *gin.Context) {
 		//log.Println(judgeSubmission)
 
 		// 发送评测点评测请求
-		token, err := judge.Submit(judgeSubmission)
+		result, err := judge.Submit(judgeSubmission)
 		if err != nil {
 			log.Println(err)
 			c.JSON(http.StatusInternalServerError, model.Response{
@@ -117,22 +118,33 @@ func JudgeSubmit(c *gin.Context) {
 			})
 			return
 		}
-		log.Println(token)
+		//log.Println(result)
 
-		// 查询评测点结果
-		result, err := judge.QueryResult(token)
+		// 解析时间
+		time, err := strconv.ParseFloat(result.Time, 64)
 		if err != nil {
 			log.Println(err)
 			c.JSON(http.StatusInternalServerError, model.Response{
 				Code: 0,
-				Msg:  "查询评测结果失败",
+				Msg:  "评测失败",
 				Data: nil,
 			})
 			return
 		}
-		log.Println(result)
+
+		// 初始化评测点结果对象
+		judgement := model.Judgement{
+			SubmissionId: submission.Id,
+			TestPointId:  point.Id,
+			Time:         time,
+			Memory:       uint64(result.Memory),
+			Stdout:       result.Stdout,
+			Status:       result.Status.Id,
+		}
+		log.Println(judgement)
 
 		// 更新评测点结果
+
 	}
 
 	c.JSON(http.StatusOK, model.Response{
