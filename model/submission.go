@@ -3,7 +3,7 @@ package model
 import "time"
 
 // 提交状态
-type SubmissionStatus uint8
+type SubmissionStatus uint64
 
 const (
 	SubmissionStatusPending SubmissionStatus = 0
@@ -16,17 +16,17 @@ const (
 func (s SubmissionStatus) String() string {
 	switch s {
 	case SubmissionStatusPending:
-		return "等待评测"
+		return "Pending"
 	case SubmissionStatusAC:
-		return "通过"
+		return "AC"
 	case SubmissionStatusWA:
-		return "答案错误"
+		return "WA"
 	case SubmissionStatusTLE:
-		return "超时"
+		return "TLE"
 	case SubmissionStatusCE:
-		return "编译错误"
+		return "CE"
 	default:
-		return "未知状态"
+		return "Unknown"
 	}
 }
 
