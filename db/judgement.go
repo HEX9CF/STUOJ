@@ -43,9 +43,7 @@ func SelectJudgementsBySubmissionId(sid uint64) ([]model.Judgement, error) {
 	for rows.Next() {
 		var judgement model.Judgement
 
-		judgement.SubmissionId = sid
-
-		err := rows.Scan(&judgement.Id, &judgement.TestPointId, &judgement.Time, &judgement.Memory, &judgement.Stdout, &judgement.Stderr, &judgement.CompileOutput, &judgement.Message, &judgement.Status)
+		err := rows.Scan(&judgement.Id, &judgement.SubmissionId, &judgement.TestPointId, &judgement.Time, &judgement.Memory, &judgement.Stdout, &judgement.Stderr, &judgement.CompileOutput, &judgement.Message, &judgement.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -71,9 +69,7 @@ func SelectJudgementsByTestPointId(tpid uint64) ([]model.Judgement, error) {
 	for rows.Next() {
 		var judgement model.Judgement
 
-		judgement.SubmissionId = tpid
-
-		err := rows.Scan(&judgement.Id, &judgement.TestPointId, &judgement.Time, &judgement.Memory, &judgement.Stdout, &judgement.Stderr, &judgement.CompileOutput, &judgement.Message, &judgement.Status)
+		err := rows.Scan(&judgement.Id, &judgement.SubmissionId, &judgement.TestPointId, &judgement.Time, &judgement.Memory, &judgement.Stdout, &judgement.Stderr, &judgement.CompileOutput, &judgement.Message, &judgement.Status)
 		if err != nil {
 			return nil, err
 		}
