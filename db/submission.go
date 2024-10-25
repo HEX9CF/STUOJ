@@ -6,9 +6,9 @@ import (
 	"time"
 )
 
-// 查询所有提交记录
+// 查询所有提交记录（不包括源代码）
 func SelectAllSubmissions() ([]model.Submission, error) {
-	sql := "SELECT id, user_id, problem_id, status, score, language_id, length, memory, time, source_code, create_time, update_time FROM tbl_submission"
+	sql := "SELECT id, user_id, problem_id, status, score, language_id, length, memory, time, create_time, update_time FROM tbl_submission"
 	rows, err := db.Query(sql)
 	log.Println(sql)
 	if err != nil {
@@ -22,7 +22,7 @@ func SelectAllSubmissions() ([]model.Submission, error) {
 		var submission model.Submission
 		var createTimeStr, updateTimeStr string
 
-		err := rows.Scan(&submission.Id, &submission.UserId, &submission.ProblemId, &submission.Status, &submission.Score, &submission.LanguageId, &submission.Length, &submission.Memory, &submission.Time, &submission.SourceCode, &createTimeStr, &updateTimeStr)
+		err := rows.Scan(&submission.Id, &submission.UserId, &submission.ProblemId, &submission.Status, &submission.Score, &submission.LanguageId, &submission.Length, &submission.Memory, &submission.Time, &createTimeStr, &updateTimeStr)
 		if err != nil {
 			return nil, err
 		}
@@ -34,6 +34,9 @@ func SelectAllSubmissions() ([]model.Submission, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		// 不返回源代码
+		submission.SourceCode = ""
 
 		//log.Println(submission)
 		submissions = append(submissions, submission)
