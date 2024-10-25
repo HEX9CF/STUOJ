@@ -98,7 +98,7 @@ func JudgeSubmit(c *gin.Context) {
 	// 返回提交ID
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,
-		Msg:  "提交成功，返回提交ID",
+		Msg:  "提交成功，返回记录提交ID",
 		Data: submission.Id,
 	})
 
