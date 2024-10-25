@@ -89,16 +89,17 @@ func InitJudgePrintInfo() error {
 		log.Println("Judge system info:", systemtmp)
 	}
 
-	statistics, err := judge.GetStatistics()
-	if err != nil {
-		return err
-	}
-	if statstmp, err := utils.PrettyStruct(statistics); err != nil {
-		log.Println("Struct formatting failed:", err)
-		log.Println("Judge statistics:", statistics)
-	} else {
-		log.Println("Judge statistics:", statstmp)
-	}
+	/*	statistics, err := judge.GetStatistics()
+		if err != nil {
+			return err
+		}
+		if statstmp, err := utils.PrettyStruct(statistics); err != nil {
+			log.Println("Struct formatting failed:", err)
+			log.Println("Judge statistics:", statistics)
+		} else {
+			log.Println("Judge statistics:", statstmp)
+		}
+	*/
 
 	/*	about, err := judge.GetAbout()
 		if err != nil {
@@ -106,6 +107,7 @@ func InitJudgePrintInfo() error {
 		}
 		log.Println("Judge about:", about)
 	*/
+
 	workers, err := judge.GetWorkers()
 	if err != nil {
 		return err
@@ -126,11 +128,13 @@ func InitJudgePrintInfo() error {
 		}
 		log.Println("Judge license:", license)
 	*/
-	isolate, err := judge.GetIsolate()
-	if err != nil {
-		return err
-	}
-	log.Println("Judge isolate:", isolate)
+
+	/*	isolate, err := judge.GetIsolate()
+		if err != nil {
+			return err
+		}
+		log.Println("Judge isolate:", isolate)
+	*/
 
 	version, err := judge.GetVersion()
 	if err != nil {
