@@ -5,11 +5,11 @@ import (
 	"log"
 )
 
-func InitDatabase(chFin chan string) {
+func InitDatabase() {
 	err := db.InitDatabase()
 	if err != nil {
 		log.Println("Init database failed!")
 		panic(err)
 	}
-	chFin <- "database"
+	log.Println("Init database success.")
 }

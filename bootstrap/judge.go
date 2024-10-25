@@ -12,19 +12,16 @@ func InitJudge(chFin chan string) {
 	err = judge.InitJudge()
 	if err != nil {
 		log.Println("Init judge failed!")
-		panic(err)
 	}
 
 	err = InitJudgePrintInfo()
 	if err != nil {
 		log.Println("Init judge failed!")
-		panic(err)
 	}
 
 	err = InitJudgeLanguages()
 	if err != nil {
 		log.Println("Init judge failed!")
-		panic(err)
 	}
 
 	chFin <- "judge"

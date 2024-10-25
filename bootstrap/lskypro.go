@@ -9,7 +9,6 @@ func InitLskypro(chFin chan string) {
 	err := lskypro.InitLskypro()
 	if err != nil {
 		log.Println("Init lskypro failed!")
-		panic(err)
 	}
 
 	chFin <- "lskypro"
