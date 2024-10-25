@@ -7,24 +7,27 @@ import (
 	"log"
 )
 
-func InitJudge() error {
+func InitJudge(chFin chan string) {
 	var err error
 	err = judge.InitJudge()
 	if err != nil {
-		return err
+		log.Println("Init judge failed!")
+		panic(err)
 	}
 
 	err = InitJudgePrintInfo()
 	if err != nil {
-		return err
+		log.Println("Init judge failed!")
+		panic(err)
 	}
 
 	err = InitJudgeLanguages()
 	if err != nil {
-		return err
+		log.Println("Init judge failed!")
+		panic(err)
 	}
 
-	return nil
+	chFin <- "judge"
 }
 
 // 初始化评测机语言
