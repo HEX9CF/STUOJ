@@ -95,8 +95,14 @@ func JudgeSubmit(c *gin.Context) {
 		return
 	}
 
-	submission.Status = model.SubmitStatusAC
+	// 返回提交ID
+	c.JSON(http.StatusOK, model.Response{
+		Code: 1,
+		Msg:  "提交成功，返回提交ID",
+		Data: submission.Id,
+	})
 
+	submission.Status = model.SubmitStatusAC
 	chJudgement := make(chan model.Judgement)
 
 	// 提交评测点
@@ -108,14 +114,16 @@ func JudgeSubmit(c *gin.Context) {
 	for _, _ = range points {
 		// 接收评测点结果
 		judgement := <-chJudgement
-		log.Println(judgement)
+		//log.Println(judgement)
 
 		// 更新提交数据
 		submission.Time = math.Max(submission.Time, judgement.Time)
-		submission.Memory = uint64(math.Max(float64(submission.Memory), float64(judgement.Memory)))
+		submission.Memory = max(submission.Memory, judgement.Memory)
 		// 如果评测点结果不是AC，更新提交状态
 		if judgement.Status != model.SubmitStatusAC {
-			submission.Status = judgement.Status
+			if submission.Status != model.SubmitStatusWA {
+				submission.Status = max(submission.Status, judgement.Status)
+			}
 		}
 	}
 
@@ -123,20 +131,8 @@ func JudgeSubmit(c *gin.Context) {
 	err = db.UpdateSubmissionById(submission)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
-			Msg:  "评测失败",
-			Data: nil,
-		})
 		return
 	}
-
-	// 返回提交ID
-	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
-		Msg:  "提交成功，返回提交ID",
-		Data: submission.Id,
-	})
 }
 
 func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission model.Submission, point model.TestPoint, c chan model.Judgement) {
