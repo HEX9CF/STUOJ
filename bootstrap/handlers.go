@@ -2,13 +2,14 @@ package bootstrap
 
 import (
 	"STUOJ/handlers"
+	"log"
 )
 
-func InitHandlers() error {
+func InitHandlers() {
 	err := handlers.InitHandlers()
 	if err != nil {
-		return err
+		log.Println("Init handlers failed!")
+		panic(err)
 	}
-
-	return nil
+	log.Println("Init handlers success.")
 }

@@ -2,13 +2,14 @@ package bootstrap
 
 import (
 	"STUOJ/conf"
+	"log"
 )
 
-func InitConfig() error {
+func InitConfig() {
 	err := conf.InitConfig()
 	if err != nil {
-		return err
+		log.Println("Init config failed!")
+		panic(err)
 	}
-
-	return nil
+	log.Println("Init config success!")
 }

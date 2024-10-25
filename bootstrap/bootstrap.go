@@ -1,40 +1,14 @@
 package bootstrap
 
-import (
-	"log"
-)
-
 func Init() {
-	var err error
+	chFin := make(chan string)
 
-	err = InitConfig()
-	if err != nil {
-		log.Println("Init config failed!")
-		panic(err)
-	}
+	InitConfig()
+	InitDatabase()
 
-	err = InitDatabase()
-	if err != nil {
-		log.Println("Init database failed!")
-		panic(err)
-	}
+	// 异步初始化
+	go InitJudge(chFin)
+	go InitLskypro(chFin)
 
-	err = InitJudge()
-	if err != nil {
-		log.Println("Init judge failed!")
-		panic(err)
-	}
-
-	err = InitLskypro()
-	if err != nil {
-		log.Println("Init lskypro failed!")
-		panic(err)
-	}
-
-	err = InitHandlers()
-	if err != nil {
-		log.Println("Init handlers failed!")
-		panic(err)
-	}
-
+	InitHandlers()
 }
