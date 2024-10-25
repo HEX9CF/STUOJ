@@ -6,25 +6,55 @@ import "time"
 type SubmitStatus uint64
 
 const (
-	SubmitStatusPending SubmitStatus = 0
-	SubmitStatusAC      SubmitStatus = 3
-	SubmitStatusWA      SubmitStatus = 4
-	SubmitStatusTLE     SubmitStatus = 5
-	SubmitStatusCE      SubmitStatus = 6
+	SubmitStatusPending         SubmitStatus = 0
+	SubmitStatusInQueue         SubmitStatus = 1
+	SubmitStatusProcessing      SubmitStatus = 2
+	SubmitStatusAC              SubmitStatus = 3
+	SubmitStatusWA              SubmitStatus = 4
+	SubmitStatusTLE             SubmitStatus = 5
+	SubmitStatusCE              SubmitStatus = 6
+	SubmitStatusRE_SIGSEGV      SubmitStatus = 7
+	SubmitStatusRE_SIGXFSZ      SubmitStatus = 8
+	SubmitStatusRE_SIGFPE       SubmitStatus = 9
+	SubmitStatusRE_SIGABRT      SubmitStatus = 10
+	SubmitStatusRE_NZEC         SubmitStatus = 11
+	SubmitStatusRE_Other        SubmitStatus = 12
+	SubmitStatusInternalError   SubmitStatus = 13
+	SubmitStatusExecFormatError SubmitStatus = 14
 )
 
 func (s SubmitStatus) String() string {
 	switch s {
 	case SubmitStatusPending:
 		return "Pending"
+	case SubmitStatusInQueue:
+		return "In Queue"
+	case SubmitStatusProcessing:
+		return "Processing"
 	case SubmitStatusAC:
-		return "AC"
+		return "Accepted"
 	case SubmitStatusWA:
-		return "WA"
+		return "Wrong Answer"
 	case SubmitStatusTLE:
-		return "TLE"
+		return "Time Limit Exceeded"
 	case SubmitStatusCE:
-		return "CE"
+		return "Compilation Error"
+	case SubmitStatusRE_SIGSEGV:
+		return "Runtime Error (SIGSEGV)"
+	case SubmitStatusRE_SIGXFSZ:
+		return "Runtime Error (SIGXFSZ)"
+	case SubmitStatusRE_SIGFPE:
+		return "Runtime Error (SIGFPE)"
+	case SubmitStatusRE_SIGABRT:
+		return "Runtime Error (SIGABRT)"
+	case SubmitStatusRE_NZEC:
+		return "Runtime Error (NZEC)"
+	case SubmitStatusRE_Other:
+		return "Runtime Error (Other)"
+	case SubmitStatusInternalError:
+		return "Internal Error"
+	case SubmitStatusExecFormatError:
+		return "Exec Format Error"
 	default:
 		return "Unknown"
 	}
