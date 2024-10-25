@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// 查询所有提交记录（不包括源代码）
+// 查询所有提交记录（不返回源代码）
 func SelectAllSubmissions() ([]model.Submission, error) {
 	sql := "SELECT id, user_id, problem_id, status, score, language_id, length, memory, time, create_time, update_time FROM tbl_submission"
 	rows, err := db.Query(sql)
@@ -69,9 +69,9 @@ func SelectSubmissionById(id uint64) (model.Submission, error) {
 	return submission, nil
 }
 
-// 根据用户ID查询提交记录
+// 根据用户ID查询提交记录（不返回源代码）
 func SelectSubmissionsByUserId(user_id uint64) ([]model.Submission, error) {
-	sql := "SELECT id, problem_id, status, score, language_id, length, memory, time, source_code, create_time, update_time FROM tbl_submission WHERE user_id = ?"
+	sql := "SELECT id, problem_id, status, score, language_id, length, memory, time, create_time, update_time FROM tbl_submission WHERE user_id = ?"
 	rows, err := db.Query(sql, user_id)
 	log.Println(sql, user_id)
 	if err != nil {
@@ -87,7 +87,7 @@ func SelectSubmissionsByUserId(user_id uint64) ([]model.Submission, error) {
 
 		submission.UserId = user_id
 
-		err := rows.Scan(&submission.Id, &submission.ProblemId, &submission.Status, &submission.Score, &submission.LanguageId, &submission.Length, &submission.Memory, &submission.Time, &submission.SourceCode, &createTimeStr, &updateTimeStr)
+		err := rows.Scan(&submission.Id, &submission.ProblemId, &submission.Status, &submission.Score, &submission.LanguageId, &submission.Length, &submission.Memory, &submission.Time, &createTimeStr, &updateTimeStr)
 		if err != nil {
 			return nil, err
 		}
@@ -100,15 +100,18 @@ func SelectSubmissionsByUserId(user_id uint64) ([]model.Submission, error) {
 			return nil, err
 		}
 
+		// 不返回源代码
+		submission.SourceCode = ""
+
 		//log.Println(submission)
 		submissions = append(submissions, submission)
 	}
 	return submissions, nil
 }
 
-// 根据题目ID查询提交记录
+// 根据题目ID查询提交记录（不返回源代码）
 func SelectSubmissionsByProblemId(problem_id uint64) ([]model.Submission, error) {
-	sql := "SELECT id, user_id, status, score, language_id, length, memory, time, source_code, create_time, update_time FROM tbl_submission WHERE problem_id = ?"
+	sql := "SELECT id, user_id, status, score, language_id, length, memory, time, create_time, update_time FROM tbl_submission WHERE problem_id = ?"
 	rows, err := db.Query(sql, problem_id)
 	log.Println(sql, problem_id)
 	if err != nil {
@@ -124,7 +127,7 @@ func SelectSubmissionsByProblemId(problem_id uint64) ([]model.Submission, error)
 
 		submission.ProblemId = problem_id
 
-		err := rows.Scan(&submission.Id, &submission.UserId, &submission.Status, &submission.Score, &submission.LanguageId, &submission.Length, &submission.Memory, &submission.Time, &submission.SourceCode, &createTimeStr, &updateTimeStr)
+		err := rows.Scan(&submission.Id, &submission.UserId, &submission.Status, &submission.Score, &submission.LanguageId, &submission.Length, &submission.Memory, &submission.Time, &createTimeStr, &updateTimeStr)
 		if err != nil {
 			return nil, err
 		}
@@ -136,6 +139,9 @@ func SelectSubmissionsByProblemId(problem_id uint64) ([]model.Submission, error)
 		if err != nil {
 			return nil, err
 		}
+
+		// 不返回源代码
+		submission.SourceCode = ""
 
 		//log.Println(submission)
 		submissions = append(submissions, submission)
