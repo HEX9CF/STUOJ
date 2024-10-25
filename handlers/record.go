@@ -77,7 +77,7 @@ func RecordListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	submisssions, err := db.SelectSubmissionsByProblemId(pid)
+	submissions, err := db.SelectSubmissionsByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -87,11 +87,12 @@ func RecordListOfProblem(c *gin.Context) {
 		})
 		return
 	}
+	//log.Println(submissions)
 
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,
 		Msg:  "OK",
-		Data: submisssions,
+		Data: submissions,
 	})
 }
 
@@ -146,7 +147,7 @@ func RecordPointListOfProblem(c *gin.Context) {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: 0,
-			Msg:  "获取",
+			Msg:  "获取评测点信息失败",
 			Data: nil,
 		})
 		return
