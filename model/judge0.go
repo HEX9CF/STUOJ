@@ -10,13 +10,13 @@ type JudgeSubmission struct {
 }
 
 type JudgeSubmissionResult struct {
-	Stdout        string                `json:"stdout"`
-	Time          string                `json:"time"`
-	Memory        float64               `json:"memory"`
-	Stderr        string                `json:"stderr"`
+	Stdout        string                `json:"stdout,omitempty"`
+	Time          string                `json:"time,omitempty"`
+	Memory        float64               `json:"memory,omitempty"`
+	Stderr        string                `json:"stderr,omitempty"`
 	Token         string                `json:"token"`
-	CompileOutput string                `json:"compile_output"`
-	Message       string                `json:"message"`
+	CompileOutput string                `json:"compile_output,omitempty"`
+	Message       string                `json:"message,omitempty"`
 	Status        JudgeSubmissionStatus `json:"status"`
 }
 

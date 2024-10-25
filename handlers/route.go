@@ -101,5 +101,6 @@ func InitRecordRoute() {
 		recordPublicRoute.GET("/:id", RecordInfo)
 		recordPublicRoute.GET("/user/:id", RecordListOfUser)
 		recordPublicRoute.GET("/problem/:id", RecordListOfProblem)
+		recordPublicRoute.GET("/point/problem/:id", RecordPointListOfProblem)
 	}
 }

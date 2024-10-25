@@ -126,3 +126,35 @@ func RecordListOfUser(c *gin.Context) {
 		Data: submisssions,
 	})
 }
+
+// 获取题目的评测点列表
+func RecordPointListOfProblem(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: 0,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	pid := uint64(id)
+	judgements, err := db.SelectJudgementsByTestPointId(pid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: 0,
+			Msg:  "获取",
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: 1,
+		Msg:  "OK",
+		Data: judgements,
+	})
+}

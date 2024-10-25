@@ -7,6 +7,7 @@ import (
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
+	"math"
 	"net/http"
 	"strconv"
 )
@@ -94,62 +95,101 @@ func JudgeSubmit(c *gin.Context) {
 		return
 	}
 
+	submission.Status = model.SubmitStatusAC
+
+	chJudgement := make(chan model.Judgement)
+
 	// 提交评测点
 	for _, point := range points {
-		// 初始化评测点评测对象
-		judgeSubmission := model.JudgeSubmission{
-			SourceCode:     req.SourceCode,
-			LanguageId:     req.LanguageId,
-			Stdin:          point.TestInput,
-			ExpectedOutput: point.TestOutput,
-			CPUTimeLimit:   problem.TimeLimit,
-			MemoryLimit:    problem.MemoryLimit,
-		}
-		//log.Println(judgeSubmission)
-
-		// 发送评测点评测请求
-		result, err := judge.Submit(judgeSubmission)
-		if err != nil {
-			log.Println(err)
-			c.JSON(http.StatusInternalServerError, model.Response{
-				Code: 0,
-				Msg:  "评测失败",
-				Data: nil,
-			})
-			return
-		}
-		//log.Println(result)
-
-		// 解析时间
-		time, err := strconv.ParseFloat(result.Time, 64)
-		if err != nil {
-			log.Println(err)
-			c.JSON(http.StatusInternalServerError, model.Response{
-				Code: 0,
-				Msg:  "评测失败",
-				Data: nil,
-			})
-			return
-		}
-
-		// 初始化评测点结果对象
-		judgement := model.Judgement{
-			SubmissionId: submission.Id,
-			TestPointId:  point.Id,
-			Time:         time,
-			Memory:       uint64(result.Memory),
-			Stdout:       result.Stdout,
-			Status:       result.Status.Id,
-		}
-		log.Println(judgement)
-
-		// 更新评测点结果
-
+		// 异步评测
+		go asyncJudgeSubmit(req, problem, submission, point, chJudgement)
 	}
 
+	for _, _ = range points {
+		// 接收评测点结果
+		judgement := <-chJudgement
+		log.Println(judgement)
+
+		// 更新提交数据
+		submission.Time = math.Max(submission.Time, judgement.Time)
+		submission.Memory = uint64(math.Max(float64(submission.Memory), float64(judgement.Memory)))
+		// 如果评测点结果不是AC，更新提交状态
+		if judgement.Status != model.SubmitStatusAC {
+			submission.Status = judgement.Status
+		}
+	}
+
+	// 更新提交信息
+	err = db.UpdateSubmissionById(submission)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: 0,
+			Msg:  "评测失败",
+			Data: nil,
+		})
+		return
+	}
+
+	// 返回提交ID
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,
-		Msg:  "提交成功",
-		Data: nil,
+		Msg:  "提交成功，返回提交ID",
+		Data: submission.Id,
 	})
+}
+
+func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission model.Submission, point model.TestPoint, c chan model.Judgement) {
+	// 初始化评测点评测对象
+	judgeSubmission := model.JudgeSubmission{
+		SourceCode:     req.SourceCode,
+		LanguageId:     req.LanguageId,
+		Stdin:          point.TestInput,
+		ExpectedOutput: point.TestOutput,
+		CPUTimeLimit:   problem.TimeLimit,
+		MemoryLimit:    problem.MemoryLimit,
+	}
+	//log.Println(judgeSubmission)
+
+	// 发送评测点评测请求
+	result, err := judge.Submit(judgeSubmission)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	//log.Println(result)
+
+	// 解析时间
+	time := float64(0)
+	if result.Time != "" {
+		time, err = strconv.ParseFloat(result.Time, 64)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+	}
+
+	// 初始化评测点结果对象
+	judgement := model.Judgement{
+		SubmissionId:  submission.Id,
+		TestPointId:   point.Id,
+		Time:          time,
+		Memory:        uint64(result.Memory),
+		Stdout:        result.Stdout,
+		Stderr:        result.Stderr,
+		CompileOutput: result.CompileOutput,
+		Message:       result.Message,
+		Status:        model.SubmitStatus(result.Status.Id),
+	}
+	//log.Println(judgement)
+
+	// 更新评测点结果
+	_, err = db.InsertJudgement(judgement)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// 发送评测点结果到通道
+	c <- judgement
 }
