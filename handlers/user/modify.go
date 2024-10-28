@@ -11,8 +11,9 @@ import (
 
 // 修改用户信息
 type ReqUserModify struct {
-	Username string `json:"username" binding:"required"`
-	Email    string `json:"email" binding:"required"`
+	Username  string `json:"username" binding:"required"`
+	Email     string `json:"email" binding:"required"`
+	Signature string `json:"signature" binding:"required"`
 }
 
 func UserModify(c *gin.Context) {
@@ -25,16 +26,6 @@ func UserModify(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
 			Msg:  "参数错误",
-			Data: nil,
-		})
-		return
-	}
-
-	// 校验参数
-	if req.Username == "" || req.Email == "" {
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
-			Msg:  "参数错误，用户名或邮箱不能为空",
 			Data: nil,
 		})
 		return
@@ -92,16 +83,6 @@ func UserChangePassword(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
 			Msg:  "参数错误",
-			Data: nil,
-		})
-		return
-	}
-
-	// 校验参数
-	if req.Password == "" {
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
-			Msg:  "参数错误，密码不能为空",
 			Data: nil,
 		})
 		return

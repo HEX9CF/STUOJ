@@ -12,8 +12,8 @@ import (
 func SelectUserById(id uint64) (model.User, error) {
 	var user model.User
 	var createTimeStr, updateTimeStr string
-	sql := "SELECT id, username, role, email, avatar, create_time, update_time FROM tbl_user WHERE id = ? LIMIT 1"
-	err := db.QueryRow(sql, id).Scan(&user.Id, &user.Username, &user.Role, &user.Email, &user.Avatar, &createTimeStr, &updateTimeStr)
+	sql := "SELECT id, username, role, email, avatar, signature, create_time, update_time FROM tbl_user WHERE id = ? LIMIT 1"
+	err := db.QueryRow(sql, id).Scan(&user.Id, &user.Username, &user.Role, &user.Email, &user.Avatar, &user.Signature, &createTimeStr, &updateTimeStr)
 	log.Println(sql, id)
 	if err != nil {
 		return model.User{}, err
@@ -80,6 +80,10 @@ func InsertUser(u model.User) (uint64, error) {
 		return 0, err
 	}
 
+	// 默认值
+	u.Avatar = ""
+	u.Signature = "这个小可爱很懒，什么也没有留下"
+
 	sql := "INSERT INTO tbl_user (username, password, email, create_time, update_time) VALUES (?, ?, ?, ?, ?)"
 	stmt, err := db.Prepare(sql)
 	if err != nil {
@@ -104,12 +108,12 @@ func InsertUser(u model.User) (uint64, error) {
 	return uint64(id), nil
 }
 
-// 更新用户
+// 根据ID更新用户（除了密码）
 func UpdateUserById(u model.User) error {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 
-	sql := "UPDATE tbl_user SET username = ?, email = ?, update_time = ? WHERE id = ?"
+	sql := "UPDATE tbl_user SET username = ?, email = ?, signature = ?, update_time = ? WHERE id = ?"
 	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
@@ -117,8 +121,8 @@ func UpdateUserById(u model.User) error {
 	defer stmt.Close()
 	// 获取当前时间
 	updateTime := time.Now().Format("2006-01-02 15:04:05")
-	_, err = stmt.Exec(u.Username, u.Email, updateTime, u.Id)
-	log.Println(sql, u.Username, u.Email, updateTime, u.Id)
+	_, err = stmt.Exec(u.Username, u.Email, u.Signature, updateTime, u.Id)
+	log.Println(sql, u.Username, u.Email, u.Signature, updateTime, u.Id)
 	if err != nil {
 		return err
 	}
@@ -169,6 +173,7 @@ func DeleteUserById(id uint64) error {
 	return nil
 }
 
+// 根据邮箱验证密码
 func VerifyUserByEmail(u model.User) (uint64, error) {
 	//log.Println("用户登录：", u.Email, u.Password)
 
@@ -192,6 +197,7 @@ func VerifyUserByEmail(u model.User) (uint64, error) {
 	return id, nil
 }
 
+// 根据ID验证密码
 func VerifyUserById(u model.User) (uint64, error) {
 	//log.Println("用户登录：", u.Email, u.Password)
 
@@ -215,6 +221,7 @@ func VerifyUserById(u model.User) (uint64, error) {
 	return id, nil
 }
 
+// 更新用户头像
 func UpdateUserAvatar(id uint64, avatarUrl string) error {
 	sql := "UPDATE tbl_user SET avatar=? ,update_time=? WHERE id=?"
 	stmt, err := db.Prepare(sql)
@@ -232,6 +239,7 @@ func UpdateUserAvatar(id uint64, avatarUrl string) error {
 	return nil
 }
 
+// 查询用户头像
 func QueryUserAvatar(id uint64) (string, error) {
 	var avatar string
 	sql := "SELECT avatar FROM tbl_user WHERE id=?"
