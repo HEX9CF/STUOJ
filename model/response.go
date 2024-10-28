@@ -20,7 +20,7 @@ func (c ResponseCode) String() string {
 
 // http响应体
 type Response struct {
-	Code ResponseCode `json:"code"`
+	Code ResponseCode `json:"code,omitempty"`
 	Msg  string       `json:"msg,omitempty"`
 	Data interface{}  `json:"data,omitempty"`
 }

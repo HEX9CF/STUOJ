@@ -63,19 +63,19 @@ func (d ProblemDifficulty) String() string {
 
 // 题目
 type Problem struct {
-	Id           uint64            `json:"id"`
-	Title        string            `json:"title"`
+	Id           uint64            `json:"id,omitempty"`
+	Title        string            `json:"title,omitempty"`
 	Source       string            `json:"source,omitempty"`
-	Difficulty   ProblemDifficulty `json:"difficulty"`
-	TimeLimit    float64           `json:"time_limit"`
-	MemoryLimit  uint64            `json:"memory_limit"`
+	Difficulty   ProblemDifficulty `json:"difficulty,omitempty"`
+	TimeLimit    float64           `json:"time_limit,omitempty"`
+	MemoryLimit  uint64            `json:"memory_limit,omitempty"`
 	Description  string            `json:"description,omitempty"`
 	Input        string            `json:"input,omitempty"`
 	Output       string            `json:"output,omitempty"`
 	SampleInput  string            `json:"sample_input,omitempty"`
 	SampleOutput string            `json:"sample_output,omitempty"`
 	Hint         string            `json:"hint,omitempty"`
-	Status       ProblemStatus     `json:"status"`
-	CreateTime   time.Time         `json:"create_time"`
-	UpdateTime   time.Time         `json:"update_time"`
+	Status       ProblemStatus     `json:"status,omitempty"`
+	CreateTime   time.Time         `json:"create_time,omitempty"`
+	UpdateTime   time.Time         `json:"update_time,omitempty"`
 }

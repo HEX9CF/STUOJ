@@ -62,16 +62,16 @@ func (s SubmitStatus) String() string {
 
 // 提交记录
 type Submission struct {
-	Id         uint64       `json:"id"`
-	UserId     uint64       `json:"user_id"`
-	ProblemId  uint64       `json:"problem_id"`
-	Status     SubmitStatus `json:"status"`
-	Score      uint64       `json:"score"`
-	LanguageId uint64       `json:"language_id"`
-	Length     uint64       `json:"length"`
-	Memory     uint64       `json:"memory"`
-	Time       float64      `json:"time"`
+	Id         uint64       `json:"id,omitempty"`
+	UserId     uint64       `json:"user_id,omitempty"`
+	ProblemId  uint64       `json:"problem_id,omitempty"`
+	Status     SubmitStatus `json:"status,omitempty"`
+	Score      uint64       `json:"score,omitempty"`
+	LanguageId uint64       `json:"language_id,omitempty"`
+	Length     uint64       `json:"length,omitempty"`
+	Memory     uint64       `json:"memory,omitempty"`
+	Time       float64      `json:"time,omitempty"`
 	SourceCode string       `json:"source_code,omitempty"`
-	CreateTime time.Time    `json:"submit_time"`
-	UpdateTime time.Time    `json:"update_time"`
+	CreateTime time.Time    `json:"submit_time,omitempty"`
+	UpdateTime time.Time    `json:"update_time,omitempty"`
 }
