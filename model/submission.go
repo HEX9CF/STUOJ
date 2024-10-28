@@ -71,7 +71,7 @@ type Submission struct {
 	Length     uint64       `json:"length"`
 	Memory     uint64       `json:"memory"`
 	Time       float64      `json:"time"`
-	SourceCode string       `json:"source_code"`
+	SourceCode string       `json:"source_code,omitempty"`
 	CreateTime time.Time    `json:"submit_time"`
 	UpdateTime time.Time    `json:"update_time"`
 }
