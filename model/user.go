@@ -32,14 +32,15 @@ func (r Role) String() string {
 
 // 用户
 type User struct {
-	Id         uint64    `json:"id"`
-	Username   string    `json:"username"`
-	Password   string    `json:"password"`
-	Role       Role      `json:"role"`
-	Email      string    `json:"email"`
-	Avatar     string    `json:"avatar"`
-	CreateTime time.Time `json:"create_time"`
-	UpdateTime time.Time `json:"update_time"`
+	Id         uint64    `json:"id,omitempty"`
+	Username   string    `json:"username,omitempty"`
+	Password   string    `json:"password,omitempty"`
+	Role       Role      `json:"role,omitempty"`
+	Email      string    `json:"email,omitempty"`
+	Avatar     string    `json:"avatar,omitempty"`
+	Signature  string    `json:"signature,omitempty"`
+	CreateTime time.Time `json:"create_time,omitempty"`
+	UpdateTime time.Time `json:"update_time,omitempty"`
 }
 
 // 对密码进行哈希
