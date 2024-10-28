@@ -35,7 +35,7 @@ func SelectUserById(id uint64) (model.User, error) {
 
 // 查询所有用户
 func SelectAllUsers() ([]model.User, error) {
-	sql := "SELECT id, username, role, email, avatar, create_time, update_time FROM tbl_user"
+	sql := "SELECT id, username, role, email, avatar, signature, create_time, update_time FROM tbl_user"
 	rows, err := db.Query(sql)
 	log.Println(sql)
 	if err != nil {
@@ -49,7 +49,7 @@ func SelectAllUsers() ([]model.User, error) {
 		var user model.User
 		var createTimeStr, updateTimeStr string
 
-		err := rows.Scan(&user.Id, &user.Username, &user.Role, &user.Email, &user.Avatar, &createTimeStr, &updateTimeStr)
+		err := rows.Scan(&user.Id, &user.Username, &user.Role, &user.Email, &user.Avatar, &user.Signature, &createTimeStr, &updateTimeStr)
 		if err != nil {
 			return nil, err
 		}
