@@ -37,7 +37,8 @@ type User struct {
 	Password   string    `json:"password"`
 	Role       Role      `json:"role"`
 	Email      string    `json:"email"`
-	Avatar     string    `json:"avatar"`
+	Avatar     string    `json:"avatar,omitempty"`
+	Signature  string    `json:"signature,omitempty"`
 	CreateTime time.Time `json:"create_time"`
 	UpdateTime time.Time `json:"update_time"`
 }
