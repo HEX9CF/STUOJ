@@ -81,10 +81,10 @@ func InsertUser(u model.User) (uint64, error) {
 	}
 
 	// 默认值
-	u.Avatar = ""
-	u.Signature = "这个小可爱很懒，什么也没有留下"
+	u.Avatar = "http://example.com/avatar.png"
+	u.Signature = "这个大佬很懒，什么也没有留下"
 
-	sql := "INSERT INTO tbl_user (username, password, email, create_time, update_time) VALUES (?, ?, ?, ?, ?)"
+	sql := "INSERT INTO tbl_user (username, password, email, avatar, signature, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?)"
 	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return 0, err
@@ -93,8 +93,8 @@ func InsertUser(u model.User) (uint64, error) {
 	// 获取当前时间
 	createTime := time.Now().Format("2006-01-02 15:04:05")
 	updateTime := createTime
-	result, err := stmt.Exec(u.Username, u.Password, u.Email, createTime, updateTime)
-	log.Println(sql, u.Username, u.Password, u.Email, createTime, updateTime)
+	result, err := stmt.Exec(u.Username, u.Password, u.Email, u.Avatar, u.Signature, createTime, updateTime)
+	log.Println(sql, u.Username, u.Password, u.Email, u.Avatar, u.Signature, createTime, updateTime)
 	if err != nil {
 		return 0, err
 	}
