@@ -1,10 +1,10 @@
-package lskypro
+package yuki
 
 import (
 	"STUOJ/conf"
 )
 
 var (
-	config conf.LskyproConf
+	config conf.YukiConf
 	preUrl string
 )
