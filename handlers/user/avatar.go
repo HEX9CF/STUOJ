@@ -14,18 +14,7 @@ import (
 )
 
 func UpdateUserAvatar(c *gin.Context) {
-	file, err := c.FormFile("file")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
-		return
-	}
-	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey())
-	if err := c.SaveUploadedFile(file, dst); err != nil {
-		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
-		return
-	}
-	image, err := yuki.UploadImage(dst, model.RoleAvatar)
-	_ = os.Remove(dst)
+	uploadData, err := lskypro.Upload(c, model.RoleAvatar)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
@@ -34,7 +23,7 @@ func UpdateUserAvatar(c *gin.Context) {
 		})
 		return
 	}
-	id, err := utils.GetTokenUid(c)
+	id, err := utils.ExtractTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
@@ -43,7 +32,7 @@ func UpdateUserAvatar(c *gin.Context) {
 		})
 		return
 	}
-	err = user_query.UpdateUserAvatar(id, image.Url)
+	err = db.UpdateUserAvatar(id, uploadData.Links.Url)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
