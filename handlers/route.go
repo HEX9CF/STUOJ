@@ -7,8 +7,9 @@ import (
 	"STUOJ/handlers/user"
 	"STUOJ/middlewares"
 	"STUOJ/model"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func InitRoute() error {
@@ -57,7 +58,7 @@ func InitTestRoute() {
 }
 
 func InitUserRoute() {
-	userPublicRoute := ginServer.Group("/user-query")
+	userPublicRoute := ginServer.Group("/user")
 	{
 		userPublicRoute.GET("/", user.UserList)
 		userPublicRoute.GET("/avatar/:id", user.UserAvatar)
@@ -65,7 +66,7 @@ func InitUserRoute() {
 		userPublicRoute.POST("/login", user.UserLogin)
 		userPublicRoute.POST("/register", user.UserRegister)
 	}
-	userProtectedRoute := ginServer.Group("/user-query")
+	userProtectedRoute := ginServer.Group("/user")
 	{
 		// 使用中间件
 		userProtectedRoute.Use(middlewares.TokenAuthUser())
