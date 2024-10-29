@@ -12,18 +12,18 @@ import (
 
 // 获取当前用户id
 func UserCurrentId(c *gin.Context) {
-	id, err := utils.ExtractTokenUid(c)
+	id, err := utils.GetTokenUid(c)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusUnauthorized, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "用户未登录",
 			Data: nil,
 		})
 	}
 
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: id,
 	})
@@ -35,7 +35,7 @@ func UserInfo(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -47,7 +47,7 @@ func UserInfo(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取用户信息失败",
 			Data: nil,
 		})
@@ -55,7 +55,7 @@ func UserInfo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: user,
 	})
@@ -69,7 +69,7 @@ func UserList(c *gin.Context) {
 			log.Println(err)
 		}
 		c.JSON(http.StatusOK, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
@@ -77,7 +77,7 @@ func UserList(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: users,
 	})

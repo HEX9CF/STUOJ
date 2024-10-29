@@ -2,6 +2,8 @@ package middlewares
 
 import (
 	"STUOJ/conf"
+	"STUOJ/db"
+	"STUOJ/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -9,61 +11,187 @@ import (
 	"time"
 )
 
-func TokenAuth() gin.HandlerFunc {
+func TokenAuthUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// 验证token
-		err := utils.VerifyToken(c)
+		err := tokenVerify(c)
 		if err != nil {
 			log.Println(err)
-			c.JSON(http.StatusUnauthorized, gin.H{
-				"code": 0,
-				"msg":  "用户未登录或token过期，请重新登录",
-				"data": nil,
-			})
-			c.Abort()
 			return
 		}
 
+		// 校验用户角色
+		role, err := getUserRole(c)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		switch role {
+		case model.UserRoleBanned:
+			c.JSON(http.StatusUnauthorized, model.Response{
+				Code: model.ResponseCodeError,
+				Msg:  "拒绝访问，用户已被封禁",
+				Data: nil,
+			})
+			c.Abort()
+			return
+		default:
+			break
+		}
+
 		// 自动刷新token
-		tokenAutoRefresh(c)
+		err = tokenAutoRefresh(c)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 
 		// 放行
 		c.Next()
 	}
 }
 
-func tokenAutoRefresh(c *gin.Context) {
+func TokenAuthAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 验证token
+		err := tokenVerify(c)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		// 校验用户角色
+		role, err := getUserRole(c)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		switch role {
+		case model.UserRoleBanned:
+			c.JSON(http.StatusUnauthorized, model.Response{
+				Code: model.ResponseCodeError,
+				Msg:  "拒绝访问，用户已被封禁",
+				Data: nil,
+			})
+			c.Abort()
+			return
+		case model.UserRoleUser:
+			c.JSON(http.StatusUnauthorized, model.Response{
+				Code: model.ResponseCodeError,
+				Msg:  "拒绝访问，用户权限不足",
+				Data: nil,
+			})
+			c.Abort()
+			return
+		default:
+			break
+		}
+
+		// 自动刷新token
+		err = tokenAutoRefresh(c)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		// 放行
+		c.Next()
+	}
+}
+
+func tokenAutoRefresh(c *gin.Context) error {
 	config := conf.Conf.Token
-	exp, err := utils.ExtractTokenExpire(c)
+	exp, err := utils.GetTokenExpire(c)
 	if err != nil {
-		log.Println(err)
-		return
+		c.JSON(http.StatusUnauthorized, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取用户信息失败",
+			Data: nil,
+		})
+		c.Abort()
+		return err
 	}
 
 	// 计算token剩余时间
 	timeLeft := exp - uint64(time.Now().Unix())
 	//log.Println(timeLeft, config.Refresh)
 	if timeLeft > config.Refresh {
-		return
+		return nil
 	}
 
-	// 刷新token
-	uid, err := utils.ExtractTokenUid(c)
+	// 获取用户id
+	uid, err := utils.GetTokenUid(c)
 	if err != nil {
-		log.Println(err)
-		return
+		c.JSON(http.StatusUnauthorized, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取用户信息失败",
+			Data: nil,
+		})
+		c.Abort()
+		return err
 	}
 
+	// 生成新token
 	token, err := utils.GenerateToken(uid)
 	if err != nil {
-		log.Println(err)
-		return
+		c.JSON(http.StatusUnauthorized, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "token刷新失败",
+			Data: nil,
+		})
+		c.Abort()
+		return err
 	}
 
 	c.JSON(http.StatusUnauthorized, gin.H{
-		"code": 2,
+		"code": model.ResponseCodeRetry,
 		"msg":  "token已刷新，请重新发送请求",
 		"data": token,
 	})
 	c.Abort()
+	return nil
+}
+
+func getUserRole(c *gin.Context) (model.UserRole, error) {
+	// 获取用户id
+	uid, err := utils.GetTokenUid(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取用户信息失败",
+			Data: nil,
+		})
+		c.Abort()
+		return 0, err
+	}
+
+	// 获取用户信息
+	user, err := db.SelectUserById(uid)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取用户信息失败",
+			Data: nil,
+		})
+		c.Abort()
+		return 0, err
+	}
+
+	return user.Role, nil
+}
+
+func tokenVerify(c *gin.Context) error {
+	err := utils.VerifyToken(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusUnauthorized, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "用户未登录或token过期，请重新登录",
+			Data: nil,
+		})
+		c.Abort()
+		return err
+	}
+
+	return nil
 }

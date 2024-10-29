@@ -24,7 +24,7 @@ func GenerateToken(id uint64) (string, error) {
 }
 
 // 提取token
-func ExtractToken(c *gin.Context) string {
+func GetToken(c *gin.Context) string {
 	bearerToken := c.GetHeader("Authorization")
 
 	if len(strings.Split(bearerToken, " ")) == 2 {
@@ -36,7 +36,7 @@ func ExtractToken(c *gin.Context) string {
 // 验证token
 func VerifyToken(c *gin.Context) error {
 	config := conf.Conf.Token
-	tokenString := ExtractToken(c)
+	tokenString := GetToken(c)
 	_, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
 		_, ok := t.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
@@ -51,9 +51,9 @@ func VerifyToken(c *gin.Context) error {
 }
 
 // 提取token中的uid
-func ExtractTokenUid(c *gin.Context) (uint64, error) {
+func GetTokenUid(c *gin.Context) (uint64, error) {
 	config := conf.Conf.Token
-	tokenString := ExtractToken(c)
+	tokenString := GetToken(c)
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
 		_, ok := t.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
@@ -77,9 +77,9 @@ func ExtractTokenUid(c *gin.Context) (uint64, error) {
 }
 
 // 提取token过期时间
-func ExtractTokenExpire(c *gin.Context) (uint64, error) {
+func GetTokenExpire(c *gin.Context) (uint64, error) {
 	config := conf.Conf.Token
-	tokenString := ExtractToken(c)
+	tokenString := GetToken(c)
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
 		_, ok := t.Method.(*jwt.SigningMethodHMAC)
 		if !ok {

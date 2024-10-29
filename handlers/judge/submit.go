@@ -27,7 +27,7 @@ func JudgeSubmit(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -35,10 +35,10 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 获取用户ID
-	uid, err := utils.ExtractTokenUid(c)
+	uid, err := utils.GetTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "用户未登录",
 			Data: nil,
 		})
@@ -64,7 +64,7 @@ func JudgeSubmit(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "提交失败",
 			Data: nil,
 		})
@@ -76,7 +76,7 @@ func JudgeSubmit(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取题目信息失败",
 			Data: nil,
 		})
@@ -88,7 +88,7 @@ func JudgeSubmit(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取评测点失败",
 			Data: nil,
 		})
@@ -97,7 +97,7 @@ func JudgeSubmit(c *gin.Context) {
 
 	// 返回提交ID
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "提交成功，返回记录提交ID",
 		Data: submission.Id,
 	})

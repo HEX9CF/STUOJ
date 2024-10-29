@@ -16,7 +16,7 @@ func InitRoute() error {
 	// index
 	ginServer.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, model.Response{
-			Code: 1,
+			Code: model.ResponseCodeOk,
 			Msg:  "OK",
 			Data: "STUOJ后端启动成功！",
 		})
@@ -25,7 +25,7 @@ func InitRoute() error {
 	// 404
 	ginServer.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "404 Not Found",
 			Data: nil,
 		})
@@ -65,7 +65,7 @@ func InitUserRoute() {
 	}
 	userProtectedRoute := ginServer.Group("/user")
 	{
-		userProtectedRoute.Use(middlewares.TokenAuth())
+		userProtectedRoute.Use(middlewares.TokenAuthUser())
 		userProtectedRoute.GET("/current", user.UserCurrentId)
 		userPublicRoute.GET("/avatar", user.ThisUserAvatar)
 		userProtectedRoute.PUT("/modify", user.UserModify)
@@ -89,7 +89,7 @@ func InitJudgeRoute() {
 	}
 	judgePrivateRoute := ginServer.Group("/judge")
 	{
-		judgePrivateRoute.Use(middlewares.TokenAuth())
+		judgePrivateRoute.Use(middlewares.TokenAuthUser())
 		judgePrivateRoute.POST("/submit", judge.JudgeSubmit)
 	}
 }
