@@ -8,7 +8,7 @@ func Init() {
 
 	// 异步初始化
 	go InitJudge(chFin)
-	go InitLskypro(chFin)
+	go InitYuki(chFin)
 
 	InitHandlers()
 }

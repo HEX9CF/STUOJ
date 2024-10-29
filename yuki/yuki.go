@@ -1,26 +1,25 @@
-package lskypro
+package yuki
 
 import (
 	"STUOJ/conf"
-	"STUOJ/model"
 	"bytes"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 )
 
-func InitLskypro() error {
-	config = conf.Conf.Lskypro
+func InitYukiImage() error {
+	config = conf.Conf.YukiImage
 	preUrl = config.Host + ":" + config.Port + "/api/v1"
-	_, err := GetProfile(1)
+	_, err := GetAlbumList()
 	if err != nil {
 		return err
 	}
-	log.Println("Successfully connected to LskyPro.")
+	log.Println("Successfully connected to yuk-image.")
 	return nil
 }
 
-func httpInteraction(route string, httpMethod string, reader *bytes.Reader, role uint8) (string, error) {
+func httpInteraction(route string, httpMethod string, reader *bytes.Reader) (string, error) {
 	url := preUrl + route
 	var req *http.Request
 	var err error
@@ -32,18 +31,15 @@ func httpInteraction(route string, httpMethod string, reader *bytes.Reader, role
 	if err != nil {
 		return "", err
 	}
-	if role == model.RoleProblem {
-		req.Header.Set("Authorization", "Bearer "+config.ProblemToken)
-	} else if role == model.RoleAvatar {
-		req.Header.Set("Authorization", "Bearer "+config.AvatarToken)
-	}
+
+	req.Header.Set("Authorization", "Bearer "+config.Token)
 	req.Header.Set("Content-Type", "application/json")
 	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return "", err
 	}
 	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return "", err
 	}
