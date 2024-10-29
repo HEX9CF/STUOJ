@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"STUOJ/conf"
+	"STUOJ/handlers/admin"
 	"STUOJ/handlers/judge"
 	"STUOJ/handlers/user"
 	"STUOJ/middlewares"
@@ -37,6 +38,7 @@ func InitRoute() error {
 	InitProblemRoute()
 	InitJudgeRoute()
 	InitRecordRoute()
+	InitAdminRoute()
 
 	// 启动服务
 	err := ginServer.Run(":" + config.Port)
@@ -65,7 +67,9 @@ func InitUserRoute() {
 	}
 	userProtectedRoute := ginServer.Group("/user")
 	{
+		// 使用中间件
 		userProtectedRoute.Use(middlewares.TokenAuthUser())
+
 		userProtectedRoute.GET("/current", user.UserCurrentId)
 		userPublicRoute.GET("/avatar", user.ThisUserAvatar)
 		userProtectedRoute.PUT("/modify", user.UserModify)
@@ -89,7 +93,9 @@ func InitJudgeRoute() {
 	}
 	judgePrivateRoute := ginServer.Group("/judge")
 	{
+		// 使用中间件
 		judgePrivateRoute.Use(middlewares.TokenAuthUser())
+
 		judgePrivateRoute.POST("/submit", judge.JudgeSubmit)
 	}
 }
@@ -102,5 +108,23 @@ func InitRecordRoute() {
 		recordPublicRoute.GET("/user/:id", RecordListOfUser)
 		recordPublicRoute.GET("/problem/:id", RecordListOfProblem)
 		recordPublicRoute.GET("/point/problem/:id", RecordPointListOfProblem)
+	}
+}
+
+func InitAdminRoute() {
+	adminPrivateRoute := ginServer.Group("/admin")
+	{
+		// 使用中间件
+		adminPrivateRoute.Use(middlewares.TokenAuthAdmin())
+
+		adminPrivateRoute.GET("/user", admin.AdminUserList)
+		adminPrivateRoute.GET("/user/:id", admin.AdminUserInfo)
+		//adminPrivateRoute.POST("/user/:id", AdminUserCreate)
+		//adminPrivateRoute.PUT("/user/:id", AdminUserModify)
+		//adminPrivateRoute.DELETE("/user/:id", AdminUserRemove)
+		//adminPrivateRoute.GET("/problem", AdminProblem)
+		//adminPrivateRoute.GET("/record", AdminRecord)
+		//adminPrivateRoute.GET("/point", AdminPoint)
+		//adminPrivateRoute.GET("/system", AdminSystem)
 	}
 }
