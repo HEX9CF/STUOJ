@@ -150,7 +150,7 @@ func UpdateUserById(u model.User) error {
 		return err
 	}
 
-	sql := "UPDATE tbl_user SET username = ?, email = ?, password = ?, role = ?, avatar = ?, signature = ?, update_time = ? WHERE id = ?"
+	sql := "UPDATE tbl_user SET username = ?, email = ?, password = ?, avatar = ?, signature = ?, update_time = ? WHERE id = ?"
 	stmt, err := db.Prepare(sql)
 	if err != nil {
 		return err
@@ -158,8 +158,8 @@ func UpdateUserById(u model.User) error {
 	defer stmt.Close()
 	// 获取当前时间
 	updateTime := time.Now().Format("2006-01-02 15:04:05")
-	_, err = stmt.Exec(u.Username, u.Email, u.Password, u.Role, u.Avatar, u.Signature, updateTime, u.Id)
-	log.Println(sql, u.Username, u.Email, u.Password, u.Role, u.Avatar, u.Signature, u.Password, updateTime, u.Id)
+	_, err = stmt.Exec(u.Username, u.Email, u.Password, u.Avatar, u.Signature, updateTime, u.Id)
+	log.Println(sql, u.Username, u.Email, u.Password, u.Avatar, u.Signature, u.Password, updateTime, u.Id)
 	if err != nil {
 		return err
 	}
