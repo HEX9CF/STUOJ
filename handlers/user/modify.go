@@ -49,7 +49,7 @@ func UserModify(c *gin.Context) {
 		Username: req.Username,
 		Email:    req.Email,
 	}
-	err = db.UpdateUserById(u)
+	err = db.UpdateUserByIdExceptPassword(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

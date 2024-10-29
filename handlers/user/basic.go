@@ -37,7 +37,7 @@ func UserRegister(c *gin.Context) {
 		Password: req.Password,
 		Email:    req.Email,
 	}
-	u.Id, err = db.InsertUser(u)
+	u.Id, err = db.InsertUserForRegister(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
