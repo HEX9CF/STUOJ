@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"STUOJ/conf"
+	"STUOJ/handlers/admin"
 	"STUOJ/handlers/judge"
 	"STUOJ/handlers/user"
 	"STUOJ/middlewares"
@@ -37,6 +38,7 @@ func InitRoute() error {
 	InitProblemRoute()
 	InitJudgeRoute()
 	InitRecordRoute()
+	InitAdminRoute()
 
 	// 启动服务
 	err := ginServer.Run(":" + config.Port)
@@ -55,7 +57,7 @@ func InitTestRoute() {
 }
 
 func InitUserRoute() {
-	userPublicRoute := ginServer.Group("/user")
+	userPublicRoute := ginServer.Group("/user-query")
 	{
 		userPublicRoute.GET("/", user.UserList)
 		userPublicRoute.GET("/avatar/:id", user.UserAvatar)
@@ -63,9 +65,11 @@ func InitUserRoute() {
 		userPublicRoute.POST("/login", user.UserLogin)
 		userPublicRoute.POST("/register", user.UserRegister)
 	}
-	userProtectedRoute := ginServer.Group("/user")
+	userProtectedRoute := ginServer.Group("/user-query")
 	{
+		// 使用中间件
 		userProtectedRoute.Use(middlewares.TokenAuthUser())
+
 		userProtectedRoute.GET("/current", user.UserCurrentId)
 		userPublicRoute.GET("/avatar", user.ThisUserAvatar)
 		userProtectedRoute.PUT("/modify", user.UserModify)
@@ -89,7 +93,9 @@ func InitJudgeRoute() {
 	}
 	judgePrivateRoute := ginServer.Group("/judge")
 	{
+		// 使用中间件
 		judgePrivateRoute.Use(middlewares.TokenAuthUser())
+
 		judgePrivateRoute.POST("/submit", judge.JudgeSubmit)
 	}
 }
@@ -102,5 +108,31 @@ func InitRecordRoute() {
 		recordPublicRoute.GET("/user/:id", RecordListOfUser)
 		recordPublicRoute.GET("/problem/:id", RecordListOfProblem)
 		recordPublicRoute.GET("/point/problem/:id", RecordPointListOfProblem)
+	}
+}
+
+func InitAdminRoute() {
+	adminPrivateRoute := ginServer.Group("/admin")
+	{
+		// 使用中间件
+		adminPrivateRoute.Use(middlewares.TokenAuthAdmin())
+
+		adminPrivateRoute.GET("/user", admin.AdminUserList)
+		adminPrivateRoute.GET("/user/:id", admin.AdminUserInfo)
+		adminPrivateRoute.POST("/user", admin.AdminUserAdd)
+		adminPrivateRoute.PUT("/user", admin.AdminUserModify)
+		adminPrivateRoute.DELETE("/user/:id", admin.AdminUserRemove)
+
+		adminPrivateRoute.GET("/problem", admin.AdminProblemList)
+		adminPrivateRoute.GET("/problem/:id", admin.AdminProblemInfo)
+		adminPrivateRoute.POST("/problem", admin.AdminProblemAdd)
+		adminPrivateRoute.PUT("/problem", admin.AdminProblemModify)
+		adminPrivateRoute.DELETE("/problem/:id", admin.AdminProblemRemove)
+
+		//adminPrivateRoute.GET("/record", AdminRecord)
+
+		//adminPrivateRoute.GET("/point", AdminPoint)
+
+		//adminPrivateRoute.GET("/system", AdminSystem)
 	}
 }

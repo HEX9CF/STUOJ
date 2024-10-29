@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"STUOJ/model"
@@ -8,7 +8,7 @@ import (
 // 插入语言
 func InsertLanguage(l model.Language) (uint64, error) {
 	sql := "INSERT INTO tbl_language (id, name) VALUES (?, ?)"
-	stmt, err := db.Prepare(sql)
+	stmt, err := Db.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}
@@ -31,7 +31,7 @@ func InsertLanguage(l model.Language) (uint64, error) {
 // 删除所有语言
 func DeleteAllLanguages() error {
 	sql := "DELETE FROM tbl_language"
-	stmt, err := db.Prepare(sql)
+	stmt, err := Db.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func DeleteAllLanguages() error {
 // 查询所有语言
 func SelectAllLanguages() ([]model.Language, error) {
 	sql := "SELECT id, name FROM tbl_language"
-	rows, err := db.Query(sql)
+	rows, err := Db.Query(sql)
 	log.Println(sql)
 	if err != nil {
 		return nil, err

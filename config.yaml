@@ -5,7 +5,7 @@ token:
   expire: 864000
   refresh: 432000
   secret: stuoj
-db:
+database:
   host: 8.134.48.192
   port: 3306
   name: stuoj_db

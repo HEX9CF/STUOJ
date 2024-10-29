@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"STUOJ/model"
@@ -9,7 +9,7 @@ import (
 // 查询所有提交记录（不返回源代码）
 func SelectAllSubmissions() ([]model.Submission, error) {
 	sql := "SELECT id, user_id, problem_id, status, score, language_id, length, memory, time, create_time, update_time FROM tbl_submission"
-	rows, err := db.Query(sql)
+	rows, err := Db.Query(sql)
 	log.Println(sql)
 	if err != nil {
 		return nil, err
@@ -52,7 +52,7 @@ func SelectSubmissionById(id uint64) (model.Submission, error) {
 	submission.Id = id
 
 	sql := "SELECT user_id, problem_id, status, score, language_id, length, memory, time, source_code, create_time, update_time FROM tbl_submission WHERE id = ? LIMIT 1"
-	err := db.QueryRow(sql, id).Scan(&submission.UserId, &submission.ProblemId, &submission.Status, &submission.Score, &submission.LanguageId, &submission.Length, &submission.Memory, &submission.Time, &submission.SourceCode, &createTimeStr, &updateTimeStr)
+	err := Db.QueryRow(sql, id).Scan(&submission.UserId, &submission.ProblemId, &submission.Status, &submission.Score, &submission.LanguageId, &submission.Length, &submission.Memory, &submission.Time, &submission.SourceCode, &createTimeStr, &updateTimeStr)
 	log.Println(sql, id)
 	if err != nil {
 		return model.Submission{}, err
@@ -72,7 +72,7 @@ func SelectSubmissionById(id uint64) (model.Submission, error) {
 // 根据用户ID查询提交记录（不返回源代码）
 func SelectSubmissionsByUserId(user_id uint64) ([]model.Submission, error) {
 	sql := "SELECT id, problem_id, status, score, language_id, length, memory, time, create_time, update_time FROM tbl_submission WHERE user_id = ?"
-	rows, err := db.Query(sql, user_id)
+	rows, err := Db.Query(sql, user_id)
 	log.Println(sql, user_id)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func SelectSubmissionsByUserId(user_id uint64) ([]model.Submission, error) {
 // 根据题目ID查询提交记录（不返回源代码）
 func SelectSubmissionsByProblemId(problem_id uint64) ([]model.Submission, error) {
 	sql := "SELECT id, user_id, status, score, language_id, length, memory, time, create_time, update_time FROM tbl_submission WHERE problem_id = ?"
-	rows, err := db.Query(sql, problem_id)
+	rows, err := Db.Query(sql, problem_id)
 	log.Println(sql, problem_id)
 	if err != nil {
 		return nil, err
@@ -152,7 +152,7 @@ func SelectSubmissionsByProblemId(problem_id uint64) ([]model.Submission, error)
 // 插入提交记录
 func InsertSubmission(s model.Submission) (uint64, error) {
 	sql := "INSERT INTO tbl_submission (user_id, problem_id, status, score, language_id, length, memory, time, source_code, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-	stmt, err := db.Prepare(sql)
+	stmt, err := Db.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}
@@ -178,7 +178,7 @@ func InsertSubmission(s model.Submission) (uint64, error) {
 // 根据ID删除提交记录
 func DeleteSubmissionById(id uint64) error {
 	sql := "DELETE FROM tbl_submission WHERE id = ?"
-	stmt, err := db.Prepare(sql)
+	stmt, err := Db.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -195,7 +195,7 @@ func DeleteSubmissionById(id uint64) error {
 // 更新提交记录
 func UpdateSubmissionById(s model.Submission) error {
 	sql := "UPDATE tbl_submission SET user_id = ?, problem_id = ?, status = ?, score = ?, language_id = ?, length = ?, memory = ?, time = ?, source_code = ?, update_time = ? WHERE id = ?"
-	stmt, err := db.Prepare(sql)
+	stmt, err := Db.Prepare(sql)
 	if err != nil {
 		return err
 	}

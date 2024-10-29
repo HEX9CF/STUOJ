@@ -1,7 +1,7 @@
 package user
 
 import (
-	"STUOJ/db"
+	"STUOJ/database/user-query"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
@@ -49,7 +49,7 @@ func UserModify(c *gin.Context) {
 		Username: req.Username,
 		Email:    req.Email,
 	}
-	err = db.UpdateUserById(u)
+	err = user_query.UpdateUserByIdExceptPassword(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -105,7 +105,7 @@ func UserChangePassword(c *gin.Context) {
 		Id:       id,
 		Password: req.Password,
 	}
-	err = db.UpdateUserPasswordById(u)
+	err = user_query.UpdateUserPasswordById(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

@@ -1,7 +1,7 @@
 package user
 
 import (
-	"STUOJ/db"
+	"STUOJ/database/user-query"
 	"STUOJ/lskypro"
 	"STUOJ/model"
 	"STUOJ/utils"
@@ -27,7 +27,7 @@ func UpdateUserAvatar(c *gin.Context) {
 			Data: nil,
 		})
 	}
-	err = db.UpdateUserAvatar(id, uploadData.Links.Url)
+	err = user_query.UpdateUserAvatar(id, uploadData.Links.Url)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: model.ResponseCodeError,
@@ -52,7 +52,7 @@ func UserAvatar(c *gin.Context) {
 		})
 	}
 	uid := uint64(id)
-	avatar, err := db.QueryUserAvatar(uid)
+	avatar, err := user_query.QueryUserAvatar(uid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: model.ResponseCodeError,
@@ -76,7 +76,7 @@ func ThisUserAvatar(c *gin.Context) {
 			Data: nil,
 		})
 	}
-	avatar, err := db.QueryUserAvatar(id)
+	avatar, err := user_query.QueryUserAvatar(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: model.ResponseCodeError,

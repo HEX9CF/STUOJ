@@ -1,7 +1,7 @@
 package judge
 
 import (
-	"STUOJ/db"
+	"STUOJ/database"
 	"STUOJ/judge"
 	"STUOJ/model"
 	"STUOJ/utils"
@@ -60,7 +60,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 插入提交
-	submission.Id, err = db.InsertSubmission(submission)
+	submission.Id, err = database.InsertSubmission(submission)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -72,7 +72,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 获取题目信息
-	problem, err := db.SelectProblemById(req.ProblemId)
+	problem, err := database.SelectProblemById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -84,7 +84,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 获取评测点
-	points, err := db.SelectTestPointsByProblemId(req.ProblemId)
+	points, err := database.SelectTestPointsByProblemId(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -128,7 +128,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 更新提交信息
-	err = db.UpdateSubmissionById(submission)
+	err = database.UpdateSubmissionById(submission)
 	if err != nil {
 		log.Println(err)
 		return
@@ -180,7 +180,7 @@ func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission mode
 	//log.Println(judgement)
 
 	// 更新评测点结果
-	_, err = db.InsertJudgement(judgement)
+	_, err = database.InsertJudgement(judgement)
 	if err != nil {
 		log.Println(err)
 		return

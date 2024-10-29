@@ -1,7 +1,7 @@
 package user
 
 import (
-	"STUOJ/db"
+	"STUOJ/database/user-query"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
@@ -9,25 +9,6 @@ import (
 	"net/http"
 	"strconv"
 )
-
-// 获取当前用户id
-func UserCurrentId(c *gin.Context) {
-	id, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusUnauthorized, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "用户未登录",
-			Data: nil,
-		})
-	}
-
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: id,
-	})
-}
 
 // 获取用户信息
 func UserInfo(c *gin.Context) {
@@ -43,7 +24,7 @@ func UserInfo(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	user, err := db.SelectUserById(uid)
+	user, err := user_query.SelectUserById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -63,7 +44,7 @@ func UserInfo(c *gin.Context) {
 
 // 获取用户列表
 func UserList(c *gin.Context) {
-	users, err := db.SelectAllUsers()
+	users, err := user_query.SelectAllUsers()
 	if err != nil || users == nil {
 		if err != nil {
 			log.Println(err)
@@ -80,5 +61,24 @@ func UserList(c *gin.Context) {
 		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: users,
+	})
+}
+
+// 获取当前用户id
+func UserCurrentId(c *gin.Context) {
+	id, err := utils.GetTokenUid(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusUnauthorized, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "用户未登录",
+			Data: nil,
+		})
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "OK",
+		Data: id,
 	})
 }
