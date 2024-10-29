@@ -122,9 +122,17 @@ func InitAdminRoute() {
 		adminPrivateRoute.POST("/user", admin.AdminUserAdd)
 		adminPrivateRoute.PUT("/user", admin.AdminUserModify)
 		adminPrivateRoute.DELETE("/user/:id", admin.AdminUserRemove)
-		//adminPrivateRoute.GET("/problem", AdminProblem)
+
+		adminPrivateRoute.GET("/problem", admin.AdminProblemList)
+		adminPrivateRoute.GET("/problem/:id", admin.AdminProblemInfo)
+		adminPrivateRoute.POST("/problem", admin.AdminProblemAdd)
+		adminPrivateRoute.PUT("/problem", admin.AdminProblemModify)
+		adminPrivateRoute.DELETE("/problem/:id", admin.AdminProblemRemove)
+
 		//adminPrivateRoute.GET("/record", AdminRecord)
+
 		//adminPrivateRoute.GET("/point", AdminPoint)
+
 		//adminPrivateRoute.GET("/system", AdminSystem)
 	}
 }

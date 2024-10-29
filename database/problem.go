@@ -74,7 +74,7 @@ func SelectAllProblems() ([]model.Problem, error) {
 
 // 插入题目
 func InsertProblem(p model.Problem) (uint64, error) {
-	sql := "INSERT INTO tbl_problem(title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, status, create_time, update_time) VALUES(?, ?. ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	sql := "INSERT INTO tbl_problem (title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, status, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	stmt, err := Db.Prepare(sql)
 	if err != nil {
 		return 0, err
