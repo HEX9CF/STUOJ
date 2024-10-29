@@ -1,9 +1,8 @@
-package user
+package admin
 
 import (
 	"STUOJ/db"
 	"STUOJ/model"
-	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -11,7 +10,7 @@ import (
 )
 
 // 获取用户信息
-func UserInfo(c *gin.Context) {
+func AdminUserInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -43,7 +42,7 @@ func UserInfo(c *gin.Context) {
 }
 
 // 获取用户列表
-func UserList(c *gin.Context) {
+func AdminUserList(c *gin.Context) {
 	users, err := db.SelectAllUsers()
 	if err != nil || users == nil {
 		if err != nil {
@@ -61,24 +60,5 @@ func UserList(c *gin.Context) {
 		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: users,
-	})
-}
-
-// 获取当前用户id
-func UserCurrentId(c *gin.Context) {
-	id, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusUnauthorized, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "用户未登录",
-			Data: nil,
-		})
-	}
-
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: id,
 	})
 }
