@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"STUOJ/model"
@@ -8,7 +8,7 @@ import (
 // 根据题目ID查询提交记录
 func SelectTestPointsByProblemId(problem_id uint64) ([]model.TestPoint, error) {
 	sql := "SELECT id, serial, problem_id, test_input, test_output FROM tbl_test_point WHERE problem_id = ?"
-	rows, err := db.Query(sql, problem_id)
+	rows, err := Db.Query(sql, problem_id)
 	log.Println(sql, problem_id)
 	if err != nil {
 		return nil, err

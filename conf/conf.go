@@ -7,7 +7,7 @@ import (
 )
 
 type Config struct {
-	DateBase DatabaseConf `yaml:"db"`
+	Datebase DatabaseConf `yaml:"database"`
 	Judge    JudgeConf    `yaml:"judge"`
 	Lskypro  LskyproConf  `yaml:"lskypro"`
 	Server   ServerConf   `yaml:"server"`

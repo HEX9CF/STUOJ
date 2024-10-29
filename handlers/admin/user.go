@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"STUOJ/db"
+	"STUOJ/database/user-query"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -23,7 +23,7 @@ func AdminUserInfo(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	user, err := db.SelectUserById(uid)
+	user, err := user_query.SelectUserById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -43,7 +43,7 @@ func AdminUserInfo(c *gin.Context) {
 
 // 获取用户列表
 func AdminUserList(c *gin.Context) {
-	users, err := db.SelectAllUsers()
+	users, err := user_query.SelectAllUsers()
 	if err != nil || users == nil {
 		if err != nil {
 			log.Println(err)
@@ -95,7 +95,7 @@ func AdminUserAdd(c *gin.Context) {
 		Avatar:    req.Avatar,
 		Signature: req.Signature,
 	}
-	u.Id, err = db.InsertUser(u)
+	u.Id, err = user_query.InsertUser(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -149,7 +149,7 @@ func AdminUserModify(c *gin.Context) {
 		Avatar:    req.Avatar,
 		Signature: req.Signature,
 	}
-	err = db.UpdateUserById(u)
+	err = user_query.UpdateUserById(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -182,7 +182,7 @@ func AdminUserRemove(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	_, err = db.SelectUserById(uid)
+	_, err = user_query.SelectUserById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -193,7 +193,7 @@ func AdminUserRemove(c *gin.Context) {
 		return
 	}
 
-	err = db.DeleteUserById(uid)
+	err = user_query.DeleteUserById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

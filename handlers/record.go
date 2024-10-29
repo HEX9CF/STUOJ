@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"STUOJ/db"
+	"STUOJ/database"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -23,7 +23,7 @@ func RecordInfo(c *gin.Context) {
 	}
 
 	sid := uint64(id)
-	submisssion, err := db.SelectSubmissionById(sid)
+	submisssion, err := database.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -43,7 +43,7 @@ func RecordInfo(c *gin.Context) {
 
 // 获取提交记录列表
 func RecordList(c *gin.Context) {
-	submissions, err := db.SelectAllSubmissions()
+	submissions, err := database.SelectAllSubmissions()
 	if err != nil || submissions == nil {
 		if err != nil {
 			log.Println(err)
@@ -77,7 +77,7 @@ func RecordListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	submissions, err := db.SelectSubmissionsByProblemId(pid)
+	submissions, err := database.SelectSubmissionsByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -110,7 +110,7 @@ func RecordListOfUser(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	submisssions, err := db.SelectSubmissionsByUserId(uid)
+	submisssions, err := database.SelectSubmissionsByUserId(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -142,7 +142,7 @@ func RecordPointListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	judgements, err := db.SelectJudgementsByTestPointId(pid)
+	judgements, err := database.SelectJudgementsByTestPointId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

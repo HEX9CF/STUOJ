@@ -57,7 +57,7 @@ func InitTestRoute() {
 }
 
 func InitUserRoute() {
-	userPublicRoute := ginServer.Group("/user")
+	userPublicRoute := ginServer.Group("/user-query")
 	{
 		userPublicRoute.GET("/", user.UserList)
 		userPublicRoute.GET("/avatar/:id", user.UserAvatar)
@@ -65,7 +65,7 @@ func InitUserRoute() {
 		userPublicRoute.POST("/login", user.UserLogin)
 		userPublicRoute.POST("/register", user.UserRegister)
 	}
-	userProtectedRoute := ginServer.Group("/user")
+	userProtectedRoute := ginServer.Group("/user-query")
 	{
 		// 使用中间件
 		userProtectedRoute.Use(middlewares.TokenAuthUser())

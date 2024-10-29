@@ -1,7 +1,7 @@
 package user
 
 import (
-	"STUOJ/db"
+	"STUOJ/database/user-query"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
@@ -24,7 +24,7 @@ func UserInfo(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	user, err := db.SelectUserById(uid)
+	user, err := user_query.SelectUserById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -44,7 +44,7 @@ func UserInfo(c *gin.Context) {
 
 // 获取用户列表
 func UserList(c *gin.Context) {
-	users, err := db.SelectAllUsers()
+	users, err := user_query.SelectAllUsers()
 	if err != nil || users == nil {
 		if err != nil {
 			log.Println(err)

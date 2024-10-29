@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"STUOJ/conf"
@@ -8,27 +8,27 @@ import (
 )
 
 var (
-	db *sql.DB
+	Db *sql.DB
 )
 
 // InitDatabase 函数用于初始化数据库连接
 func InitDatabase() error {
-	data := conf.Conf.DateBase
+	data := conf.Conf.Datebase
 	var err error
 
 	dsn := data.User + ":" + data.Pwd + "@tcp(" + data.Host + ":" + data.Port + ")/" + data.Name
-	db, err = sql.Open("mysql", dsn)
+	Db, err = sql.Open("mysql", dsn)
 	log.Println("Connecting to MySQL:", dsn)
 
 	if err != nil {
 		log.Println("Open database error!")
 		return err
 	}
-	db.SetMaxIdleConns(data.MaxIdle)
-	db.SetMaxOpenConns(data.MaxConn)
-	//defer db.Close()
+	Db.SetMaxIdleConns(data.MaxIdle)
+	Db.SetMaxOpenConns(data.MaxConn)
+	//defer database.Close()
 
-	err = db.Ping()
+	err = Db.Ping()
 	if err != nil {
 		log.Println("Error pinging the database!")
 		return err
