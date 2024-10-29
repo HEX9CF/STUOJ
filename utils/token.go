@@ -17,7 +17,7 @@ func GenerateToken(id uint64) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["uid"] = id
-	claims["exp"] = time.Now().Add(time.Hour * time.Duration(config.Expire)).Unix()
+	claims["exp"] = time.Now().Add(time.Second * time.Duration(config.Expire)).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString([]byte(config.Secret))
@@ -26,6 +26,7 @@ func GenerateToken(id uint64) (string, error) {
 // 提取token
 func ExtractToken(c *gin.Context) string {
 	bearerToken := c.GetHeader("Authorization")
+
 	if len(strings.Split(bearerToken, " ")) == 2 {
 		return strings.Split(bearerToken, " ")[1]
 	}
@@ -71,6 +72,32 @@ func ExtractTokenUid(c *gin.Context) (uint64, error) {
 			return 0, err
 		}
 		return uid, nil
+	}
+	return 0, nil
+}
+
+// 提取token过期时间
+func ExtractTokenExpire(c *gin.Context) (uint64, error) {
+	config := conf.Conf.Token
+	tokenString := ExtractToken(c)
+	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
+		_, ok := t.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+		}
+		return []byte(config.Secret), nil
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		exp, err := strconv.ParseUint(fmt.Sprintf("%.0f", claims["exp"]), 10, 64)
+		if err != nil {
+			return 0, err
+		}
+		return exp, nil
 	}
 	return 0, nil
 }

@@ -31,16 +31,6 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 
-	// 校验参数
-	if req.Username == "" || req.Password == "" || req.Email == "" {
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
-			Msg:  "参数错误，用户名、邮箱或密码不能为空",
-			Data: nil,
-		})
-		return
-	}
-
 	// 初始化用户
 	u := model.User{
 		Username: req.Username,
@@ -134,7 +124,7 @@ func UserLogin(c *gin.Context) {
 	// 登录成功，返回token
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,
-		Msg:  "登录成功",
+		Msg:  "登录成功，返回token",
 		Data: token,
 	})
 }

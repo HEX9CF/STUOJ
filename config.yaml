@@ -2,7 +2,8 @@ server:
   port: 14514
   token: 
 token:
-  token_expire: 864000
+  expire: 864000
+  refresh: 432000
   secret: stuoj
 db:
   host: 8.134.48.192
