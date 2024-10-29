@@ -4,6 +4,8 @@ import (
 	"STUOJ/model"
 	"encoding/json"
 	"errors"
+
+	"github.com/mitchellh/mapstructure"
 )
 
 func GetAlbumList() ([]model.YukiAlbum, error) {
@@ -12,7 +14,13 @@ func GetAlbumList() ([]model.YukiAlbum, error) {
 		return nil, err
 	}
 
-	var responses model.YukiResponses
+	type tmpResponses struct {
+		Code    int                      `json:"code"`
+		Message string                   `json:"message"`
+		Data    []map[string]interface{} `json:"data"`
+	}
+	var responses tmpResponses
+
 	err = json.Unmarshal([]byte(bodystr), &responses)
 	if err != nil {
 		return nil, err
@@ -21,7 +29,7 @@ func GetAlbumList() ([]model.YukiAlbum, error) {
 		return nil, errors.New(responses.Message)
 	}
 	var albumList []model.YukiAlbum
-	err = json.Unmarshal([]byte(bodystr), &albumList)
+	err = mapstructure.Decode(responses.Data, &albumList)
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +50,7 @@ func GetAlbum(albumId uint64) (model.YukiAlbum, error) {
 		return model.YukiAlbum{}, errors.New(responses.Message)
 	}
 	var album model.YukiAlbum
-	err = json.Unmarshal([]byte(bodystr), &album)
+	err = mapstructure.Decode(responses.Data, &album)
 	if err != nil {
 		return model.YukiAlbum{}, err
 	}

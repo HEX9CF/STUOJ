@@ -1,7 +1,7 @@
 package user
 
 import (
-	"STUOJ/db"
+	user_query "STUOJ/database/user-query"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"STUOJ/yuki"
@@ -34,7 +34,7 @@ func UpdateUserAvatar(c *gin.Context) {
 		})
 		return
 	}
-	id, err := utils.ExtractTokenUid(c)
+	id, err := utils.GetTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
@@ -43,7 +43,7 @@ func UpdateUserAvatar(c *gin.Context) {
 		})
 		return
 	}
-	err = db.UpdateUserAvatar(id, image.Url)
+	err = user_query.UpdateUserAvatar(id, image.Url)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
@@ -69,7 +69,7 @@ func UserAvatar(c *gin.Context) {
 		})
 	}
 	uid := uint64(id)
-	avatar, err := db.QueryUserAvatar(uid)
+	avatar, err := user_query.QueryUserAvatar(uid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
@@ -85,7 +85,7 @@ func UserAvatar(c *gin.Context) {
 }
 
 func ThisUserAvatar(c *gin.Context) {
-	id, err := utils.ExtractTokenUid(c)
+	id, err := utils.GetTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
@@ -93,7 +93,7 @@ func ThisUserAvatar(c *gin.Context) {
 			Data: nil,
 		})
 	}
-	avatar, err := db.QueryUserAvatar(id)
+	avatar, err := user_query.QueryUserAvatar(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
