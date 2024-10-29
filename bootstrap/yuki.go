@@ -5,10 +5,9 @@ import (
 	"log"
 )
 
-func InitYuki(chFin chan string) {
+func InitYuki() {
 	err := yuki.InitYukiImage()
 	if err != nil {
 		log.Println("yuki-image init error:", err)
 	}
-	chFin <- "yuki-image init success!"
 }

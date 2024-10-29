@@ -15,7 +15,7 @@ func InitYukiImage() error {
 	if err != nil {
 		return err
 	}
-	log.Println("Successfully connected to yuk-image.")
+	log.Println("Successfully connected to yuki-image.")
 	return nil
 }
 

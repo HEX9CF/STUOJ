@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func InitJudge(chFin chan string) {
+func InitJudge() {
 	var err error
 	err = judge.InitJudge()
 	if err != nil {
@@ -24,7 +24,6 @@ func InitJudge(chFin chan string) {
 		log.Println("Init judge failed!")
 	}
 
-	chFin <- "judge"
 }
 
 // 初始化评测机语言
