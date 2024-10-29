@@ -91,7 +91,7 @@ func GetImageList(page uint64, role uint8) (model.YukiImageList, error) {
 		return model.YukiImageList{}, errors.New(responses.Message)
 	}
 	var imageList model.YukiImageList
-	err = json.Unmarshal([]byte(responses.Message), &imageList)
+	err = mapstructure.Decode(responses.Data, &imageList)
 	if err != nil {
 		return model.YukiImageList{}, err
 	}
@@ -112,7 +112,7 @@ func GetImage(key string) (model.YukiImage, error) {
 		return model.YukiImage{}, errors.New(responses.Message)
 	}
 	var image model.YukiImage
-	err = json.Unmarshal([]byte(responses.Message), &image)
+	err = mapstructure.Decode(responses.Data, &image)
 	if err != nil {
 		return model.YukiImage{}, err
 	}
@@ -133,7 +133,7 @@ func GetImageFromUrl(url string) (model.YukiImage, error) {
 		return model.YukiImage{}, errors.New(responses.Message)
 	}
 	var image model.YukiImage
-	err = json.Unmarshal([]byte(responses.Message), &image)
+	err = mapstructure.Decode(responses.Data, &image)
 	if err != nil {
 		return model.YukiImage{}, err
 	}
