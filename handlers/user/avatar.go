@@ -2,16 +2,29 @@ package user
 
 import (
 	"STUOJ/db"
-	"STUOJ/lskypro"
 	"STUOJ/model"
 	"STUOJ/utils"
-	"github.com/gin-gonic/gin"
+	"STUOJ/yuki"
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func UpdateUserAvatar(c *gin.Context) {
-	uploadData, err := lskypro.Upload(c, model.RoleAvatar)
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
+		return
+	}
+	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey())
+	if err := c.SaveUploadedFile(file, dst); err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
+		return
+	}
+	image, err := yuki.UploadImage(dst, model.RoleAvatar)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
@@ -19,6 +32,7 @@ func UpdateUserAvatar(c *gin.Context) {
 			Data: nil,
 		})
 	}
+	_ = os.Remove(dst)
 	id, err := utils.ExtractTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
@@ -27,7 +41,7 @@ func UpdateUserAvatar(c *gin.Context) {
 			Data: nil,
 		})
 	}
-	err = db.UpdateUserAvatar(id, uploadData.Links.Url)
+	err = db.UpdateUserAvatar(id, image.Url)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
@@ -38,7 +52,7 @@ func UpdateUserAvatar(c *gin.Context) {
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,
 		Msg:  "更新成功",
-		Data: uploadData.Links.Url,
+		Data: image.Url,
 	})
 }
 
