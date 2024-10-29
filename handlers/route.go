@@ -16,7 +16,7 @@ func InitRoute() error {
 	// index
 	ginServer.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, model.Response{
-			Code: 1,
+			Code: model.ResponseCodeOk,
 			Msg:  "OK",
 			Data: "STUOJ后端启动成功！",
 		})
@@ -25,7 +25,7 @@ func InitRoute() error {
 	// 404
 	ginServer.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "404 Not Found",
 			Data: nil,
 		})

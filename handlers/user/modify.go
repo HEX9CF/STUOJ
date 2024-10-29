@@ -24,7 +24,7 @@ func UserModify(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -36,7 +36,7 @@ func UserModify(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusUnauthorized, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "用户未登录",
 			Data: nil,
 		})
@@ -53,7 +53,7 @@ func UserModify(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "修改失败, 用户名或邮箱已存在",
 			Data: nil,
 		})
@@ -62,7 +62,7 @@ func UserModify(c *gin.Context) {
 
 	// 返回结果
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "修改成功",
 		Data: nil,
 	})
@@ -81,7 +81,7 @@ func UserChangePassword(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -93,7 +93,7 @@ func UserChangePassword(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusUnauthorized, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "用户未登录",
 			Data: nil,
 		})
@@ -109,7 +109,7 @@ func UserChangePassword(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "修改失败",
 			Data: nil,
 		})
@@ -118,7 +118,7 @@ func UserChangePassword(c *gin.Context) {
 
 	// 返回结果
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "修改成功",
 		Data: nil,
 	})

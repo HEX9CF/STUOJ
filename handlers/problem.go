@@ -15,7 +15,7 @@ func ProblemInfo(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -27,7 +27,7 @@ func ProblemInfo(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取题目信息失败",
 			Data: nil,
 		})
@@ -35,7 +35,7 @@ func ProblemInfo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: problem,
 	})
@@ -49,7 +49,7 @@ func ProblemList(c *gin.Context) {
 			log.Println(err)
 		}
 		c.JSON(http.StatusOK, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
@@ -57,7 +57,7 @@ func ProblemList(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: problems,
 	})

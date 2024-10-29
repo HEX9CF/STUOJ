@@ -15,7 +15,7 @@ func RecordInfo(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -27,7 +27,7 @@ func RecordInfo(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取提交记录信息失败",
 			Data: nil,
 		})
@@ -35,7 +35,7 @@ func RecordInfo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: submisssion,
 	})
@@ -49,7 +49,7 @@ func RecordList(c *gin.Context) {
 			log.Println(err)
 		}
 		c.JSON(http.StatusOK, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
@@ -57,7 +57,7 @@ func RecordList(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: submissions,
 	})
@@ -69,7 +69,7 @@ func RecordListOfProblem(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -81,7 +81,7 @@ func RecordListOfProblem(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取提交记录信息失败",
 			Data: nil,
 		})
@@ -90,7 +90,7 @@ func RecordListOfProblem(c *gin.Context) {
 	//log.Println(submissions)
 
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: submissions,
 	})
@@ -102,7 +102,7 @@ func RecordListOfUser(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -114,7 +114,7 @@ func RecordListOfUser(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取提交记录信息失败",
 			Data: nil,
 		})
@@ -122,7 +122,7 @@ func RecordListOfUser(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: submisssions,
 	})
@@ -134,7 +134,7 @@ func RecordPointListOfProblem(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -146,7 +146,7 @@ func RecordPointListOfProblem(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取评测点信息失败",
 			Data: nil,
 		})
@@ -154,7 +154,7 @@ func RecordPointListOfProblem(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: judgements,
 	})

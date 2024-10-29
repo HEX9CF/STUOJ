@@ -16,7 +16,7 @@ func JudgeLanguageList(c *gin.Context) {
 			log.Println(err)
 		}
 		c.JSON(http.StatusOK, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
@@ -24,7 +24,7 @@ func JudgeLanguageList(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: languages,
 	})

@@ -14,7 +14,7 @@ func UpdateUserAvatar(c *gin.Context) {
 	uploadData, err := lskypro.Upload(c, model.RoleAvatar)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "上传失败",
 			Data: nil,
 		})
@@ -22,7 +22,7 @@ func UpdateUserAvatar(c *gin.Context) {
 	id, err := utils.ExtractTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取用户id失败",
 			Data: nil,
 		})
@@ -30,13 +30,13 @@ func UpdateUserAvatar(c *gin.Context) {
 	err = db.UpdateUserAvatar(id, uploadData.Links.Url)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "更新用户头像失败",
 			Data: nil,
 		})
 	}
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "更新成功",
 		Data: uploadData.Links.Url,
 	})
@@ -46,7 +46,7 @@ func UserAvatar(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取用户id失败",
 			Data: nil,
 		})
@@ -55,13 +55,13 @@ func UserAvatar(c *gin.Context) {
 	avatar, err := db.QueryUserAvatar(uid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取用户头像失败",
 			Data: nil,
 		})
 	}
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "获取成功",
 		Data: avatar,
 	})
@@ -71,7 +71,7 @@ func ThisUserAvatar(c *gin.Context) {
 	id, err := utils.ExtractTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取用户id失败",
 			Data: nil,
 		})
@@ -79,13 +79,13 @@ func ThisUserAvatar(c *gin.Context) {
 	avatar, err := db.QueryUserAvatar(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: 0,
+			Code: model.ResponseCodeError,
 			Msg:  "获取用户头像失败",
 			Data: nil,
 		})
 	}
 	c.JSON(http.StatusOK, model.Response{
-		Code: 1,
+		Code: model.ResponseCodeOk,
 		Msg:  "获取成功",
 		Data: avatar,
 	})
