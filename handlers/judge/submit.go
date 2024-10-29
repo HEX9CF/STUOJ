@@ -35,7 +35,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 获取用户ID
-	uid, err := utils.ExtractTokenUid(c)
+	uid, err := utils.GetTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, model.Response{
 			Code: model.ResponseCodeError,

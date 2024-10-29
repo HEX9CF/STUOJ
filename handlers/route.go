@@ -65,7 +65,7 @@ func InitUserRoute() {
 	}
 	userProtectedRoute := ginServer.Group("/user")
 	{
-		userProtectedRoute.Use(middlewares.TokenAuth())
+		userProtectedRoute.Use(middlewares.TokenAuthUser())
 		userProtectedRoute.GET("/current", user.UserCurrentId)
 		userPublicRoute.GET("/avatar", user.ThisUserAvatar)
 		userProtectedRoute.PUT("/modify", user.UserModify)
@@ -89,7 +89,7 @@ func InitJudgeRoute() {
 	}
 	judgePrivateRoute := ginServer.Group("/judge")
 	{
-		judgePrivateRoute.Use(middlewares.TokenAuth())
+		judgePrivateRoute.Use(middlewares.TokenAuthUser())
 		judgePrivateRoute.POST("/submit", judge.JudgeSubmit)
 	}
 }

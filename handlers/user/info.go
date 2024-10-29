@@ -12,7 +12,7 @@ import (
 
 // 获取当前用户id
 func UserCurrentId(c *gin.Context) {
-	id, err := utils.ExtractTokenUid(c)
+	id, err := utils.GetTokenUid(c)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusUnauthorized, model.Response{

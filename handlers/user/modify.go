@@ -32,7 +32,7 @@ func UserModify(c *gin.Context) {
 	}
 
 	// 获取用户id
-	id, err := utils.ExtractTokenUid(c)
+	id, err := utils.GetTokenUid(c)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusUnauthorized, model.Response{
@@ -89,7 +89,7 @@ func UserChangePassword(c *gin.Context) {
 	}
 
 	// 获取用户id
-	id, err := utils.ExtractTokenUid(c)
+	id, err := utils.GetTokenUid(c)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusUnauthorized, model.Response{

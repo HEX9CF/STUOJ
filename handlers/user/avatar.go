@@ -19,7 +19,7 @@ func UpdateUserAvatar(c *gin.Context) {
 			Data: nil,
 		})
 	}
-	id, err := utils.ExtractTokenUid(c)
+	id, err := utils.GetTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: model.ResponseCodeError,
@@ -68,7 +68,7 @@ func UserAvatar(c *gin.Context) {
 }
 
 func ThisUserAvatar(c *gin.Context) {
-	id, err := utils.ExtractTokenUid(c)
+	id, err := utils.GetTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: model.ResponseCodeError,
