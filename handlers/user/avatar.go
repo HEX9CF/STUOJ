@@ -1,44 +1,61 @@
 package user
 
 import (
-	"STUOJ/database/user-query"
-	"STUOJ/lskypro"
+	user_query "STUOJ/database/user-query"
 	"STUOJ/model"
 	"STUOJ/utils"
-	"github.com/gin-gonic/gin"
+	"STUOJ/yuki"
+	"fmt"
 	"net/http"
+	"os"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 func UpdateUserAvatar(c *gin.Context) {
-	uploadData, err := lskypro.Upload(c, model.RoleAvatar)
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
+		return
+	}
+	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey())
+	if err := c.SaveUploadedFile(file, dst); err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
+		return
+	}
+	image, err := yuki.UploadImage(dst, model.RoleAvatar)
+	_ = os.Remove(dst)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+			Code: 0,
 			Msg:  "上传失败",
-			Data: nil,
+			Data: err,
 		})
+		return
 	}
 	id, err := utils.GetTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+			Code: 0,
 			Msg:  "获取用户id失败",
-			Data: nil,
+			Data: err,
 		})
+		return
 	}
-	err = user_query.UpdateUserAvatar(id, uploadData.Links.Url)
+	err = user_query.UpdateUserAvatar(id, image.Url)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+			Code: 0,
 			Msg:  "更新用户头像失败",
-			Data: nil,
+			Data: err,
 		})
+		return
 	}
 	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
+		Code: 1,
 		Msg:  "更新成功",
-		Data: uploadData.Links.Url,
+		Data: image.Url,
 	})
 }
 
@@ -46,7 +63,7 @@ func UserAvatar(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+			Code: 0,
 			Msg:  "获取用户id失败",
 			Data: nil,
 		})
@@ -55,13 +72,13 @@ func UserAvatar(c *gin.Context) {
 	avatar, err := user_query.QueryUserAvatar(uid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+			Code: 0,
 			Msg:  "获取用户头像失败",
 			Data: nil,
 		})
 	}
 	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
+		Code: 1,
 		Msg:  "获取成功",
 		Data: avatar,
 	})
@@ -71,7 +88,7 @@ func ThisUserAvatar(c *gin.Context) {
 	id, err := utils.GetTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+			Code: 0,
 			Msg:  "获取用户id失败",
 			Data: nil,
 		})
@@ -79,13 +96,13 @@ func ThisUserAvatar(c *gin.Context) {
 	avatar, err := user_query.QueryUserAvatar(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+			Code: 0,
 			Msg:  "获取用户头像失败",
 			Data: nil,
 		})
 	}
 	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
+		Code: 1,
 		Msg:  "获取成功",
 		Data: avatar,
 	})
