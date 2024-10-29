@@ -25,29 +25,32 @@ func UpdateUserAvatar(c *gin.Context) {
 		return
 	}
 	image, err := yuki.UploadImage(dst, model.RoleAvatar)
+	_ = os.Remove(dst)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
 			Msg:  "上传失败",
-			Data: nil,
+			Data: err,
 		})
+		return
 	}
-	_ = os.Remove(dst)
 	id, err := utils.ExtractTokenUid(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
 			Msg:  "获取用户id失败",
-			Data: nil,
+			Data: err,
 		})
+		return
 	}
 	err = db.UpdateUserAvatar(id, image.Url)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
 			Msg:  "更新用户头像失败",
-			Data: nil,
+			Data: err,
 		})
+		return
 	}
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,

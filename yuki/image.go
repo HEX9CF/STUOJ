@@ -6,10 +6,13 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"strconv"
+
+	"github.com/mitchellh/mapstructure"
 )
 
 func UploadImage(path string, roal uint8) (model.YukiImage, error) {
@@ -21,6 +24,10 @@ func UploadImage(path string, roal uint8) (model.YukiImage, error) {
 	req.Header.Set("Authorization", "Bearer "+config.Token)
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
+	err = writer.WriteField("album_id", strconv.FormatUint(uint64(roal), 10))
+	if err != nil {
+		return model.YukiImage{}, err
+	}
 	fileinfo, err := os.Stat(path)
 	part, err := writer.CreateFormFile("file", fileinfo.Name())
 	if err != nil {
@@ -51,7 +58,7 @@ func UploadImage(path string, roal uint8) (model.YukiImage, error) {
 		return model.YukiImage{}, err
 	}
 	defer resp.Body.Close()
-
+	log.Println("resp.StatusCode: ", resp.StatusCode)
 	bodys, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return model.YukiImage{}, err
@@ -59,10 +66,15 @@ func UploadImage(path string, roal uint8) (model.YukiImage, error) {
 	bodystr := string(bodys)
 	var responses model.YukiResponses
 	err = json.Unmarshal([]byte(bodystr), &responses)
-	if image, ok := responses.Data.(model.YukiImage); ok {
-		return image, nil
+	if err != nil {
+		return model.YukiImage{}, err
 	}
-	return model.YukiImage{}, errors.New("Upload failed")
+	var image model.YukiImage
+	err = mapstructure.Decode(responses.Data, &image)
+	if err != nil {
+		return model.YukiImage{}, err
+	}
+	return image, nil
 }
 
 func GetImageList(page uint64, role uint8) (model.YukiImageList, error) {
@@ -78,10 +90,12 @@ func GetImageList(page uint64, role uint8) (model.YukiImageList, error) {
 	if responses.Code == 0 {
 		return model.YukiImageList{}, errors.New(responses.Message)
 	}
-	if imageList, ok := responses.Data.(model.YukiImageList); ok {
-		return imageList, nil
+	var imageList model.YukiImageList
+	err = json.Unmarshal([]byte(responses.Message), &imageList)
+	if err != nil {
+		return model.YukiImageList{}, err
 	}
-	return model.YukiImageList{}, errors.New("Get failed")
+	return imageList, nil
 }
 
 func GetImage(key string) (model.YukiImage, error) {
@@ -97,10 +111,12 @@ func GetImage(key string) (model.YukiImage, error) {
 	if responses.Code == 0 {
 		return model.YukiImage{}, errors.New(responses.Message)
 	}
-	if image, ok := responses.Data.(model.YukiImage); ok {
-		return image, nil
+	var image model.YukiImage
+	err = json.Unmarshal([]byte(responses.Message), &image)
+	if err != nil {
+		return model.YukiImage{}, err
 	}
-	return model.YukiImage{}, errors.New("Get failed")
+	return image, nil
 }
 
 func GetImageFromUrl(url string) (model.YukiImage, error) {
@@ -116,10 +132,12 @@ func GetImageFromUrl(url string) (model.YukiImage, error) {
 	if responses.Code == 0 {
 		return model.YukiImage{}, errors.New(responses.Message)
 	}
-	if image, ok := responses.Data.(model.YukiImage); ok {
-		return image, nil
+	var image model.YukiImage
+	err = json.Unmarshal([]byte(responses.Message), &image)
+	if err != nil {
+		return model.YukiImage{}, err
 	}
-	return model.YukiImage{}, errors.New("Get failed")
+	return image, nil
 }
 
 func DeleteImage(key string) error {
