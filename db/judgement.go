@@ -96,3 +96,20 @@ func DeleteJudgementById(id uint64) error {
 
 	return nil
 }
+
+// 根据提交ID查询评测结果
+func DeleteJudgementBySubmissionId(id uint64) error {
+	sql := "DELETE FROM tbl_judgement WHERE submission_id = ?"
+	stmt, err := Mysql.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(id)
+	log.Println(sql, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
