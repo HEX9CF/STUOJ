@@ -1,6 +1,6 @@
 package model
 
-// 单个评测点结果
+// 评测点结果
 type Judgement struct {
 	Id            uint64       `json:"id,omitempty"`
 	SubmissionId  uint64       `json:"submission_id,omitempty"`
