@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"STUOJ/database/user-query"
+	"STUOJ/db/user-query"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"log"

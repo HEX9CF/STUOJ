@@ -1,7 +1,7 @@
 package user_query
 
 import (
-	"STUOJ/database"
+	"STUOJ/db"
 	"STUOJ/model"
 	"log"
 	"time"
@@ -12,7 +12,7 @@ func SelectUserById(id uint64) (model.User, error) {
 	var user model.User
 	var createTimeStr, updateTimeStr string
 	sql := "SELECT id, username, role, email, avatar, signature, create_time, update_time FROM tbl_user WHERE id = ? LIMIT 1"
-	err := database.Db.QueryRow(sql, id).Scan(&user.Id, &user.Username, &user.Role, &user.Email, &user.Avatar, &user.Signature, &createTimeStr, &updateTimeStr)
+	err := db.Mysql.QueryRow(sql, id).Scan(&user.Id, &user.Username, &user.Role, &user.Email, &user.Avatar, &user.Signature, &createTimeStr, &updateTimeStr)
 	log.Println(sql, id)
 	if err != nil {
 		return model.User{}, err
@@ -35,7 +35,7 @@ func SelectUserById(id uint64) (model.User, error) {
 // 查询所有用户
 func SelectAllUsers() ([]model.User, error) {
 	sql := "SELECT id, username, role, email, avatar, signature, create_time, update_time FROM tbl_user"
-	rows, err := database.Db.Query(sql)
+	rows, err := db.Mysql.Query(sql)
 	log.Println(sql)
 	if err != nil {
 		return nil, err

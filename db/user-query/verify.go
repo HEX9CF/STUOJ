@@ -1,7 +1,7 @@
 package user_query
 
 import (
-	"STUOJ/database"
+	"STUOJ/db"
 	"STUOJ/model"
 	"log"
 )
@@ -14,7 +14,7 @@ func VerifyUserByEmail(u model.User) (uint64, error) {
 	var id uint64
 	var hashedPassword string
 	sql := "SELECT id, password FROM tbl_user WHERE email = ? LIMIT 1"
-	err := database.Db.QueryRow(sql, &u.Email).Scan(&id, &hashedPassword)
+	err := db.Mysql.QueryRow(sql, &u.Email).Scan(&id, &hashedPassword)
 	log.Println(sql, u.Email)
 	if err != nil {
 		return 0, err
@@ -38,7 +38,7 @@ func VerifyUserById(u model.User) (uint64, error) {
 	var id uint64
 	var hashedPassword string
 	sql := "SELECT id, password FROM tbl_user WHERE id = ? LIMIT 1"
-	err := database.Db.QueryRow(sql, &u.Id).Scan(&id, &hashedPassword)
+	err := db.Mysql.QueryRow(sql, &u.Id).Scan(&id, &hashedPassword)
 	log.Println(sql, u.Id)
 	if err != nil {
 		return 0, err

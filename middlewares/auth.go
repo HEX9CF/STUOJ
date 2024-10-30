@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"STUOJ/conf"
-	"STUOJ/database/user-query"
+	"STUOJ/db/user-query"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"

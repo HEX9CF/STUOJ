@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"STUOJ/database"
+	"STUOJ/db"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -23,7 +23,7 @@ func AdminProblemInfo(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	problem, err := database.SelectProblemById(pid)
+	problem, err := db.SelectProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -43,7 +43,7 @@ func AdminProblemInfo(c *gin.Context) {
 
 // 获取题目列表
 func AdminProblemList(c *gin.Context) {
-	problems, err := database.SelectAllProblems()
+	problems, err := db.SelectAllProblems()
 	if err != nil || problems == nil {
 		if err != nil {
 			log.Println(err)
@@ -109,7 +109,7 @@ func AdminProblemAdd(c *gin.Context) {
 		Hint:         req.Hint,
 		Status:       req.Status,
 	}
-	p.Id, err = database.InsertProblem(p)
+	p.Id, err = db.InsertProblem(p)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -176,7 +176,7 @@ func AdminProblemModify(c *gin.Context) {
 		Hint:         req.Hint,
 		Status:       req.Status,
 	}
-	err = database.UpdateProblemById(p)
+	err = db.UpdateProblemById(p)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -209,7 +209,7 @@ func AdminProblemRemove(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	_, err = database.SelectProblemById(pid)
+	_, err = db.SelectProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -220,7 +220,7 @@ func AdminProblemRemove(c *gin.Context) {
 		return
 	}
 
-	err = database.DeleteProblemById(pid)
+	err = db.DeleteProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

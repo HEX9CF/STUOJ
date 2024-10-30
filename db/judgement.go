@@ -1,4 +1,4 @@
-package database
+package db
 
 import (
 	"STUOJ/model"
@@ -8,7 +8,7 @@ import (
 // 插入评测结果
 func InsertJudgement(s model.Judgement) (uint64, error) {
 	sql := "INSERT INTO tbl_judgement (submission_id, test_point_id, time, memory, stdout, stderr, compile_output, message, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
-	stmt, err := Db.Prepare(sql)
+	stmt, err := Mysql.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}
@@ -31,7 +31,7 @@ func InsertJudgement(s model.Judgement) (uint64, error) {
 // 根据提交ID查询评测结果
 func SelectJudgementsBySubmissionId(sid uint64) ([]model.Judgement, error) {
 	sql := "SELECT id, submission_id, test_point_id, time, memory, stdout, stderr, compile_output, message, status FROM tbl_judgement WHERE submission_id = ?"
-	rows, err := Db.Query(sql, sid)
+	rows, err := Mysql.Query(sql, sid)
 	log.Println(sql, sid)
 	if err != nil {
 		return nil, err
@@ -57,7 +57,7 @@ func SelectJudgementsBySubmissionId(sid uint64) ([]model.Judgement, error) {
 // 根据测试点ID查询评测结果
 func SelectJudgementsByTestPointId(tpid uint64) ([]model.Judgement, error) {
 	sql := "SELECT id, submission_id, test_point_id, time, memory, stdout, stderr, compile_output, message, status FROM tbl_judgement WHERE test_point_id = ?"
-	rows, err := Db.Query(sql, tpid)
+	rows, err := Mysql.Query(sql, tpid)
 	log.Println(sql, tpid)
 	if err != nil {
 		return nil, err
@@ -83,7 +83,7 @@ func SelectJudgementsByTestPointId(tpid uint64) ([]model.Judgement, error) {
 // 根据ID查询评测结果
 func DeleteJudgementById(id uint64) error {
 	sql := "DELETE FROM tbl_judgement WHERE id = ?"
-	stmt, err := Db.Prepare(sql)
+	stmt, err := Mysql.Prepare(sql)
 	if err != nil {
 		return err
 	}

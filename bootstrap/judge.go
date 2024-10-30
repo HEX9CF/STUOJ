@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	"STUOJ/database"
+	"STUOJ/db"
 	"STUOJ/judge"
 	"STUOJ/utils"
 	"log"
@@ -40,7 +40,7 @@ func InitJudgeLanguages() error {
 	}
 
 	// 清空数据库语言表
-	err = database.DeleteAllLanguages()
+	err = db.DeleteAllLanguages()
 	if err != nil {
 		log.Println(err)
 	}
@@ -55,7 +55,7 @@ func InitJudgeLanguages() error {
 		// 	Name: v["name"].(string),
 		// }
 
-		_, err := database.InsertLanguage(language)
+		_, err := db.InsertLanguage(language)
 		if err != nil {
 			return err
 		}

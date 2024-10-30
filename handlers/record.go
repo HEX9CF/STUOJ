@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"STUOJ/database"
+	"STUOJ/db"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -24,7 +24,7 @@ func RecordInfo(c *gin.Context) {
 
 	// 获取提交信息
 	sid := uint64(id)
-	submission, err := database.SelectSubmissionById(sid)
+	submission, err := db.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -36,7 +36,7 @@ func RecordInfo(c *gin.Context) {
 	}
 
 	// 获取评测结果
-	judgements, err := database.SelectJudgementsBySubmissionId(sid)
+	judgements, err := db.SelectJudgementsBySubmissionId(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -61,7 +61,7 @@ func RecordInfo(c *gin.Context) {
 
 // 获取提交记录列表
 func RecordList(c *gin.Context) {
-	submissions, err := database.SelectAllSubmissions()
+	submissions, err := db.SelectAllSubmissions()
 	if err != nil || submissions == nil {
 		if err != nil {
 			log.Println(err)
@@ -95,7 +95,7 @@ func RecordListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	submissions, err := database.SelectSubmissionsByProblemId(pid)
+	submissions, err := db.SelectSubmissionsByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -128,7 +128,7 @@ func RecordListOfUser(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	submisssions, err := database.SelectSubmissionsByUserId(uid)
+	submisssions, err := db.SelectSubmissionsByUserId(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -160,7 +160,7 @@ func RecordPointListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	judgements, err := database.SelectJudgementsByTestPointId(pid)
+	judgements, err := db.SelectJudgementsByTestPointId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
