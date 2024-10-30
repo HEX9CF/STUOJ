@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-// 获取提交记录信息
+// 获取提交记录信息（提交信息+评测结果）
 func AdminRecordInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -78,5 +78,61 @@ func AdminRecordList(c *gin.Context) {
 		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: submissions,
+	})
+}
+
+// 删除提交记录（提交信息+评测结果）
+func AdminRecordRemove(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	sid := uint64(id)
+	_, err = db.SelectSubmissionById(sid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "删除失败，提交记录不存在",
+			Data: nil,
+		})
+		return
+	}
+
+	// 删除提交信息
+	err = db.DeleteSubmissionById(sid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "删除提交信息失败",
+			Data: nil,
+		})
+		return
+	}
+
+	// 删除评测结果
+	err = db.DeleteJudgementBySubmissionId(sid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "删除评测结果失败",
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "删除成功",
+		Data: nil,
 	})
 }
