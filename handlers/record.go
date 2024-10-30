@@ -22,22 +22,40 @@ func RecordInfo(c *gin.Context) {
 		return
 	}
 
+	// 获取提交信息
 	sid := uint64(id)
-	submisssion, err := database.SelectSubmissionById(sid)
+	submission, err := database.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "获取提交记录信息失败",
+			Msg:  "获取提交信息失败",
 			Data: nil,
 		})
 		return
 	}
 
+	// 获取评测结果
+	judgements, err := database.SelectJudgementsBySubmissionId(sid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取评测结果失败",
+			Data: nil,
+		})
+		return
+	}
+
+	record := model.Record{
+		Submission: submission,
+		Judgements: judgements,
+	}
+
 	c.JSON(http.StatusOK, model.Response{
 		Code: model.ResponseCodeOk,
 		Msg:  "OK",
-		Data: submisssion,
+		Data: record,
 	})
 }
 
