@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-// 获取提交记录信息
+// 获取提交记录信息（提交信息+评测结果）
 func RecordInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -143,37 +143,5 @@ func RecordListOfUser(c *gin.Context) {
 		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: submisssions,
-	})
-}
-
-// 获取题目的评测点列表
-func RecordPointListOfProblem(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
-		return
-	}
-
-	pid := uint64(id)
-	judgements, err := db.SelectJudgementsByTestPointId(pid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取评测点信息失败",
-			Data: nil,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: judgements,
 	})
 }
