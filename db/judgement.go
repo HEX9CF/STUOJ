@@ -13,8 +13,8 @@ func InsertJudgement(s model.Judgement) (uint64, error) {
 		return 0, err
 	}
 	defer stmt.Close()
-	result, err := stmt.Exec(s.SubmissionId, s.TestPointId, s.Time, s.Memory, s.Stdout, s.Stderr, s.CompileOutput, s.Message, s.Status)
-	log.Println(sql, s.SubmissionId, s.TestPointId, s.Time, s.Memory, s.Stdout, s.Stderr, s.CompileOutput, s.Message, s.Status)
+	result, err := stmt.Exec(s.SubmissionId, s.TestcaseId, s.Time, s.Memory, s.Stdout, s.Stderr, s.CompileOutput, s.Message, s.Status)
+	log.Println(sql, s.SubmissionId, s.TestcaseId, s.Time, s.Memory, s.Stdout, s.Stderr, s.CompileOutput, s.Message, s.Status)
 	if err != nil {
 		return 0, err
 	}
@@ -43,7 +43,7 @@ func SelectJudgementsBySubmissionId(sid uint64) ([]model.Judgement, error) {
 	for rows.Next() {
 		var judgement model.Judgement
 
-		err := rows.Scan(&judgement.Id, &judgement.SubmissionId, &judgement.TestPointId, &judgement.Time, &judgement.Memory, &judgement.Stdout, &judgement.Stderr, &judgement.CompileOutput, &judgement.Message, &judgement.Status)
+		err := rows.Scan(&judgement.Id, &judgement.SubmissionId, &judgement.TestcaseId, &judgement.Time, &judgement.Memory, &judgement.Stdout, &judgement.Stderr, &judgement.CompileOutput, &judgement.Message, &judgement.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -55,7 +55,7 @@ func SelectJudgementsBySubmissionId(sid uint64) ([]model.Judgement, error) {
 }
 
 // 根据测试点ID查询评测结果
-func SelectJudgementsByTestPointId(tpid uint64) ([]model.Judgement, error) {
+func SelectJudgementsByTestcaseId(tpid uint64) ([]model.Judgement, error) {
 	sql := "SELECT id, submission_id, testcase_id, time, memory, stdout, stderr, compile_output, message, status FROM tbl_judgement WHERE testcase_id = ?"
 	rows, err := Mysql.Query(sql, tpid)
 	log.Println(sql, tpid)
@@ -69,7 +69,7 @@ func SelectJudgementsByTestPointId(tpid uint64) ([]model.Judgement, error) {
 	for rows.Next() {
 		var judgement model.Judgement
 
-		err := rows.Scan(&judgement.Id, &judgement.SubmissionId, &judgement.TestPointId, &judgement.Time, &judgement.Memory, &judgement.Stdout, &judgement.Stderr, &judgement.CompileOutput, &judgement.Message, &judgement.Status)
+		err := rows.Scan(&judgement.Id, &judgement.SubmissionId, &judgement.TestcaseId, &judgement.Time, &judgement.Memory, &judgement.Stdout, &judgement.Stderr, &judgement.CompileOutput, &judgement.Message, &judgement.Status)
 		if err != nil {
 			return nil, err
 		}

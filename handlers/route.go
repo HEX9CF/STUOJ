@@ -135,8 +135,6 @@ func InitAdminRoute() {
 		//adminPrivateRoute.PUT("/record", admin.AdminRecordModify)
 		adminPrivateRoute.DELETE("/record/:id", admin.AdminRecordRemove)
 
-		//adminPrivateRoute.GET("/point", AdminPoint)
-
 		//adminPrivateRoute.GET("/system", AdminSystem)
 	}
 }

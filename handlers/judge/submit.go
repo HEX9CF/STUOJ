@@ -106,9 +106,9 @@ func JudgeSubmit(c *gin.Context) {
 	chJudgement := make(chan model.Judgement)
 
 	// 提交评测点
-	for _, point := range testcases {
+	for _, testcase := range testcases {
 		// 异步评测
-		go asyncJudgeSubmit(req, problem, submission, point, chJudgement)
+		go asyncJudgeSubmit(req, problem, submission, testcase, chJudgement)
 	}
 
 	for _, _ = range testcases {
@@ -135,13 +135,13 @@ func JudgeSubmit(c *gin.Context) {
 	}
 }
 
-func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission model.Submission, point model.Testcase, c chan model.Judgement) {
+func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission model.Submission, testcase model.Testcase, c chan model.Judgement) {
 	// 初始化评测点评测对象
 	judgeSubmission := model.JudgeSubmission{
 		SourceCode:     req.SourceCode,
 		LanguageId:     req.LanguageId,
-		Stdin:          point.TestInput,
-		ExpectedOutput: point.TestOutput,
+		Stdin:          testcase.TestInput,
+		ExpectedOutput: testcase.TestOutput,
 		CPUTimeLimit:   problem.TimeLimit,
 		MemoryLimit:    problem.MemoryLimit,
 	}
@@ -168,7 +168,7 @@ func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission mode
 	// 初始化评测点结果对象
 	judgement := model.Judgement{
 		SubmissionId:  submission.Id,
-		TestPointId:   point.Id,
+		TestcaseId:    testcase.Id,
 		Time:          time,
 		Memory:        uint64(result.Memory),
 		Stdout:        result.Stdout,

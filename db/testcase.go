@@ -16,19 +16,19 @@ func SelectTestcasesByProblemId(problem_id uint64) ([]model.Testcase, error) {
 	defer rows.Close()
 
 	// 遍历查询结果
-	points := make([]model.Testcase, 0)
+	testcases := make([]model.Testcase, 0)
 	for rows.Next() {
-		var point model.Testcase
+		var testcase model.Testcase
 
-		point.ProblemId = problem_id
+		testcase.ProblemId = problem_id
 
-		err := rows.Scan(&point.Id, &point.Serial, &point.ProblemId, &point.TestInput, &point.TestOutput)
+		err := rows.Scan(&testcase.Id, &testcase.Serial, &testcase.ProblemId, &testcase.TestInput, &testcase.TestOutput)
 		if err != nil {
 			return nil, err
 		}
 
-		//log.Println(point)
-		points = append(points, point)
+		//log.Println(testcase)
+		testcases = append(testcases, testcase)
 	}
-	return points, nil
+	return testcases, nil
 }
