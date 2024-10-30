@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-// 获取题目信息
+// 获取题目信息（题目+评测点数据）
 func AdminProblemInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -22,6 +22,7 @@ func AdminProblemInfo(c *gin.Context) {
 		return
 	}
 
+	// 获取题目信息
 	pid := uint64(id)
 	problem, err := db.SelectProblemById(pid)
 	if err != nil {
@@ -34,10 +35,27 @@ func AdminProblemInfo(c *gin.Context) {
 		return
 	}
 
+	// 获取评测点数据
+	testcases, err := db.SelectTestcasesByProblemId(pid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取评测点数据失败",
+			Data: nil,
+		})
+		return
+	}
+
+	problemInfo := model.ProblemInfo{
+		Problem:   problem,
+		Testcases: testcases,
+	}
+
 	c.JSON(http.StatusOK, model.Response{
 		Code: model.ResponseCodeOk,
 		Msg:  "OK",
-		Data: problem,
+		Data: problemInfo,
 	})
 }
 
