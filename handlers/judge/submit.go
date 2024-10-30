@@ -84,12 +84,12 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 获取评测点
-	points, err := db.SelectTestPointsByProblemId(req.ProblemId)
+	testcases, err := db.SelectTestcasesByProblemId(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "获取评测点失败",
+			Msg:  "获取评测点数据失败",
 			Data: nil,
 		})
 		return
@@ -106,12 +106,12 @@ func JudgeSubmit(c *gin.Context) {
 	chJudgement := make(chan model.Judgement)
 
 	// 提交评测点
-	for _, point := range points {
+	for _, point := range testcases {
 		// 异步评测
 		go asyncJudgeSubmit(req, problem, submission, point, chJudgement)
 	}
 
-	for _, _ = range points {
+	for _, _ = range testcases {
 		// 接收评测点结果
 		judgement := <-chJudgement
 		//log.Println(judgement)
@@ -135,7 +135,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 }
 
-func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission model.Submission, point model.TestPoint, c chan model.Judgement) {
+func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission model.Submission, point model.Testcase, c chan model.Judgement) {
 	// 初始化评测点评测对象
 	judgeSubmission := model.JudgeSubmission{
 		SourceCode:     req.SourceCode,

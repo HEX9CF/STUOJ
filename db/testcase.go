@@ -5,9 +5,9 @@ import (
 	"log"
 )
 
-// 根据题目ID查询提交记录
-func SelectTestPointsByProblemId(problem_id uint64) ([]model.TestPoint, error) {
-	sql := "SELECT id, serial, problem_id, test_input, test_output FROM tbl_test_point WHERE problem_id = ?"
+// 通过题目ID查询评测点数据
+func SelectTestcasesByProblemId(problem_id uint64) ([]model.Testcase, error) {
+	sql := "SELECT id, serial, problem_id, test_input, test_output FROM tbl_testcase WHERE problem_id = ?"
 	rows, err := Mysql.Query(sql, problem_id)
 	log.Println(sql, problem_id)
 	if err != nil {
@@ -16,9 +16,9 @@ func SelectTestPointsByProblemId(problem_id uint64) ([]model.TestPoint, error) {
 	defer rows.Close()
 
 	// 遍历查询结果
-	points := make([]model.TestPoint, 0)
+	points := make([]model.Testcase, 0)
 	for rows.Next() {
-		var point model.TestPoint
+		var point model.Testcase
 
 		point.ProblemId = problem_id
 
