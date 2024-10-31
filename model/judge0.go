@@ -115,7 +115,7 @@ type JudgeStatistics struct {
 	Submissions JudgeSubmissionsStatistics `json:"submissions"`
 	Languages   []JudgeLanguageStatistics  `json:"languages"`
 	Statuses    []JudgeStatusStatistics    `json:"statuses"`
-	Database    JudgeDatabaseStatistics    `json:"database"`
+	Database    JudgeDatabaseStatistics    `json:"db"`
 }
 
 type JudgeSubmissionsStatistics struct {

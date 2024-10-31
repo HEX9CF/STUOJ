@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"STUOJ/database"
+	"STUOJ/db"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-// 获取题目信息
+// 获取题目信息（题目+评测点数据）
 func AdminProblemInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -22,8 +22,9 @@ func AdminProblemInfo(c *gin.Context) {
 		return
 	}
 
+	// 获取题目信息
 	pid := uint64(id)
-	problem, err := database.SelectProblemById(pid)
+	problem, err := db.SelectProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -34,16 +35,33 @@ func AdminProblemInfo(c *gin.Context) {
 		return
 	}
 
+	// 获取评测点数据
+	testcases, err := db.SelectTestcasesByProblemId(pid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取评测点数据失败",
+			Data: nil,
+		})
+		return
+	}
+
+	problemInfo := model.ProblemInfo{
+		Problem:   problem,
+		Testcases: testcases,
+	}
+
 	c.JSON(http.StatusOK, model.Response{
 		Code: model.ResponseCodeOk,
 		Msg:  "OK",
-		Data: problem,
+		Data: problemInfo,
 	})
 }
 
 // 获取题目列表
 func AdminProblemList(c *gin.Context) {
-	problems, err := database.SelectAllProblems()
+	problems, err := db.SelectAllProblems()
 	if err != nil || problems == nil {
 		if err != nil {
 			log.Println(err)
@@ -109,7 +127,7 @@ func AdminProblemAdd(c *gin.Context) {
 		Hint:         req.Hint,
 		Status:       req.Status,
 	}
-	p.Id, err = database.InsertProblem(p)
+	p.Id, err = db.InsertProblem(p)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -160,23 +178,33 @@ func AdminProblemModify(c *gin.Context) {
 		return
 	}
 
-	// 初始化题目
-	p := model.Problem{
-		Id:           req.Id,
-		Title:        req.Title,
-		Source:       req.Source,
-		Difficulty:   req.Difficulty,
-		TimeLimit:    req.TimeLimit,
-		MemoryLimit:  req.MemoryLimit,
-		Description:  req.Description,
-		Input:        req.Input,
-		Output:       req.Output,
-		SampleInput:  req.SampleInput,
-		SampleOutput: req.SampleOutput,
-		Hint:         req.Hint,
-		Status:       req.Status,
+	// 读取题目
+	p, err := db.SelectProblemById(req.Id)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "修改失败，题目不存在",
+			Data: nil,
+		})
+		return
 	}
-	err = database.UpdateProblemById(p)
+
+	// 修改题目
+	p.Title = req.Title
+	p.Source = req.Source
+	p.Difficulty = req.Difficulty
+	p.TimeLimit = req.TimeLimit
+	p.MemoryLimit = req.MemoryLimit
+	p.Description = req.Description
+	p.Input = req.Input
+	p.Output = req.Output
+	p.SampleInput = req.SampleInput
+	p.SampleOutput = req.SampleOutput
+	p.Hint = req.Hint
+	p.Status = req.Status
+
+	err = db.UpdateProblemById(p)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -209,7 +237,7 @@ func AdminProblemRemove(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	_, err = database.SelectProblemById(pid)
+	_, err = db.SelectProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -220,7 +248,7 @@ func AdminProblemRemove(c *gin.Context) {
 		return
 	}
 
-	err = database.DeleteProblemById(pid)
+	err = db.DeleteProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

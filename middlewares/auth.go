@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"STUOJ/conf"
-	"STUOJ/database/user-query"
+	"STUOJ/db/user-query"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
@@ -156,7 +156,7 @@ func tokenAutoRefresh(c *gin.Context) error {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "获取用户信息失败",
+			Msg:  "token无效，获取用户信息失败",
 			Data: nil,
 		})
 		c.Abort()
@@ -175,7 +175,7 @@ func tokenAutoRefresh(c *gin.Context) error {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "获取用户信息失败",
+			Msg:  "token无效，获取用户信息失败",
 			Data: nil,
 		})
 		c.Abort()
@@ -209,7 +209,7 @@ func getUserRole(c *gin.Context) (model.UserRole, error) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "获取用户信息失败",
+			Msg:  "token无效，获取用户信息失败",
 			Data: nil,
 		})
 		c.Abort()
@@ -221,7 +221,7 @@ func getUserRole(c *gin.Context) (model.UserRole, error) {
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "获取用户信息失败",
+			Msg:  "token无效，获取用户信息失败",
 			Data: nil,
 		})
 		c.Abort()

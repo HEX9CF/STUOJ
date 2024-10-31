@@ -1,6 +1,6 @@
 package model
 
-type TestPoint struct {
+type Testcase struct {
 	Id         uint64 `json:"id,omitempty"`
 	Serial     uint64 `json:"serial,omitempty"`
 	ProblemId  uint64 `json:"problem_id,omitempty"`

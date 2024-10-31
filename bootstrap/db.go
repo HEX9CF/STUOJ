@@ -1,12 +1,12 @@
 package bootstrap
 
 import (
-	"STUOJ/database"
+	"STUOJ/db"
 	"log"
 )
 
 func InitDatabase() {
-	err := database.InitDatabase()
+	err := db.InitDatabase()
 	if err != nil {
 		log.Println("Init database failed!")
 		panic(err)

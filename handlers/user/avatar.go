@@ -1,7 +1,7 @@
 package user
 
 import (
-	user_query "STUOJ/database/user-query"
+	user_query "STUOJ/db/user-query"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"STUOJ/yuki"

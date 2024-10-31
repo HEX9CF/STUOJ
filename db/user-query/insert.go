@@ -1,7 +1,7 @@
 package user_query
 
 import (
-	"STUOJ/database"
+	"STUOJ/db"
 	"STUOJ/model"
 	"html"
 	"log"
@@ -19,7 +19,7 @@ func InsertUser(u model.User) (uint64, error) {
 	}
 
 	sql := "INSERT INTO tbl_user (username, password, email, role, avatar, signature, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-	stmt, err := database.Db.Prepare(sql)
+	stmt, err := db.Mysql.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}
@@ -56,7 +56,7 @@ func InsertUserForRegister(u model.User) (uint64, error) {
 	u.Signature = "这个大佬很懒，什么也没有留下"
 
 	sql := "INSERT INTO tbl_user (username, password, email, avatar, signature, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?)"
-	stmt, err := database.Db.Prepare(sql)
+	stmt, err := db.Mysql.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}

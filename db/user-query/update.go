@@ -1,7 +1,7 @@
 package user_query
 
 import (
-	"STUOJ/database"
+	"STUOJ/db"
 	"STUOJ/model"
 	"html"
 	"log"
@@ -19,7 +19,7 @@ func UpdateUserById(u model.User) error {
 	}
 
 	sql := "UPDATE tbl_user SET username = ?, email = ?, password = ?, avatar = ?, signature = ?, update_time = ? WHERE id = ?"
-	stmt, err := database.Db.Prepare(sql)
+	stmt, err := db.Mysql.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func UpdateUserByIdExceptPassword(u model.User) error {
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 
 	sql := "UPDATE tbl_user SET username = ?, email = ?, signature = ?, update_time = ? WHERE id = ?"
-	stmt, err := database.Db.Prepare(sql)
+	stmt, err := db.Mysql.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func UpdateUserPasswordById(u model.User) error {
 	}
 
 	sql := "UPDATE tbl_user SET password = ?, update_time = ? WHERE id = ?"
-	stmt, err := database.Db.Prepare(sql)
+	stmt, err := db.Mysql.Prepare(sql)
 	if err != nil {
 		return err
 	}

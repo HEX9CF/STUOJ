@@ -1,4 +1,4 @@
-package database
+package db
 
 import (
 	"STUOJ/model"
@@ -9,7 +9,7 @@ import (
 // 查询所有提交记录（不返回源代码）
 func SelectAllSubmissions() ([]model.Submission, error) {
 	sql := "SELECT id, user_id, problem_id, status, score, language_id, length, memory, time, create_time, update_time FROM tbl_submission"
-	rows, err := Db.Query(sql)
+	rows, err := Mysql.Query(sql)
 	log.Println(sql)
 	if err != nil {
 		return nil, err
@@ -46,13 +46,13 @@ func SelectAllSubmissions() ([]model.Submission, error) {
 
 // 根据ID查询提交记录
 func SelectSubmissionById(id uint64) (model.Submission, error) {
-	var submission model.Submission
+	var s model.Submission
 	var createTimeStr, updateTimeStr string
 
-	submission.Id = id
+	s.Id = id
 
 	sql := "SELECT user_id, problem_id, status, score, language_id, length, memory, time, source_code, create_time, update_time FROM tbl_submission WHERE id = ? LIMIT 1"
-	err := Db.QueryRow(sql, id).Scan(&submission.UserId, &submission.ProblemId, &submission.Status, &submission.Score, &submission.LanguageId, &submission.Length, &submission.Memory, &submission.Time, &submission.SourceCode, &createTimeStr, &updateTimeStr)
+	err := Mysql.QueryRow(sql, id).Scan(&s.UserId, &s.ProblemId, &s.Status, &s.Score, &s.LanguageId, &s.Length, &s.Memory, &s.Time, &s.SourceCode, &createTimeStr, &updateTimeStr)
 	log.Println(sql, id)
 	if err != nil {
 		return model.Submission{}, err
@@ -60,19 +60,19 @@ func SelectSubmissionById(id uint64) (model.Submission, error) {
 
 	// 时间格式转换
 	timeLayout := "2006-01-02 15:04:05"
-	submission.CreateTime, err = time.Parse(timeLayout, createTimeStr)
-	submission.UpdateTime, err = time.Parse(timeLayout, updateTimeStr)
+	s.CreateTime, err = time.Parse(timeLayout, createTimeStr)
+	s.UpdateTime, err = time.Parse(timeLayout, updateTimeStr)
 	if err != nil {
 		return model.Submission{}, err
 	}
 
-	return submission, nil
+	return s, nil
 }
 
 // 根据用户ID查询提交记录（不返回源代码）
 func SelectSubmissionsByUserId(user_id uint64) ([]model.Submission, error) {
 	sql := "SELECT id, problem_id, status, score, language_id, length, memory, time, create_time, update_time FROM tbl_submission WHERE user_id = ?"
-	rows, err := Db.Query(sql, user_id)
+	rows, err := Mysql.Query(sql, user_id)
 	log.Println(sql, user_id)
 	if err != nil {
 		return nil, err
@@ -112,7 +112,7 @@ func SelectSubmissionsByUserId(user_id uint64) ([]model.Submission, error) {
 // 根据题目ID查询提交记录（不返回源代码）
 func SelectSubmissionsByProblemId(problem_id uint64) ([]model.Submission, error) {
 	sql := "SELECT id, user_id, status, score, language_id, length, memory, time, create_time, update_time FROM tbl_submission WHERE problem_id = ?"
-	rows, err := Db.Query(sql, problem_id)
+	rows, err := Mysql.Query(sql, problem_id)
 	log.Println(sql, problem_id)
 	if err != nil {
 		return nil, err
@@ -152,7 +152,7 @@ func SelectSubmissionsByProblemId(problem_id uint64) ([]model.Submission, error)
 // 插入提交记录
 func InsertSubmission(s model.Submission) (uint64, error) {
 	sql := "INSERT INTO tbl_submission (user_id, problem_id, status, score, language_id, length, memory, time, source_code, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-	stmt, err := Db.Prepare(sql)
+	stmt, err := Mysql.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}
@@ -178,7 +178,7 @@ func InsertSubmission(s model.Submission) (uint64, error) {
 // 根据ID删除提交记录
 func DeleteSubmissionById(id uint64) error {
 	sql := "DELETE FROM tbl_submission WHERE id = ?"
-	stmt, err := Db.Prepare(sql)
+	stmt, err := Mysql.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -195,7 +195,7 @@ func DeleteSubmissionById(id uint64) error {
 // 更新提交记录
 func UpdateSubmissionById(s model.Submission) error {
 	sql := "UPDATE tbl_submission SET user_id = ?, problem_id = ?, status = ?, score = ?, language_id = ?, length = ?, memory = ?, time = ?, source_code = ?, update_time = ? WHERE id = ?"
-	stmt, err := Db.Prepare(sql)
+	stmt, err := Mysql.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -205,6 +205,25 @@ func UpdateSubmissionById(s model.Submission) error {
 	updateTime := time.Now().Format("2006-01-02 15:04:05")
 	_, err = stmt.Exec(s.UserId, s.ProblemId, s.Status, s.Score, s.LanguageId, s.Length, s.Memory, s.Time, s.SourceCode, updateTime, s.Id)
 	log.Println(sql, s.UserId, s.ProblemId, s.Status, s.Score, s.LanguageId, s.Length, s.Memory, s.Time, s.SourceCode, updateTime, s.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// 根据ID更新提交记录状态更新时间
+func UpdateSubmissionUpdateTimeById(id uint64) error {
+	sql := "UPDATE tbl_submission SET update_time = ? WHERE id = ?"
+	stmt, err := Mysql.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	// 获取当前时间
+	updateTime := time.Now().Format("2006-01-02 15:04:05")
+	_, err = stmt.Exec(updateTime, id)
+	log.Println(sql, updateTime, id)
 	if err != nil {
 		return err
 	}

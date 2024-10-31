@@ -7,9 +7,8 @@ import (
 	"STUOJ/handlers/user"
 	"STUOJ/middlewares"
 	"STUOJ/model"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func InitRoute() error {
@@ -108,7 +107,6 @@ func InitRecordRoute() {
 		recordPublicRoute.GET("/:id", RecordInfo)
 		recordPublicRoute.GET("/user/:id", RecordListOfUser)
 		recordPublicRoute.GET("/problem/:id", RecordListOfProblem)
-		recordPublicRoute.GET("/point/problem/:id", RecordPointListOfProblem)
 	}
 }
 
@@ -130,10 +128,18 @@ func InitAdminRoute() {
 		adminPrivateRoute.PUT("/problem", admin.AdminProblemModify)
 		adminPrivateRoute.DELETE("/problem/:id", admin.AdminProblemRemove)
 
-		//adminPrivateRoute.GET("/record", AdminRecord)
+		adminPrivateRoute.GET("/testcase/:id", admin.AdminTestcaseInfo)
+		adminPrivateRoute.POST("/testcase", admin.AdminTestcaseAdd)
+		adminPrivateRoute.PUT("/testcase", admin.AdminTestcaseModify)
+		adminPrivateRoute.DELETE("/testcase/:id", admin.AdminTestcaseRemove)
 
-		//adminPrivateRoute.GET("/point", AdminPoint)
+		adminPrivateRoute.GET("/record", admin.AdminRecordList)
+		adminPrivateRoute.GET("/record/:id", admin.AdminRecordInfo)
+		adminPrivateRoute.DELETE("/record/:id", admin.AdminRecordRemove)
 
-		//adminPrivateRoute.GET("/system", AdminSystem)
+		adminPrivateRoute.GET("/config", admin.AdminConfigList)
+		//adminPrivateRoute.PUT("/config", admin.AdminConfigModify)
+
+		adminPrivateRoute.GET("/statistics", admin.AdminStatisticsList)
 	}
 }

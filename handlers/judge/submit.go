@@ -1,7 +1,7 @@
 package judge
 
 import (
-	"STUOJ/database"
+	"STUOJ/db"
 	"STUOJ/judge"
 	"STUOJ/model"
 	"STUOJ/utils"
@@ -60,7 +60,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 插入提交
-	submission.Id, err = database.InsertSubmission(submission)
+	submission.Id, err = db.InsertSubmission(submission)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -72,7 +72,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 获取题目信息
-	problem, err := database.SelectProblemById(req.ProblemId)
+	problem, err := db.SelectProblemById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -84,12 +84,12 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 获取评测点
-	points, err := database.SelectTestPointsByProblemId(req.ProblemId)
+	testcases, err := db.SelectTestcasesByProblemId(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "获取评测点失败",
+			Msg:  "获取评测点数据失败",
 			Data: nil,
 		})
 		return
@@ -106,12 +106,12 @@ func JudgeSubmit(c *gin.Context) {
 	chJudgement := make(chan model.Judgement)
 
 	// 提交评测点
-	for _, point := range points {
+	for _, testcase := range testcases {
 		// 异步评测
-		go asyncJudgeSubmit(req, problem, submission, point, chJudgement)
+		go asyncJudgeSubmit(req, problem, submission, testcase, chJudgement)
 	}
 
-	for _, _ = range points {
+	for _, _ = range testcases {
 		// 接收评测点结果
 		judgement := <-chJudgement
 		//log.Println(judgement)
@@ -128,20 +128,20 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 更新提交信息
-	err = database.UpdateSubmissionById(submission)
+	err = db.UpdateSubmissionById(submission)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 }
 
-func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission model.Submission, point model.TestPoint, c chan model.Judgement) {
+func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission model.Submission, testcase model.Testcase, c chan model.Judgement) {
 	// 初始化评测点评测对象
 	judgeSubmission := model.JudgeSubmission{
 		SourceCode:     req.SourceCode,
 		LanguageId:     req.LanguageId,
-		Stdin:          point.TestInput,
-		ExpectedOutput: point.TestOutput,
+		Stdin:          testcase.TestInput,
+		ExpectedOutput: testcase.TestOutput,
 		CPUTimeLimit:   problem.TimeLimit,
 		MemoryLimit:    problem.MemoryLimit,
 	}
@@ -168,7 +168,7 @@ func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission mode
 	// 初始化评测点结果对象
 	judgement := model.Judgement{
 		SubmissionId:  submission.Id,
-		TestPointId:   point.Id,
+		TestcaseId:    testcase.Id,
 		Time:          time,
 		Memory:        uint64(result.Memory),
 		Stdout:        result.Stdout,
@@ -180,7 +180,7 @@ func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission mode
 	//log.Println(judgement)
 
 	// 更新评测点结果
-	_, err = database.InsertJudgement(judgement)
+	_, err = db.InsertJudgement(judgement)
 	if err != nil {
 		log.Println(err)
 		return

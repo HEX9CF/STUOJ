@@ -1,4 +1,4 @@
-package handlers
+package admin
 
 import (
 	"STUOJ/db"
@@ -10,7 +10,7 @@ import (
 )
 
 // 获取提交记录信息（提交信息+评测结果）
-func RecordInfo(c *gin.Context) {
+func AdminRecordInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -60,7 +60,7 @@ func RecordInfo(c *gin.Context) {
 }
 
 // 获取提交记录列表
-func RecordList(c *gin.Context) {
+func AdminRecordList(c *gin.Context) {
 	submissions, err := db.SelectAllSubmissions()
 	if err != nil || submissions == nil {
 		if err != nil {
@@ -81,8 +81,8 @@ func RecordList(c *gin.Context) {
 	})
 }
 
-// 获取题目的提交记录列表
-func RecordListOfProblem(c *gin.Context) {
+// 删除提交记录（提交信息+评测结果）
+func AdminRecordRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -94,46 +94,37 @@ func RecordListOfProblem(c *gin.Context) {
 		return
 	}
 
-	pid := uint64(id)
-	submissions, err := db.SelectSubmissionsByProblemId(pid)
+	sid := uint64(id)
+	_, err = db.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "获取提交记录信息失败",
-			Data: nil,
-		})
-		return
-	}
-	//log.Println(submissions)
-
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: submissions,
-	})
-}
-
-// 获取用户的提交记录列表
-func RecordListOfUser(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
+			Msg:  "删除失败，提交记录不存在",
 			Data: nil,
 		})
 		return
 	}
 
-	uid := uint64(id)
-	submisssions, err := db.SelectSubmissionsByUserId(uid)
+	// 删除提交信息
+	err = db.DeleteSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "获取提交记录信息失败",
+			Msg:  "删除提交信息失败",
+			Data: nil,
+		})
+		return
+	}
+
+	// 删除评测结果
+	err = db.DeleteJudgementBySubmissionId(sid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "删除评测结果失败",
 			Data: nil,
 		})
 		return
@@ -141,7 +132,7 @@ func RecordListOfUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, model.Response{
 		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: submisssions,
+		Msg:  "删除成功",
+		Data: nil,
 	})
 }
