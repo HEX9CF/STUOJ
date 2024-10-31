@@ -178,22 +178,32 @@ func AdminProblemModify(c *gin.Context) {
 		return
 	}
 
-	// 初始化题目
-	p := model.Problem{
-		Id:           req.Id,
-		Title:        req.Title,
-		Source:       req.Source,
-		Difficulty:   req.Difficulty,
-		TimeLimit:    req.TimeLimit,
-		MemoryLimit:  req.MemoryLimit,
-		Description:  req.Description,
-		Input:        req.Input,
-		Output:       req.Output,
-		SampleInput:  req.SampleInput,
-		SampleOutput: req.SampleOutput,
-		Hint:         req.Hint,
-		Status:       req.Status,
+	// 读取题目
+	p, err := db.SelectProblemById(req.Id)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "修改失败，题目不存在",
+			Data: nil,
+		})
+		return
 	}
+
+	// 修改题目
+	p.Title = req.Title
+	p.Source = req.Source
+	p.Difficulty = req.Difficulty
+	p.TimeLimit = req.TimeLimit
+	p.MemoryLimit = req.MemoryLimit
+	p.Description = req.Description
+	p.Input = req.Input
+	p.Output = req.Output
+	p.SampleInput = req.SampleInput
+	p.SampleOutput = req.SampleOutput
+	p.Hint = req.Hint
+	p.Status = req.Status
+
 	err = db.UpdateProblemById(p)
 	if err != nil {
 		log.Println(err)
