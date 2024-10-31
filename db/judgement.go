@@ -25,6 +25,12 @@ func InsertJudgement(s model.Judgement) (uint64, error) {
 		return 0, err
 	}
 
+	// 更新提交记录更新时间
+	err = UpdateSubmissionUpdateTimeById(s.SubmissionId)
+	if err != nil {
+		return uint64(id), err
+	}
+
 	return uint64(id), nil
 }
 

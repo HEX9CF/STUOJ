@@ -211,3 +211,22 @@ func UpdateSubmissionById(s model.Submission) error {
 
 	return nil
 }
+
+// 根据ID更新提交记录状态更新时间
+func UpdateSubmissionUpdateTimeById(id uint64) error {
+	sql := "UPDATE tbl_submission SET update_time = ? WHERE id = ?"
+	stmt, err := Mysql.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	// 获取当前时间
+	updateTime := time.Now().Format("2006-01-02 15:04:05")
+	_, err = stmt.Exec(updateTime, id)
+	log.Println(sql, updateTime, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
