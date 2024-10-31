@@ -8,13 +8,13 @@ import (
 
 // 根据ID查询题目
 func SelectProblemById(id uint64) (model.Problem, error) {
-	var problem model.Problem
+	var p model.Problem
 	var createTimeStr, updateTimeStr string
 
-	problem.Id = id
+	p.Id = id
 
 	sql := "SELECT title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, status, create_time, update_time FROM tbl_problem WHERE id = ? LIMIT 1"
-	err := Mysql.QueryRow(sql, id).Scan(&problem.Title, &problem.Source, &problem.Difficulty, &problem.TimeLimit, &problem.MemoryLimit, &problem.Description, &problem.Input, &problem.Output, &problem.SampleInput, &problem.SampleOutput, &problem.Hint, &problem.Status, &createTimeStr, &updateTimeStr)
+	err := Mysql.QueryRow(sql, id).Scan(&p.Title, &p.Source, &p.Difficulty, &p.TimeLimit, &p.MemoryLimit, &p.Description, &p.Input, &p.Output, &p.SampleInput, &p.SampleOutput, &p.Hint, &p.Status, &createTimeStr, &updateTimeStr)
 	log.Println(sql, id)
 	if err != nil {
 		return model.Problem{}, err
@@ -22,16 +22,16 @@ func SelectProblemById(id uint64) (model.Problem, error) {
 
 	// 时间格式转换
 	timeLayout := "2006-01-02 15:04:05"
-	problem.CreateTime, err = time.Parse(timeLayout, createTimeStr)
+	p.CreateTime, err = time.Parse(timeLayout, createTimeStr)
 	if err != nil {
 		return model.Problem{}, err
 	}
-	problem.UpdateTime, err = time.Parse(timeLayout, updateTimeStr)
+	p.UpdateTime, err = time.Parse(timeLayout, updateTimeStr)
 	if err != nil {
 		return model.Problem{}, err
 	}
 
-	return problem, nil
+	return p, nil
 }
 
 // 查询所有题目
@@ -134,7 +134,7 @@ func DeleteProblemById(id uint64) error {
 	return nil
 }
 
-// 更新题目更新时间
+// 根据ID更新提交记录状态更新时间
 func UpdateProblemUpdateTimeById(id uint64) error {
 	sql := "UPDATE tbl_problem SET update_time = ? WHERE id = ?"
 	stmt, err := Mysql.Prepare(sql)

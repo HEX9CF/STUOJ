@@ -46,13 +46,13 @@ func SelectAllSubmissions() ([]model.Submission, error) {
 
 // 根据ID查询提交记录
 func SelectSubmissionById(id uint64) (model.Submission, error) {
-	var submission model.Submission
+	var s model.Submission
 	var createTimeStr, updateTimeStr string
 
-	submission.Id = id
+	s.Id = id
 
 	sql := "SELECT user_id, problem_id, status, score, language_id, length, memory, time, source_code, create_time, update_time FROM tbl_submission WHERE id = ? LIMIT 1"
-	err := Mysql.QueryRow(sql, id).Scan(&submission.UserId, &submission.ProblemId, &submission.Status, &submission.Score, &submission.LanguageId, &submission.Length, &submission.Memory, &submission.Time, &submission.SourceCode, &createTimeStr, &updateTimeStr)
+	err := Mysql.QueryRow(sql, id).Scan(&s.UserId, &s.ProblemId, &s.Status, &s.Score, &s.LanguageId, &s.Length, &s.Memory, &s.Time, &s.SourceCode, &createTimeStr, &updateTimeStr)
 	log.Println(sql, id)
 	if err != nil {
 		return model.Submission{}, err
@@ -60,13 +60,13 @@ func SelectSubmissionById(id uint64) (model.Submission, error) {
 
 	// 时间格式转换
 	timeLayout := "2006-01-02 15:04:05"
-	submission.CreateTime, err = time.Parse(timeLayout, createTimeStr)
-	submission.UpdateTime, err = time.Parse(timeLayout, updateTimeStr)
+	s.CreateTime, err = time.Parse(timeLayout, createTimeStr)
+	s.UpdateTime, err = time.Parse(timeLayout, updateTimeStr)
 	if err != nil {
 		return model.Submission{}, err
 	}
 
-	return submission, nil
+	return s, nil
 }
 
 // 根据用户ID查询提交记录（不返回源代码）

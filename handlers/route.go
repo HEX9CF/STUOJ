@@ -7,9 +7,8 @@ import (
 	"STUOJ/handlers/user"
 	"STUOJ/middlewares"
 	"STUOJ/model"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 func InitRoute() error {
@@ -129,10 +128,13 @@ func InitAdminRoute() {
 		adminPrivateRoute.PUT("/problem", admin.AdminProblemModify)
 		adminPrivateRoute.DELETE("/problem/:id", admin.AdminProblemRemove)
 
+		adminPrivateRoute.GET("/testcase/:id", admin.AdminTestcaseInfo)
+		adminPrivateRoute.POST("/testcase", admin.AdminTestcaseAdd)
+		adminPrivateRoute.PUT("/testcase", admin.AdminTestcaseModify)
+		adminPrivateRoute.DELETE("/testcase/:id", admin.AdminTestcaseRemove)
+
 		adminPrivateRoute.GET("/record", admin.AdminRecordList)
 		adminPrivateRoute.GET("/record/:id", admin.AdminRecordInfo)
-		//adminPrivateRoute.POST("/record", admin.AdminRecordAdd)
-		//adminPrivateRoute.PUT("/record", admin.AdminRecordModify)
 		adminPrivateRoute.DELETE("/record/:id", admin.AdminRecordRemove)
 
 		//adminPrivateRoute.GET("/system", AdminSystem)
