@@ -7,11 +7,11 @@ import (
 )
 
 type Config struct {
-	Datebase  DatabaseConf `yaml:"database"`
-	Judge     JudgeConf    `yaml:"judge"`
-	YukiImage YukiConf     `yaml:"yuki-image"`
-	Server    ServerConf   `yaml:"server"`
-	Token     TokenConf    `yaml:"token"`
+	Datebase  DatabaseConf `yaml:"database" json:"database"`
+	Judge     JudgeConf    `yaml:"judge" json:"judge"`
+	YukiImage YukiConf     `yaml:"yuki-image" json:"yuki_image"`
+	Server    ServerConf   `yaml:"server" json:"server"`
+	Token     TokenConf    `yaml:"token" json:"token"`
 }
 
 // Config 初始化
