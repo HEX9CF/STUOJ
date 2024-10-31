@@ -140,6 +140,6 @@ func InitAdminRoute() {
 		adminPrivateRoute.GET("/config", admin.AdminConfigList)
 		//adminPrivateRoute.PUT("/config", admin.AdminConfigModify)
 
-		//adminPrivateRoute.GET("/statistics", admin.AdminStatistics)
+		adminPrivateRoute.GET("/statistics", admin.AdminStatisticsList)
 	}
 }
