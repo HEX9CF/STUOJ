@@ -139,16 +139,25 @@ func AdminUserModify(c *gin.Context) {
 		return
 	}
 
-	// 初始化用户
-	u := model.User{
-		Id:        req.Id,
-		Username:  req.Username,
-		Password:  req.Password,
-		Email:     req.Email,
-		Role:      model.UserRoleUser,
-		Avatar:    req.Avatar,
-		Signature: req.Signature,
+	// 读取用户
+	u, err := user_query.SelectUserById(req.Id)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "修改失败，用户不存在",
+			Data: nil,
+		})
+		return
 	}
+
+	// 修改用户
+	u.Username = req.Username
+	u.Password = req.Password
+	u.Email = req.Email
+	u.Avatar = req.Avatar
+	u.Signature = req.Signature
+
 	err = user_query.UpdateUserById(u)
 	if err != nil {
 		log.Println(err)
