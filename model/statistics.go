@@ -1,5 +1,6 @@
 package model
 
 type Statistics struct {
-	Judge JudgeStatistics `json:"judge"`
+	JudgeStatistics JudgeStatistics `json:"judge_statistics"`
+	JudgeSystemInfo JudgeSystemInfo `json:"judge_system_info"`
 }
