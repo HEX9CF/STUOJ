@@ -43,12 +43,23 @@ func UserModify(c *gin.Context) {
 		return
 	}
 
-	// 初始化用户
-	u := model.User{
-		Id:       id,
-		Username: req.Username,
-		Email:    req.Email,
+	// 读取用户
+	u, err := user_query.SelectUserById(id)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "修改失败，用户不存在",
+			Data: nil,
+		})
+		return
 	}
+
+	// 修改用户
+	u.Username = req.Username
+	u.Email = req.Email
+	u.Signature = req.Signature
+
 	err = user_query.UpdateUserByIdExceptPassword(u)
 	if err != nil {
 		log.Println(err)
@@ -100,11 +111,21 @@ func UserChangePassword(c *gin.Context) {
 		return
 	}
 
-	// 初始化用户
-	u := model.User{
-		Id:       id,
-		Password: req.Password,
+	// 读取用户
+	u, err := user_query.SelectUserById(id)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "修改失败，用户不存在",
+			Data: nil,
+		})
+		return
 	}
+
+	// 修改用户密码
+	u.Password = req.Password
+
 	err = user_query.UpdateUserPasswordById(u)
 	if err != nil {
 		log.Println(err)
