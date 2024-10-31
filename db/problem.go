@@ -133,3 +133,22 @@ func DeleteProblemById(id uint64) error {
 
 	return nil
 }
+
+// 更新题目更新时间
+func UpdateProblemUpdateTimeById(id uint64) error {
+	sql := "UPDATE tbl_problem SET update_time = ? WHERE id = ?"
+	stmt, err := Mysql.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	// 获取当前时间
+	updateTime := time.Now().Format("2006-01-02 15:04:05")
+	_, err = stmt.Exec(updateTime, id)
+	log.Println(sql, updateTime, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
