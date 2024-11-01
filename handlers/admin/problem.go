@@ -3,6 +3,7 @@ package admin
 import (
 	"STUOJ/db"
 	"STUOJ/model"
+	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -138,6 +139,27 @@ func AdminProblemAdd(c *gin.Context) {
 		return
 	}
 
+	// 添加题目历史记录
+	uid, err := utils.GetTokenUid(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "修改成功，但添加题目历史记录失败",
+			Data: p.Id,
+		})
+		return
+	}
+	_, err = db.InsertProblemHistory(p, uid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "添加成功，但添加题目历史记录失败",
+			Data: p.Id,
+		})
+	}
+
 	// 返回结果
 	c.JSON(http.StatusOK, model.Response{
 		Code: model.ResponseCodeOk,
@@ -213,6 +235,27 @@ func AdminProblemModify(c *gin.Context) {
 			Data: nil,
 		})
 		return
+	}
+
+	// 添加题目历史记录
+	uid, err := utils.GetTokenUid(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "修改成功，但添加题目历史记录失败",
+			Data: p.Id,
+		})
+		return
+	}
+	_, err = db.InsertProblemHistory(p, uid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "修改成功，但添加题目历史记录失败",
+			Data: p.Id,
+		})
 	}
 
 	// 返回结果
