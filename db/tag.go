@@ -7,7 +7,7 @@ import (
 
 // 插入标签
 func InsertTag(t model.Tag) (uint64, error) {
-	sql := "INSERT INTO tbl_tag (id, name) VALUES (?, ?)"
+	sql := "INSERT INTO tbl_tag (name) VALUES (?)"
 	stmt, err := Mysql.Prepare(sql)
 	if err != nil {
 		return 0, err

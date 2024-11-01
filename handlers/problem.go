@@ -62,3 +62,25 @@ func ProblemList(c *gin.Context) {
 		Data: problems,
 	})
 }
+
+// 获取标签列表
+func TagList(c *gin.Context) {
+	tags, err := db.SelectAllTags()
+	if err != nil || tags == nil {
+		if err != nil {
+			log.Println(err)
+		}
+		c.JSON(http.StatusOK, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取失败",
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "OK",
+		Data: tags,
+	})
+}

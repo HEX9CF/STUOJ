@@ -9,27 +9,16 @@ import (
 	"strconv"
 )
 
-// 获取评测点数据
-func AdminTestcaseInfo(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
+// 获取标签列表
+func AdminTagList(c *gin.Context) {
+	tags, err := db.SelectAllTags()
+	if err != nil || tags == nil {
+		if err != nil {
+			log.Println(err)
+		}
+		c.JSON(http.StatusOK, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
-		return
-	}
-
-	// 获取评测点数据
-	tid := uint64(id)
-	testcase, err := db.SelectTestcaseById(tid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取评测点数据失败",
+			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
@@ -38,20 +27,17 @@ func AdminTestcaseInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, model.Response{
 		Code: model.ResponseCodeOk,
 		Msg:  "OK",
-		Data: testcase,
+		Data: tags,
 	})
 }
 
-// 添加评测点数据
-type ReqTestcaseAdd struct {
-	Serial     uint64 `json:"serial,omitempty" binding:"required"`
-	ProblemId  uint64 `json:"problem_id,omitempty" binding:"required"`
-	TestInput  string `json:"test_input,omitempty" binding:"required"`
-	TestOutput string `json:"test_output,omitempty" binding:"required"`
+// 添加标签
+type ReqTagAdd struct {
+	Name string `json:"name,omitempty" binding:"required"`
 }
 
-func AdminTestcaseAdd(c *gin.Context) {
-	var req ReqTestcaseAdd
+func AdminTagAdd(c *gin.Context) {
+	var req ReqTagAdd
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
@@ -65,19 +51,16 @@ func AdminTestcaseAdd(c *gin.Context) {
 		return
 	}
 
-	// 初始化题目
-	t := model.Testcase{
-		Serial:     req.Serial,
-		ProblemId:  req.ProblemId,
-		TestInput:  req.TestInput,
-		TestOutput: req.TestOutput,
+	// 初始化标签
+	t := model.Tag{
+		Name: req.Name,
 	}
-	t.Id, err = db.InsertTestcase(t)
+	t.Id, err = db.InsertTag(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "添加失败",
+			Msg:  "添加失败，标签不能重复",
 			Data: nil,
 		})
 		return
@@ -86,22 +69,19 @@ func AdminTestcaseAdd(c *gin.Context) {
 	// 返回结果
 	c.JSON(http.StatusOK, model.Response{
 		Code: model.ResponseCodeOk,
-		Msg:  "添加成功，返回评测点ID",
+		Msg:  "添加成功，返回标签ID",
 		Data: t.Id,
 	})
 }
 
-// 修改评测点数据
-type ReqTestcaseModify struct {
-	Id         uint64 `json:"id,omitempty" binding:"required"`
-	Serial     uint64 `json:"serial,omitempty" binding:"required"`
-	ProblemId  uint64 `json:"problem_id,omitempty" binding:"required"`
-	TestInput  string `json:"test_input,omitempty" binding:"required"`
-	TestOutput string `json:"test_output,omitempty" binding:"required"`
+// 修改标签数据
+type ReqTagModify struct {
+	Id   uint64 `json:"id,omitempty" binding:"required"`
+	Name string `json:"name,omitempty" binding:"required"`
 }
 
-func AdminTestcaseModify(c *gin.Context) {
-	var req ReqTestcaseModify
+func AdminTagModify(c *gin.Context) {
+	var req ReqTagModify
 
 	// 参数绑定
 	err := c.ShouldBindBodyWithJSON(&req)
@@ -115,30 +95,27 @@ func AdminTestcaseModify(c *gin.Context) {
 		return
 	}
 
-	// 读取评测点数据
-	t, err := db.SelectTestcaseById(req.Id)
+	// 读取标签
+	t, err := db.SelectTagById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "修改失败，评测点不存在",
+			Msg:  "修改失败，标签不存在",
 			Data: nil,
 		})
 		return
 	}
 
-	// 修改评测点数据
-	t.Serial = req.Serial
-	t.ProblemId = req.ProblemId
-	t.TestInput = req.TestInput
-	t.TestOutput = req.TestOutput
+	// 修改标签
+	t.Name = req.Name
 
-	err = db.UpdateTestcaseById(t)
+	err = db.UpdateTagById(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "修改失败",
+			Msg:  "修改失败，标签不能重复",
 			Data: nil,
 		})
 		return
@@ -152,8 +129,8 @@ func AdminTestcaseModify(c *gin.Context) {
 	})
 }
 
-// 删除评测点数据
-func AdminTestcaseRemove(c *gin.Context) {
+// 删除标签
+func AdminTagRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -166,18 +143,18 @@ func AdminTestcaseRemove(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	_, err = db.SelectTestcaseById(tid)
+	_, err = db.SelectTagById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "删除失败，题目不存在",
+			Msg:  "删除失败，标签不存在",
 			Data: nil,
 		})
 		return
 	}
 
-	err = db.DeleteTestcaseById(tid)
+	err = db.DeleteTagById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

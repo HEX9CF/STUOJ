@@ -83,6 +83,8 @@ func InitProblemRoute() {
 	{
 		problemPublicRoute.GET("/", ProblemList)
 		problemPublicRoute.GET("/:id", ProblemInfo)
+		problemPublicRoute.GET("/tag", TagList)
+		//problemPublicRoute.GET("/tag/:id", ProblemTagList)
 	}
 }
 
@@ -133,6 +135,11 @@ func InitAdminRoute() {
 		adminPrivateRoute.POST("/testcase", admin.AdminTestcaseAdd)
 		adminPrivateRoute.PUT("/testcase", admin.AdminTestcaseModify)
 		adminPrivateRoute.DELETE("/testcase/:id", admin.AdminTestcaseRemove)
+
+		adminPrivateRoute.GET("/tag", admin.AdminTagList)
+		adminPrivateRoute.POST("/tag", admin.AdminTagAdd)
+		adminPrivateRoute.PUT("/tag", admin.AdminTagModify)
+		adminPrivateRoute.DELETE("/tag/:id", admin.AdminTagRemove)
 
 		adminPrivateRoute.GET("/record", admin.AdminRecordList)
 		adminPrivateRoute.GET("/record/:id", admin.AdminRecordInfo)
