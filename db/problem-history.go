@@ -8,7 +8,7 @@ import (
 
 // 根据题目ID查询题目历史记录
 func SelectProblemHistoriesByProblemId(pid uint64) ([]model.ProblemHistory, error) {
-	sql := "SELECT id, user_id, problem_id, title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, create_time FROM tbl_problem_history WHERE problem_id = ?"
+	sql := "SELECT id, user_id, problem_id, title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, operation, create_time FROM tbl_problem_history WHERE problem_id = ?"
 	rows, err := Mysql.Query(sql)
 	log.Println(sql)
 	if err != nil {
@@ -22,7 +22,7 @@ func SelectProblemHistoriesByProblemId(pid uint64) ([]model.ProblemHistory, erro
 		var ph model.ProblemHistory
 		var createTimeStr string
 
-		err := rows.Scan(&ph.Id, &ph.UserId, &ph.ProblemId, &ph.Title, &ph.Source, &ph.Difficulty, &ph.TimeLimit, &ph.MemoryLimit, &ph.Description, &ph.Input, &ph.Output, &ph.SampleInput, &ph.SampleOutput, &ph.Hint, &createTimeStr)
+		err := rows.Scan(&ph.Id, &ph.UserId, &ph.ProblemId, &ph.Title, &ph.Source, &ph.Difficulty, &ph.TimeLimit, &ph.MemoryLimit, &ph.Description, &ph.Input, &ph.Output, &ph.SampleInput, &ph.SampleOutput, &ph.Hint, &ph.Operation, &createTimeStr)
 		if err != nil {
 			return nil, err
 		}
@@ -41,8 +41,8 @@ func SelectProblemHistoriesByProblemId(pid uint64) ([]model.ProblemHistory, erro
 }
 
 // 插入题目历史记录
-func InsertProblemHistory(p model.Problem, uid uint64) (uint64, error) {
-	sql := "INSERT INTO tbl_problem_history (user_id, problem_id, title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+func InsertProblemHistory(p model.Problem, uid uint64, op model.Operation) (uint64, error) {
+	sql := "INSERT INTO tbl_problem_history (user_id, problem_id, title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, operation, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	stmt, err := Mysql.Prepare(sql)
 	if err != nil {
 		return 0, err
@@ -50,8 +50,8 @@ func InsertProblemHistory(p model.Problem, uid uint64) (uint64, error) {
 	defer stmt.Close()
 	// 获取当前时间
 	createTime := time.Now().Format("2006-01-02 15:04:05")
-	result, err := stmt.Exec(uid, p.Id, p.Title, p.Source, p.Difficulty, p.TimeLimit, p.MemoryLimit, p.Description, p.Input, p.Output, p.SampleInput, p.SampleOutput, p.Hint, createTime)
-	log.Println(sql, uid, p.Id, p.Title, p.Source, p.Difficulty, p.TimeLimit, p.MemoryLimit, p.Description, p.Input, p.Output, p.SampleInput, p.SampleOutput, p.Hint, createTime)
+	result, err := stmt.Exec(uid, p.Id, p.Title, p.Source, p.Difficulty, p.TimeLimit, p.MemoryLimit, p.Description, p.Input, p.Output, p.SampleInput, p.SampleOutput, p.Hint, op, createTime)
+	log.Println(sql, uid, p.Id, p.Title, p.Source, p.Difficulty, p.TimeLimit, p.MemoryLimit, p.Description, p.Input, p.Output, p.SampleInput, p.SampleOutput, p.Hint, op, createTime)
 	if err != nil {
 		return 0, err
 	}

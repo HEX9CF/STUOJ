@@ -79,22 +79,3 @@ type Problem struct {
 	CreateTime   time.Time         `json:"create_time,omitempty"`
 	UpdateTime   time.Time         `json:"update_time,omitempty"`
 }
-
-// 题目历史记录
-type ProblemHistory struct {
-	Id           uint64            `json:"id,omitempty"`
-	UserId       uint64            `json:"user_id,omitempty"`
-	ProblemId    uint64            `json:"problem_id,omitempty"`
-	Title        string            `json:"title,omitempty"`
-	Source       string            `json:"source,omitempty"`
-	Difficulty   ProblemDifficulty `json:"difficulty,omitempty"`
-	TimeLimit    float64           `json:"time_limit,omitempty"`
-	MemoryLimit  uint64            `json:"memory_limit,omitempty"`
-	Description  string            `json:"description,omitempty"`
-	Input        string            `json:"input,omitempty"`
-	Output       string            `json:"output,omitempty"`
-	SampleInput  string            `json:"sample_input,omitempty"`
-	SampleOutput string            `json:"sample_output,omitempty"`
-	Hint         string            `json:"hint,omitempty"`
-	CreateTime   time.Time         `json:"create_time,omitempty"`
-}
