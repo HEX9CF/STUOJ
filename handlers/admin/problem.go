@@ -364,3 +364,82 @@ func AdminProblemHistoryList(c *gin.Context) {
 		Data: phs,
 	})
 }
+
+// 添加标签到题目
+type ReqProblemAddTag struct {
+	ProblemId uint64 `json:"problem_id,omitempty" binding:"required"`
+	TagId     uint64 `json:"tag_id,omitempty" binding:"required"`
+}
+
+func AdminProblemAddTag(c *gin.Context) {
+	var req ReqProblemAddTag
+
+	// 参数绑定
+	err := c.ShouldBindBodyWithJSON(&req)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	// 读取题目
+	_, err = db.SelectProblemById(req.ProblemId)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "添加失败，题目不存在",
+			Data: nil,
+		})
+		return
+	}
+
+	// 读取标签
+	_, err = db.SelectTagById(req.TagId)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "添加失败，标签不存在",
+			Data: nil,
+		})
+		return
+	}
+
+	// 读取题目标签关系
+	count, err := db.CountProblemTagByProblemIdAndTagId(req.ProblemId, req.TagId)
+	if err != nil || count > 0 {
+		if err != nil {
+			log.Println(err)
+		}
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "添加失败，该题目已存在该标签",
+			Data: nil,
+		})
+		return
+	}
+
+	// 初始化标签
+	_, err = db.InsertProblemTag(req.ProblemId, req.TagId)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "添加失败",
+			Data: nil,
+		})
+		return
+	}
+
+	// 返回结果
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "添加成功",
+		Data: nil,
+	})
+}
