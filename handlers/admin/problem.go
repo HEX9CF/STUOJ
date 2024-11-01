@@ -150,7 +150,7 @@ func AdminProblemAdd(c *gin.Context) {
 		})
 		return
 	}
-	_, err = db.InsertProblemHistory(p, uid)
+	_, err = db.InsertProblemHistory(p, uid, model.OperationAdd)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -248,7 +248,7 @@ func AdminProblemModify(c *gin.Context) {
 		})
 		return
 	}
-	_, err = db.InsertProblemHistory(p, uid)
+	_, err = db.InsertProblemHistory(p, uid, model.OperationUpdate)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -302,9 +302,65 @@ func AdminProblemRemove(c *gin.Context) {
 		return
 	}
 
+	// 添加题目历史记录
+	uid, err := utils.GetTokenUid(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "删除成功，但添加题目历史记录失败",
+			Data: nil,
+		})
+		return
+	}
+	p := model.Problem{
+		Id: pid,
+	}
+	_, err = db.InsertProblemHistory(p, uid, model.OperationDelete)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "删除成功，但添加题目历史记录失败",
+			Data: nil,
+		})
+	}
+
 	c.JSON(http.StatusOK, model.Response{
 		Code: model.ResponseCodeOk,
 		Msg:  "删除成功",
 		Data: nil,
+	})
+}
+
+func AdminProblemHistoryList(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	// 获取题目历史记录
+	pid := uint64(id)
+	phs, err := db.SelectProblemHistoriesByProblemId(pid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取题目历史记录失败",
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "OK",
+		Data: phs,
 	})
 }
