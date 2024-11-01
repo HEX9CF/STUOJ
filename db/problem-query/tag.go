@@ -74,7 +74,7 @@ func DeleteProblemTagByProblemIdAndTagId(pid uint64, tid uint64) error {
 
 func SelectTagsByProblemId(pid uint64) ([]model.Tag, error) {
 	sql := "SELECT id, name FROM tbl_tag WHERE id IN (SELECT tag_id FROM tbl_problem_tag WHERE problem_id = ?)"
-	rows, err := db.Mysql.Query(sql)
+	rows, err := db.Mysql.Query(sql, pid)
 	log.Println(sql)
 	if err != nil {
 		return nil, err
