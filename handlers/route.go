@@ -82,7 +82,9 @@ func InitProblemRoute() {
 	problemPublicRoute := ginServer.Group("/problem")
 	{
 		problemPublicRoute.GET("/", ProblemList)
+		problemPublicRoute.GET("/tag", TagList)
 		problemPublicRoute.GET("/:id", ProblemInfo)
+		problemPublicRoute.GET("/tag/:id", ProblemListByTagId)
 	}
 }
 
@@ -128,11 +130,18 @@ func InitAdminRoute() {
 		adminPrivateRoute.PUT("/problem", admin.AdminProblemModify)
 		adminPrivateRoute.DELETE("/problem/:id", admin.AdminProblemRemove)
 		adminPrivateRoute.GET("/problem/history/:id", admin.AdminProblemHistoryList)
+		adminPrivateRoute.POST("/problem/tag", admin.AdminProblemAddTag)
+		adminPrivateRoute.DELETE("/problem/tag", admin.AdminProblemRemoveTag)
 
 		adminPrivateRoute.GET("/testcase/:id", admin.AdminTestcaseInfo)
 		adminPrivateRoute.POST("/testcase", admin.AdminTestcaseAdd)
 		adminPrivateRoute.PUT("/testcase", admin.AdminTestcaseModify)
 		adminPrivateRoute.DELETE("/testcase/:id", admin.AdminTestcaseRemove)
+
+		adminPrivateRoute.GET("/tag", admin.AdminTagList)
+		adminPrivateRoute.POST("/tag", admin.AdminTagAdd)
+		adminPrivateRoute.PUT("/tag", admin.AdminTagModify)
+		adminPrivateRoute.DELETE("/tag/:id", admin.AdminTagRemove)
 
 		adminPrivateRoute.GET("/record", admin.AdminRecordList)
 		adminPrivateRoute.GET("/record/:id", admin.AdminRecordInfo)
