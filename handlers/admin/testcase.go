@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"STUOJ/db"
+	"STUOJ/db/problem-query"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -24,7 +24,7 @@ func AdminTestcaseInfo(c *gin.Context) {
 
 	// 获取评测点数据
 	tid := uint64(id)
-	testcase, err := db.SelectTestcaseById(tid)
+	testcase, err := problem_query.SelectTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -72,7 +72,7 @@ func AdminTestcaseAdd(c *gin.Context) {
 		TestInput:  req.TestInput,
 		TestOutput: req.TestOutput,
 	}
-	t.Id, err = db.InsertTestcase(t)
+	t.Id, err = problem_query.InsertTestcase(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -116,7 +116,7 @@ func AdminTestcaseModify(c *gin.Context) {
 	}
 
 	// 读取评测点数据
-	t, err := db.SelectTestcaseById(req.Id)
+	t, err := problem_query.SelectTestcaseById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -133,7 +133,7 @@ func AdminTestcaseModify(c *gin.Context) {
 	t.TestInput = req.TestInput
 	t.TestOutput = req.TestOutput
 
-	err = db.UpdateTestcaseById(t)
+	err = problem_query.UpdateTestcaseById(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -166,7 +166,7 @@ func AdminTestcaseRemove(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	_, err = db.SelectTestcaseById(tid)
+	_, err = problem_query.SelectTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -177,7 +177,7 @@ func AdminTestcaseRemove(c *gin.Context) {
 		return
 	}
 
-	err = db.DeleteTestcaseById(tid)
+	err = problem_query.DeleteTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
