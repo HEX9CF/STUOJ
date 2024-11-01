@@ -49,8 +49,21 @@ func AdminProblemInfo(c *gin.Context) {
 		return
 	}
 
+	// 获取题目标签
+	tags, err := problem_query.SelectTagsByProblemId(pid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取题目标签失败",
+			Data: nil,
+		})
+		return
+	}
+
 	problemInfo := model.ProblemInfo{
 		Problem:   problem,
+		Tags:      tags,
 		Testcases: testcases,
 	}
 
