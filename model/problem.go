@@ -80,6 +80,7 @@ type Problem struct {
 	UpdateTime   time.Time         `json:"update_time,omitempty"`
 }
 
+// 题目历史
 type ProblemHistory struct {
 	Id           uint64            `json:"id,omitempty"`
 	UserId       uint64            `json:"user_id,omitempty"`
