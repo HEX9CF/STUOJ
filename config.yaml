@@ -1,6 +1,5 @@
 server:
   port: 14514
-  token: 
 token:
   expire: 864000
   refresh: 432000
