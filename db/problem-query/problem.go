@@ -1,6 +1,7 @@
-package db
+package problem_query
 
 import (
+	"STUOJ/db"
 	"STUOJ/model"
 	"log"
 	"time"
@@ -14,7 +15,7 @@ func SelectProblemById(id uint64) (model.Problem, error) {
 	p.Id = id
 
 	sql := "SELECT title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, status, create_time, update_time FROM tbl_problem WHERE id = ? LIMIT 1"
-	err := Mysql.QueryRow(sql, id).Scan(&p.Title, &p.Source, &p.Difficulty, &p.TimeLimit, &p.MemoryLimit, &p.Description, &p.Input, &p.Output, &p.SampleInput, &p.SampleOutput, &p.Hint, &p.Status, &createTimeStr, &updateTimeStr)
+	err := db.Mysql.QueryRow(sql, id).Scan(&p.Title, &p.Source, &p.Difficulty, &p.TimeLimit, &p.MemoryLimit, &p.Description, &p.Input, &p.Output, &p.SampleInput, &p.SampleOutput, &p.Hint, &p.Status, &createTimeStr, &updateTimeStr)
 	log.Println(sql, id)
 	if err != nil {
 		return model.Problem{}, err
@@ -37,7 +38,7 @@ func SelectProblemById(id uint64) (model.Problem, error) {
 // 查询所有题目
 func SelectAllProblems() ([]model.Problem, error) {
 	sql := "SELECT id, title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, status, create_time, update_time FROM tbl_problem"
-	rows, err := Mysql.Query(sql)
+	rows, err := db.Mysql.Query(sql)
 	log.Println(sql)
 	if err != nil {
 		return nil, err
@@ -75,7 +76,7 @@ func SelectAllProblems() ([]model.Problem, error) {
 // 插入题目
 func InsertProblem(p model.Problem) (uint64, error) {
 	sql := "INSERT INTO tbl_problem (title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, status, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-	stmt, err := Mysql.Prepare(sql)
+	stmt, err := db.Mysql.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}
@@ -101,7 +102,7 @@ func InsertProblem(p model.Problem) (uint64, error) {
 // 根据ID更新题目
 func UpdateProblemById(p model.Problem) error {
 	sql := "UPDATE tbl_problem SET title = ?, source = ?, difficulty = ?, time_limit = ?, memory_limit = ?, description = ?, input = ?, output = ?, sample_input = ?, sample_output = ?, hint = ?, status = ?, update_time = ? WHERE id = ?"
-	stmt, err := Mysql.Prepare(sql)
+	stmt, err := db.Mysql.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -120,7 +121,7 @@ func UpdateProblemById(p model.Problem) error {
 // 根据ID删除题目
 func DeleteProblemById(id uint64) error {
 	sql := "DELETE FROM tbl_problem WHERE id = ?"
-	stmt, err := Mysql.Prepare(sql)
+	stmt, err := db.Mysql.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -137,7 +138,7 @@ func DeleteProblemById(id uint64) error {
 // 根据ID更新提交记录状态更新时间
 func UpdateProblemUpdateTimeById(id uint64) error {
 	sql := "UPDATE tbl_problem SET update_time = ? WHERE id = ?"
-	stmt, err := Mysql.Prepare(sql)
+	stmt, err := db.Mysql.Prepare(sql)
 	if err != nil {
 		return err
 	}

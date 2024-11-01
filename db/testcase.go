@@ -1,6 +1,7 @@
 package db
 
 import (
+	"STUOJ/db/problem-query"
 	"STUOJ/model"
 	"log"
 )
@@ -70,7 +71,7 @@ func InsertTestcase(t model.Testcase) (uint64, error) {
 	}
 
 	// 更新题目更新时间
-	err = UpdateProblemUpdateTimeById(t.ProblemId)
+	err = problem_query.UpdateProblemUpdateTimeById(t.ProblemId)
 	if err != nil {
 		return uint64(id), err
 	}
@@ -93,7 +94,7 @@ func UpdateTestcaseById(t model.Testcase) error {
 	}
 
 	// 更新题目更新时间
-	err = UpdateProblemUpdateTimeById(t.ProblemId)
+	err = problem_query.UpdateProblemUpdateTimeById(t.ProblemId)
 	if err != nil {
 		return err
 	}
@@ -116,7 +117,7 @@ func DeleteTestcaseById(id uint64) error {
 	}
 
 	// 更新题目更新时间
-	err = UpdateProblemUpdateTimeById(id)
+	err = problem_query.UpdateProblemUpdateTimeById(id)
 	if err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package admin
 
 import (
 	"STUOJ/db"
+	"STUOJ/db/problem-query"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,7 @@ func AdminProblemInfo(c *gin.Context) {
 
 	// 获取题目信息
 	pid := uint64(id)
-	problem, err := db.SelectProblemById(pid)
+	problem, err := problem_query.SelectProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -62,7 +63,7 @@ func AdminProblemInfo(c *gin.Context) {
 
 // 获取题目列表
 func AdminProblemList(c *gin.Context) {
-	problems, err := db.SelectAllProblems()
+	problems, err := problem_query.SelectAllProblems()
 	if err != nil || problems == nil {
 		if err != nil {
 			log.Println(err)
@@ -128,7 +129,7 @@ func AdminProblemAdd(c *gin.Context) {
 		Hint:         req.Hint,
 		Status:       req.Status,
 	}
-	p.Id, err = db.InsertProblem(p)
+	p.Id, err = problem_query.InsertProblem(p)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -150,7 +151,7 @@ func AdminProblemAdd(c *gin.Context) {
 		})
 		return
 	}
-	_, err = db.InsertProblemHistory(p, uid, model.OperationAdd)
+	_, err = problem_query.InsertProblemHistory(p, uid, model.OperationAdd)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -201,7 +202,7 @@ func AdminProblemModify(c *gin.Context) {
 	}
 
 	// 读取题目
-	p, err := db.SelectProblemById(req.Id)
+	p, err := problem_query.SelectProblemById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -226,7 +227,7 @@ func AdminProblemModify(c *gin.Context) {
 	p.Hint = req.Hint
 	p.Status = req.Status
 
-	err = db.UpdateProblemById(p)
+	err = problem_query.UpdateProblemById(p)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -248,7 +249,7 @@ func AdminProblemModify(c *gin.Context) {
 		})
 		return
 	}
-	_, err = db.InsertProblemHistory(p, uid, model.OperationUpdate)
+	_, err = problem_query.InsertProblemHistory(p, uid, model.OperationUpdate)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -280,7 +281,7 @@ func AdminProblemRemove(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	_, err = db.SelectProblemById(pid)
+	_, err = problem_query.SelectProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -291,7 +292,7 @@ func AdminProblemRemove(c *gin.Context) {
 		return
 	}
 
-	err = db.DeleteProblemById(pid)
+	err = problem_query.DeleteProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -316,7 +317,7 @@ func AdminProblemRemove(c *gin.Context) {
 	p := model.Problem{
 		Id: pid,
 	}
-	_, err = db.InsertProblemHistory(p, uid, model.OperationDelete)
+	_, err = problem_query.InsertProblemHistory(p, uid, model.OperationDelete)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -347,7 +348,7 @@ func AdminProblemHistoryList(c *gin.Context) {
 
 	// 获取题目历史记录
 	pid := uint64(id)
-	phs, err := db.SelectProblemHistoriesByProblemId(pid)
+	phs, err := problem_query.SelectProblemHistoriesByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -387,7 +388,7 @@ func AdminProblemAddTag(c *gin.Context) {
 	}
 
 	// 读取题目
-	_, err = db.SelectProblemById(req.ProblemId)
+	_, err = problem_query.SelectProblemById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -411,7 +412,7 @@ func AdminProblemAddTag(c *gin.Context) {
 	}
 
 	// 检查题目标签关系是否存在
-	count, err := db.CountProblemTagByProblemIdAndTagId(req.ProblemId, req.TagId)
+	count, err := problem_query.CountProblemTagByProblemIdAndTagId(req.ProblemId, req.TagId)
 	if err != nil || count > 0 {
 		if err != nil {
 			log.Println(err)
@@ -425,7 +426,7 @@ func AdminProblemAddTag(c *gin.Context) {
 	}
 
 	// 初始化标签
-	_, err = db.InsertProblemTag(req.ProblemId, req.TagId)
+	_, err = problem_query.InsertProblemTag(req.ProblemId, req.TagId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -466,7 +467,7 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	}
 
 	// 读取题目
-	_, err = db.SelectProblemById(req.ProblemId)
+	_, err = problem_query.SelectProblemById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -490,7 +491,7 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	}
 
 	// 检查题目标签关系是否存在
-	count, err := db.CountProblemTagByProblemIdAndTagId(req.ProblemId, req.TagId)
+	count, err := problem_query.CountProblemTagByProblemIdAndTagId(req.ProblemId, req.TagId)
 	if err != nil || count == 0 {
 		if err != nil {
 			log.Println(err)
@@ -504,7 +505,7 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	}
 
 	// 初始化标签
-	err = db.DeleteProblemTagByProblemIdAndTagId(req.ProblemId, req.TagId)
+	err = problem_query.DeleteProblemTagByProblemIdAndTagId(req.ProblemId, req.TagId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

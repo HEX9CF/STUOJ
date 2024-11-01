@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"STUOJ/db"
+	"STUOJ/db/problem-query"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -23,7 +24,7 @@ func ProblemInfo(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	problem, err := db.SelectProblemById(pid)
+	problem, err := problem_query.SelectProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -43,7 +44,7 @@ func ProblemInfo(c *gin.Context) {
 
 // 获取题目列表
 func ProblemList(c *gin.Context) {
-	problems, err := db.SelectAllProblems()
+	problems, err := problem_query.SelectAllProblems()
 	if err != nil || problems == nil {
 		if err != nil {
 			log.Println(err)

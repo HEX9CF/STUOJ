@@ -2,6 +2,7 @@ package judge
 
 import (
 	"STUOJ/db"
+	"STUOJ/db/problem-query"
 	"STUOJ/judge"
 	"STUOJ/model"
 	"STUOJ/utils"
@@ -72,7 +73,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 获取题目信息
-	problem, err := db.SelectProblemById(req.ProblemId)
+	problem, err := problem_query.SelectProblemById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
