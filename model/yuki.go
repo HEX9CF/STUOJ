@@ -16,6 +16,15 @@ const (
 	YukiProblemAlbum uint8 = 2
 )
 
+func GetAlbumName(role uint8) string {
+	switch role {
+	case RoleAvatar:
+		return "avatar"
+	default:
+		return "problem"
+	}
+}
+
 type YukiResponses struct {
 	Code    int                    `json:"code"`
 	Message string                 `json:"message"`
@@ -51,7 +60,7 @@ type YukiFormatSupport struct {
 }
 
 type YukiImage struct {
-	Id         string `json:"id"`
+	Key        string `json:"key"`
 	Name       string `json:"name"`
 	Url        string `json:"url,omitempty"`
 	AlbumId    uint64 `json:"album_id,omitempty"`

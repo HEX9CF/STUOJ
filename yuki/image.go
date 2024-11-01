@@ -15,7 +15,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-func UploadImage(path string, roal uint8) (model.YukiImage, error) {
+func UploadImage(path string, role uint8) (model.YukiImage, error) {
 	url := preUrl + "/image"
 	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
@@ -24,7 +24,7 @@ func UploadImage(path string, roal uint8) (model.YukiImage, error) {
 	req.Header.Set("Authorization", "Bearer "+config.Token)
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	err = writer.WriteField("album_id", strconv.FormatUint(uint64(roal), 10))
+	err = writer.WriteField("album_name", model.GetAlbumName(role))
 	if err != nil {
 		return model.YukiImage{}, err
 	}
@@ -78,7 +78,7 @@ func UploadImage(path string, roal uint8) (model.YukiImage, error) {
 }
 
 func GetImageList(page uint64, role uint8) (model.YukiImageList, error) {
-	bodystr, err := httpInteraction("/album/image"+strconv.FormatUint(uint64(role), 10)+"/?page="+strconv.FormatUint(page, 10), "GET", nil)
+	bodystr, err := httpInteraction("/album/image/"+model.GetAlbumName(role)+"/?page="+strconv.FormatUint(page, 10), "GET", nil)
 	if err != nil {
 		return model.YukiImageList{}, err
 	}
