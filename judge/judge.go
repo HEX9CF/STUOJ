@@ -33,7 +33,7 @@ func httpInteraction(route string, httpMethod string, reader *bytes.Reader) (str
 	var err error
 	if route == "/submissions" && httpMethod == "POST" {
 		log.Println("Wait for judge server to finish checking...")
-		url = url + "/?wait=true"
+		url = url + "?wait=true"
 	}
 	if reader == nil {
 		req, err = http.NewRequest(httpMethod, url, nil)
