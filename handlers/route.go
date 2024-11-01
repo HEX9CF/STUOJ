@@ -138,9 +138,15 @@ func InitAdminRoute() {
 		adminPrivateRoute.GET("/record/:id", admin.AdminRecordInfo)
 		adminPrivateRoute.DELETE("/record/:id", admin.AdminRecordRemove)
 
-		adminPrivateRoute.GET("/config", admin.AdminConfigList)
-		//adminPrivateRoute.PUT("/config", admin.AdminConfigModify)
-
 		adminPrivateRoute.GET("/statistics", admin.AdminStatisticsList)
+	}
+
+	rootPrivateRoute := ginServer.Group("/admin")
+	{
+		// 使用中间件
+		rootPrivateRoute.Use(middlewares.TokenAuthRoot())
+
+		rootPrivateRoute.GET("/config", admin.AdminConfigList)
+		//rootPrivateRoute.PUT("/config", admin.AdminConfigModify)
 	}
 }
