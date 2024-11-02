@@ -10,8 +10,8 @@ import (
 // 根据题目ID查询题目历史记录
 func SelectProblemHistoriesByProblemId(pid uint64) ([]model.ProblemHistory, error) {
 	sql := "SELECT id, user_id, problem_id, title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, operation, create_time FROM tbl_problem_history WHERE problem_id = ?"
-	rows, err := db.Mysql.Query(sql)
-	log.Println(sql)
+	rows, err := db.Mysql.Query(sql, pid)
+	log.Println(sql, pid)
 	if err != nil {
 		return nil, err
 	}
