@@ -82,3 +82,20 @@ func UpdateUserPasswordById(u model.User) error {
 
 	return nil
 }
+
+// 根据ID更新用户角色
+func UpdateUserRoleById(u model.User) error {
+	sql := "UPDATE tbl_user SET role = ? WHERE id = ?"
+	stmt, err := db.Mysql.Prepare(sql)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec(u.Role, u.Id)
+	log.Println(sql, u.Role, u.Id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
