@@ -146,6 +146,8 @@ func InitAdminRoute() {
 		// 使用中间件
 		rootPrivateRoute.Use(middlewares.TokenAuthRoot())
 
+		rootPrivateRoute.PUT("/user/role", admin.AdminUserModifyRole)
+
 		rootPrivateRoute.GET("/config", admin.AdminConfigList)
 		//rootPrivateRoute.PUT("/config", admin.AdminConfigModify)
 	}

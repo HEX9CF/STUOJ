@@ -219,3 +219,58 @@ func AdminUserRemove(c *gin.Context) {
 		Data: nil,
 	})
 }
+
+// 设置用户角色
+type ReqUserModifyRole struct {
+	Id   uint64         `json:"id" binding:"required"`
+	Role model.UserRole `json:"role" binding:"required"`
+}
+
+func AdminUserModifyRole(c *gin.Context) {
+	var req ReqUserModifyRole
+
+	// 参数绑定
+	err := c.ShouldBindBodyWithJSON(&req)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	// 读取用户
+	u, err := user_query.SelectUserById(req.Id)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "修改失败，用户不存在",
+			Data: nil,
+		})
+		return
+	}
+
+	// 修改用户
+	u.Role = req.Role
+
+	err = user_query.UpdateUserRoleById(u)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "修改失败",
+			Data: nil,
+		})
+		return
+	}
+
+	// 返回结果
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "修改成功",
+		Data: nil,
+	})
+}
