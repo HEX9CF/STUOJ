@@ -4,7 +4,6 @@ import (
 	"STUOJ/db"
 	"STUOJ/model"
 	"log"
-	"time"
 )
 
 // 给题目添加标签
@@ -95,41 +94,4 @@ func SelectTagsByProblemId(pid uint64) ([]model.Tag, error) {
 		tags = append(tags, tag)
 	}
 	return tags, nil
-}
-
-func SelectProblemsByTagId(tid uint64) ([]model.Problem, error) {
-	sql := "SELECT id, title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, status, create_time, update_time FROM tbl_problem WHERE id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id = ?)"
-	rows, err := db.Mysql.Query(sql, tid)
-	log.Println(sql, tid)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	// 遍历查询结果
-	problems := make([]model.Problem, 0)
-	for rows.Next() {
-		var problem model.Problem
-		var createTimeStr, updateTimeStr string
-
-		err := rows.Scan(&problem.Id, &problem.Title, &problem.Source, &problem.Difficulty, &problem.TimeLimit, &problem.MemoryLimit, &problem.Description, &problem.Input, &problem.Output, &problem.SampleInput, &problem.SampleOutput, &problem.Hint, &problem.Status, &createTimeStr, &updateTimeStr)
-		if err != nil {
-			return nil, err
-		}
-
-		// 时间格式转换
-		timeLayout := "2006-01-02 15:04:05"
-		problem.CreateTime, err = time.Parse(timeLayout, createTimeStr)
-		if err != nil {
-			return nil, err
-		}
-		problem.UpdateTime, err = time.Parse(timeLayout, updateTimeStr)
-		if err != nil {
-			return nil, err
-		}
-
-		//log.Println(problem)
-		problems = append(problems, problem)
-	}
-	return problems, nil
 }
