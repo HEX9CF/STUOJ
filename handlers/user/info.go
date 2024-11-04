@@ -43,7 +43,7 @@ func UserInfo(c *gin.Context) {
 }
 
 // 获取用户列表
-func UserList(c *gin.Context) {
+/*func UserList(c *gin.Context) {
 	users, err := user_query.SelectAllUsers()
 	if err != nil || users == nil {
 		if err != nil {
@@ -63,6 +63,7 @@ func UserList(c *gin.Context) {
 		Data: users,
 	})
 }
+*/
 
 // 获取当前用户id
 func UserCurrentId(c *gin.Context) {
