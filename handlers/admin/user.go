@@ -63,6 +63,40 @@ func AdminUserList(c *gin.Context) {
 	})
 }
 
+// 根据角色获取用户列表
+func AdminUserListByRole(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	rid := model.UserRole(id)
+	users, err := user_query.SelectUsersByRole(rid)
+	if err != nil || users == nil {
+		if err != nil {
+			log.Println(err)
+		}
+		c.JSON(http.StatusOK, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取失败",
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "OK",
+		Data: users,
+	})
+}
+
 // 添加普通用户
 type ReqUserAdd struct {
 	Username  string `json:"username" binding:"required"`
