@@ -96,6 +96,40 @@ func AdminProblemList(c *gin.Context) {
 	})
 }
 
+// 根据状态获取题目列表
+func AdminProblemListByStatus(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	s := model.ProblemStatus(id)
+	problems, err := problem_query.SelectAllProblemsByStatus(s)
+	if err != nil || problems == nil {
+		if err != nil {
+			log.Println(err)
+		}
+		c.JSON(http.StatusOK, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取失败",
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "OK",
+		Data: problems,
+	})
+}
+
 // 添加题目
 type ReqProblemAdd struct {
 	Title        string                  `json:"title" binding:"required"`

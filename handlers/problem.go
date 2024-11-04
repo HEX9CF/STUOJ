@@ -137,7 +137,7 @@ func ProblemPublicListByTagId(c *gin.Context) {
 }
 
 // 根据难度获取公开题目列表
-func ProblemListByDifficulty(c *gin.Context) {
+func ProblemPublicListByDifficulty(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
