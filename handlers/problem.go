@@ -135,3 +135,35 @@ func ProblemListByTagId(c *gin.Context) {
 		Data: problems,
 	})
 }
+
+// 根据难度获取题目列表
+func ProblemListByDifficulty(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	d := model.ProblemDifficulty(id)
+	problems, err := problem_query.SelectProblemsByDifficulty(d)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取失败",
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "OK",
+		Data: problems,
+	})
+}
