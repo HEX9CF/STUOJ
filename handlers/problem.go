@@ -10,8 +10,8 @@ import (
 	"strconv"
 )
 
-// 获取题目信息
-func ProblemInfo(c *gin.Context) {
+// 获取公开题目信息
+func ProblemPublicInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -24,7 +24,7 @@ func ProblemInfo(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	problem, err := problem_query.SelectProblemById(pid)
+	problem, err := problem_query.SelectProblemByStatusAndId(pid, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -60,9 +60,9 @@ func ProblemInfo(c *gin.Context) {
 	})
 }
 
-// 获取题目列表
-func ProblemList(c *gin.Context) {
-	problems, err := problem_query.SelectAllProblems()
+// 获取公开题目列表
+func ProblemPublicList(c *gin.Context) {
+	problems, err := problem_query.SelectAllProblemsByStatus(model.ProblemStatusPublic)
 	if err != nil || problems == nil {
 		if err != nil {
 			log.Println(err)
@@ -104,8 +104,8 @@ func TagList(c *gin.Context) {
 	})
 }
 
-// 根据标签获取题目列表
-func ProblemListByTagId(c *gin.Context) {
+// 根据标签获取公开题目列表
+func ProblemPublicListByTagId(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -118,7 +118,7 @@ func ProblemListByTagId(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	problems, err := problem_query.SelectProblemsByTagId(tid)
+	problems, err := problem_query.SelectProblemsByStatusAndTagId(tid, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -136,7 +136,7 @@ func ProblemListByTagId(c *gin.Context) {
 	})
 }
 
-// 根据难度获取题目列表
+// 根据难度获取公开题目列表
 func ProblemListByDifficulty(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -150,7 +150,7 @@ func ProblemListByDifficulty(c *gin.Context) {
 	}
 
 	d := model.ProblemDifficulty(id)
-	problems, err := problem_query.SelectProblemsByDifficulty(d)
+	problems, err := problem_query.SelectProblemsByStatusAndDifficulty(d, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

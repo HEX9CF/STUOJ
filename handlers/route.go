@@ -81,10 +81,10 @@ func InitUserRoute() {
 func InitProblemRoute() {
 	problemPublicRoute := ginServer.Group("/problem")
 	{
-		problemPublicRoute.GET("/", ProblemList)
+		problemPublicRoute.GET("/", ProblemPublicList)
 		problemPublicRoute.GET("/difficulty/:id", ProblemListByDifficulty)
-		problemPublicRoute.GET("/tag/:id", ProblemListByTagId)
-		problemPublicRoute.GET("/:id", ProblemInfo)
+		problemPublicRoute.GET("/tag/:id", ProblemPublicListByTagId)
+		problemPublicRoute.GET("/:id", ProblemPublicInfo)
 
 		problemPublicRoute.GET("/tag", TagList)
 	}
