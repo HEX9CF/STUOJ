@@ -38,7 +38,7 @@ func AdminProblemInfo(c *gin.Context) {
 	}
 
 	// 获取评测点数据
-	testcases, err := problem_query.SelectTestcasesByProblemId(pid)
+	testcases, err := db.SelectTestcasesByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

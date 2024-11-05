@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"STUOJ/db/problem-query"
+	"STUOJ/db"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -24,7 +24,7 @@ func AdminTestcaseInfo(c *gin.Context) {
 
 	// 获取评测点数据
 	tid := uint64(id)
-	testcase, err := problem_query.SelectTestcaseById(tid)
+	testcase, err := db.SelectTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -72,12 +72,24 @@ func AdminTestcaseAdd(c *gin.Context) {
 		TestInput:  req.TestInput,
 		TestOutput: req.TestOutput,
 	}
-	t.Id, err = problem_query.InsertTestcase(t)
+	t.Id, err = db.InsertTestcase(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
 			Msg:  "添加失败",
+			Data: nil,
+		})
+		return
+	}
+
+	// 更新题目更新时间
+	err = db.UpdateProblemUpdateTimeById(t.ProblemId)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "添加成功，但更新题目更新时间失败",
 			Data: nil,
 		})
 		return
@@ -116,7 +128,7 @@ func AdminTestcaseModify(c *gin.Context) {
 	}
 
 	// 读取评测点数据
-	t, err := problem_query.SelectTestcaseById(req.Id)
+	t, err := db.SelectTestcaseById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -133,12 +145,24 @@ func AdminTestcaseModify(c *gin.Context) {
 	t.TestInput = req.TestInput
 	t.TestOutput = req.TestOutput
 
-	err = problem_query.UpdateTestcaseById(t)
+	err = db.UpdateTestcaseById(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
 			Msg:  "修改失败",
+			Data: nil,
+		})
+		return
+	}
+
+	// 更新题目更新时间
+	err = db.UpdateProblemUpdateTimeById(t.ProblemId)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "修改成功，但更新题目更新时间失败",
 			Data: nil,
 		})
 		return
@@ -166,7 +190,7 @@ func AdminTestcaseRemove(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	_, err = problem_query.SelectTestcaseById(tid)
+	_, err = db.SelectTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -177,7 +201,7 @@ func AdminTestcaseRemove(c *gin.Context) {
 		return
 	}
 
-	err = problem_query.DeleteTestcaseById(tid)
+	err = db.DeleteTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
