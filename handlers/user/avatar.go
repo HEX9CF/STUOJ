@@ -43,6 +43,23 @@ func UpdateUserAvatar(c *gin.Context) {
 		})
 		return
 	}
+	oldAvatarUrl, err := user_query.QueryUserAvatar(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: 0,
+			Msg:  "获取用户头像失败",
+			Data: nil,
+		})
+	}
+	err = yuki.DeleteOldAvatar(oldAvatarUrl)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: 0,
+			Msg:  "删除旧头像失败",
+			Data: err,
+		})
+		return
+	}
 	err = user_query.UpdateUserAvatar(id, image.Url)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
