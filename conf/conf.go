@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"STUOJ/utils"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -28,5 +29,8 @@ func InitConfig() error {
 	if err != nil {
 		return err
 	}
+	utils.Expire = Conf.Token.Expire
+	utils.Secret = Conf.Token.Secret
+	utils.Refresh = Conf.Token.Refresh
 	return nil
 }
