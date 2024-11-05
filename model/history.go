@@ -29,20 +29,24 @@ func (o Operation) String() string {
 
 // 题目历史记录
 type ProblemHistory struct {
-	Id           uint64            `json:"id,omitempty"`
-	UserId       uint64            `json:"user_id,omitempty"`
-	ProblemId    uint64            `json:"problem_id,omitempty"`
-	Title        string            `json:"title,omitempty"`
-	Source       string            `json:"source,omitempty"`
-	Difficulty   ProblemDifficulty `json:"difficulty,omitempty"`
-	TimeLimit    float64           `json:"time_limit,omitempty"`
-	MemoryLimit  uint64            `json:"memory_limit,omitempty"`
-	Description  string            `json:"description,omitempty"`
-	Input        string            `json:"input,omitempty"`
-	Output       string            `json:"output,omitempty"`
-	SampleInput  string            `json:"sample_input,omitempty"`
-	SampleOutput string            `json:"sample_output,omitempty"`
-	Hint         string            `json:"hint,omitempty"`
-	Operation    Operation         `json:"operation,omitempty"`
-	CreateTime   time.Time         `json:"create_time,omitempty"`
+	ID           uint64            `gorm:"primaryKey;autoIncrement;comment:记录ID" json:"id,omitempty"`
+	UserID       int               `gorm:"not null;default:0;comment:用户ID" json:"user_id,omitempty"`
+	ProblemID    uint64            `gorm:"not null;default:0;comment:题目ID" json:"problem_id,omitempty"`
+	Title        string            `gorm:"type:text;not null;comment:标题" json:"title,omitempty"`
+	Source       string            `gorm:"type:text;not null;comment:题目来源" json:"source,omitempty"`
+	Difficulty   ProblemDifficulty `gorm:"not null;default:0;comment:难度" json:"difficulty,omitempty"`
+	TimeLimit    float64           `gorm:"not null;default:1;comment:时间限制（s）" json:"time_limit,omitempty"`
+	MemoryLimit  uint64            `gorm:"not null;default:131072;comment:内存限制（kb）" json:"memory_limit,omitempty"`
+	Description  string            `gorm:"type:longtext;not null;comment:题面" json:"description,omitempty"`
+	Input        string            `gorm:"type:longtext;not null;comment:输入说明" json:"input,omitempty"`
+	Output       string            `gorm:"type:longtext;not null;comment:输出说明" json:"output,omitempty"`
+	SampleInput  string            `gorm:"type:longtext;not null;comment:输入样例" json:"sample_input,omitempty"`
+	SampleOutput string            `gorm:"type:longtext;not null;comment:输出样例" json:"sample_output,omitempty"`
+	Hint         string            `gorm:"type:longtext;not null;comment:提示" json:"hint,omitempty"`
+	Operation    Operation         `gorm:"not null;default:0;comment:操作" json:"operation,omitempty"`
+	CreateTime   time.Time         `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time,omitempty"`
+}
+
+func (ProblemHistory) TableName() string {
+	return "tbl_problem_history"
 }
