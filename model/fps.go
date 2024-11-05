@@ -44,7 +44,7 @@ type MemoryLimit struct {
 	Data string `xml:",chardata"`
 }
 
-type Solution struct {
+type FpsSolution struct {
 	Language string `xml:"language,attr"`
 	Code     string `xml:",chardata"`
 }
