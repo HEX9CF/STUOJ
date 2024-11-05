@@ -32,7 +32,7 @@ func (r UserRole) String() string {
 
 // 用户
 type User struct {
-	ID         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id,omitempty"`
+	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id,omitempty"`
 	Username   string    `gorm:"type:varchar(255);not null;unique;comment:用户名" json:"username,omitempty"`
 	Password   string    `gorm:"type:varchar(255);not null;default:'123456';comment:密码" json:"password,omitempty"`
 	Role       UserRole  `gorm:"not null;default:1;comment:角色" json:"role,omitempty"`

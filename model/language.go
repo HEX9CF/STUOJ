@@ -2,7 +2,7 @@ package model
 
 // 编程语言
 type Language struct {
-	ID   uint64 `gorm:"primaryKey;autoIncrement;comment:语言ID" json:"id,omitempty"`
+	Id   uint64 `gorm:"primaryKey;autoIncrement;comment:语言ID" json:"id,omitempty"`
 	Name string `gorm:"type:varchar(255);not null;comment:语言名" json:"name,omitempty"`
 }
 

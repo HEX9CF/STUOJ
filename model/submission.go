@@ -62,12 +62,12 @@ func (s SubmitStatus) String() string {
 
 // 提交信息
 type Submission struct {
-	ID         uint64    `gorm:"primaryKey;autoIncrement;comment:提交记录ID" json:"id,omitempty"`
-	UserID     uint64    `gorm:"not null;default:0;comment:用户ID" json:"user_id,omitempty"`
-	ProblemID  uint64    `gorm:"not null;default:0;comment:题目ID" json:"problem_id,omitempty"`
+	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:提交记录ID" json:"id,omitempty"`
+	UserId     uint64    `gorm:"not null;default:0;comment:用户ID" json:"user_id,omitempty"`
+	ProblemId  uint64    `gorm:"not null;default:0;comment:题目ID" json:"problem_id,omitempty"`
 	Status     uint64    `gorm:"not null;default:0;comment:状态" json:"status,omitempty"`
 	Score      uint64    `gorm:"not null;default:0;comment:分数" json:"score,omitempty"`
-	LanguageID uint64    `gorm:"not null;default:0;comment:语言ID" json:"language_id,omitempty"`
+	LanguageId uint64    `gorm:"not null;default:0;comment:语言ID" json:"language_id,omitempty"`
 	Length     uint64    `gorm:"not null;default:0;comment:源代码长度" json:"length,omitempty"`
 	Memory     uint64    `gorm:"not null;default:0;comment:内存（kb）" json:"memory,omitempty"`
 	Time       float64   `gorm:"not null;default:0;comment:运行耗时（s）" json:"time,omitempty"`

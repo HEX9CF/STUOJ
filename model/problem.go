@@ -63,7 +63,7 @@ func (d ProblemDifficulty) String() string {
 
 // 题目
 type Problem struct {
-	ID           uint64            `gorm:"primaryKey;autoIncrement;comment:题目ID" json:"id,omitempty"`
+	Id           uint64            `gorm:"primaryKey;autoIncrement;comment:题目ID" json:"id,omitempty"`
 	Title        string            `gorm:"type:text;not null;comment:标题" json:"title,omitempty"`
 	Source       string            `gorm:"type:text;not null;comment:题目来源" json:"source,omitempty"`
 	Difficulty   ProblemDifficulty `gorm:"not null;default:0;comment:难度" json:"difficulty,omitempty"`

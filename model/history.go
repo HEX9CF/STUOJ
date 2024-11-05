@@ -29,9 +29,9 @@ func (o Operation) String() string {
 
 // 题目历史记录
 type ProblemHistory struct {
-	ID           uint64            `gorm:"primaryKey;autoIncrement;comment:记录ID" json:"id,omitempty"`
-	UserID       int               `gorm:"not null;default:0;comment:用户ID" json:"user_id,omitempty"`
-	ProblemID    uint64            `gorm:"not null;default:0;comment:题目ID" json:"problem_id,omitempty"`
+	Id           uint64            `gorm:"primaryKey;autoIncrement;comment:记录ID" json:"id,omitempty"`
+	UserId       int               `gorm:"not null;default:0;comment:用户ID" json:"user_id,omitempty"`
+	ProblemId    uint64            `gorm:"not null;default:0;comment:题目ID" json:"problem_id,omitempty"`
 	Title        string            `gorm:"type:text;not null;comment:标题" json:"title,omitempty"`
 	Source       string            `gorm:"type:text;not null;comment:题目来源" json:"source,omitempty"`
 	Difficulty   ProblemDifficulty `gorm:"not null;default:0;comment:难度" json:"difficulty,omitempty"`
