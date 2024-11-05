@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 // 状态：0 作废，1 公开，2 出题中，3 调试中
 type ProblemStatus uint8
@@ -78,4 +80,10 @@ type Problem struct {
 	Status       ProblemStatus     `json:"status,omitempty"`
 	CreateTime   time.Time         `json:"create_time,omitempty"`
 	UpdateTime   time.Time         `json:"update_time,omitempty"`
+}
+
+type ProblemSolution struct {
+	ProblemId  uint64 `json:"problem_id,omitempty"`
+	LanguageId uint64 `json:"language_id,omitempty"`
+	Code       string `json:"code,omitempty"`
 }
