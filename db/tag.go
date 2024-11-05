@@ -8,7 +8,7 @@ import (
 // 插入标签
 func InsertTag(t model.Tag) (uint64, error) {
 	sql := "INSERT INTO tbl_tag (name) VALUES (?)"
-	stmt, err := Mysql.Prepare(sql)
+	stmt, err := SqlDb.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}
@@ -35,7 +35,7 @@ func SelectTagById(id uint64) (model.Tag, error) {
 	t.Id = id
 
 	sql := "SELECT name FROM tbl_tag WHERE id = ?"
-	err := Mysql.QueryRow(sql, id).Scan(&t.Name)
+	err := SqlDb.QueryRow(sql, id).Scan(&t.Name)
 	log.Println(sql, id)
 	if err != nil {
 		return model.Tag{}, err
@@ -47,7 +47,7 @@ func SelectTagById(id uint64) (model.Tag, error) {
 // 查询所有标签
 func SelectAllTags() ([]model.Tag, error) {
 	sql := "SELECT id, name FROM tbl_tag"
-	rows, err := Mysql.Query(sql)
+	rows, err := SqlDb.Query(sql)
 	log.Println(sql)
 	if err != nil {
 		return nil, err
@@ -73,7 +73,7 @@ func SelectAllTags() ([]model.Tag, error) {
 // 根据ID更新标签
 func UpdateTagById(t model.Tag) error {
 	sql := "UPDATE tbl_tag SET name = ? WHERE id = ?"
-	stmt, err := Mysql.Prepare(sql)
+	stmt, err := SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ func UpdateTagById(t model.Tag) error {
 // 根据ID删除标签
 func DeleteTagById(id uint64) error {
 	sql := "DELETE FROM tbl_tag WHERE id = ?"
-	stmt, err := Mysql.Prepare(sql)
+	stmt, err := SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}

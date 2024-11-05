@@ -9,7 +9,7 @@ import (
 // 给题目添加标签
 func InsertProblemTag(pid uint64, tid uint64) (uint64, error) {
 	sql := "INSERT INTO tbl_problem_tag (problem_id, tag_id) VALUES (?, ?)"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}
@@ -39,7 +39,7 @@ func InsertProblemTag(pid uint64, tid uint64) (uint64, error) {
 func CountProblemTagByProblemIdAndTagId(pid uint64, tid uint64) (uint64, error) {
 	var count uint64
 	sql := "SELECT COUNT(*) FROM tbl_problem_tag WHERE problem_id = ? AND tag_id = ?"
-	err := db.Mysql.QueryRow(sql, pid, tid).Scan(&count)
+	err := db.SqlDb.QueryRow(sql, pid, tid).Scan(&count)
 	log.Println(sql, pid, tid)
 	if err != nil {
 		return 0, err
@@ -51,7 +51,7 @@ func CountProblemTagByProblemIdAndTagId(pid uint64, tid uint64) (uint64, error) 
 // 删除题目的某个标签
 func DeleteProblemTagByProblemIdAndTagId(pid uint64, tid uint64) error {
 	sql := "DELETE FROM tbl_problem_tag WHERE problem_id = ? AND tag_id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func DeleteProblemTagByProblemIdAndTagId(pid uint64, tid uint64) error {
 
 func SelectTagsByProblemId(pid uint64) ([]model.Tag, error) {
 	sql := "SELECT id, name FROM tbl_tag WHERE id IN (SELECT tag_id FROM tbl_problem_tag WHERE problem_id = ?)"
-	rows, err := db.Mysql.Query(sql, pid)
+	rows, err := db.SqlDb.Query(sql, pid)
 	log.Println(sql)
 	if err != nil {
 		return nil, err

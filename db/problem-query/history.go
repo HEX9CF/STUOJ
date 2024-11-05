@@ -10,7 +10,7 @@ import (
 // 根据题目ID查询题目历史记录
 func SelectProblemHistoriesByProblemId(pid uint64) ([]model.ProblemHistory, error) {
 	sql := "SELECT id, user_id, problem_id, title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, operation, create_time FROM tbl_problem_history WHERE problem_id = ?"
-	rows, err := db.Mysql.Query(sql, pid)
+	rows, err := db.SqlDb.Query(sql, pid)
 	log.Println(sql, pid)
 	if err != nil {
 		return nil, err
@@ -44,7 +44,7 @@ func SelectProblemHistoriesByProblemId(pid uint64) ([]model.ProblemHistory, erro
 // 插入题目历史记录
 func InsertProblemHistory(p model.Problem, uid uint64, op model.Operation) (uint64, error) {
 	sql := "INSERT INTO tbl_problem_history (user_id, problem_id, title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, operation, create_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}
@@ -69,7 +69,7 @@ func InsertProblemHistory(p model.Problem, uid uint64, op model.Operation) (uint
 // 根据ID删除题目历史记录
 func DeleteProblemHistoryById(id uint64) error {
 	sql := "DELETE FROM tbl_problem_history WHERE id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}

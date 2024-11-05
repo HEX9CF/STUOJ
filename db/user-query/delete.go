@@ -8,7 +8,7 @@ import (
 // 根据ID删除用户
 func DeleteUserById(id uint64) error {
 	sql := "DELETE FROM tbl_user WHERE id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}

@@ -10,7 +10,7 @@ import (
 // 插入题目
 func InsertProblem(p model.Problem) (uint64, error) {
 	sql := "INSERT INTO tbl_problem (title, source, difficulty, time_limit, memory_limit, description, input, output, sample_input, sample_output, hint, status, create_time, update_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}
@@ -36,7 +36,7 @@ func InsertProblem(p model.Problem) (uint64, error) {
 // 根据ID更新题目
 func UpdateProblemById(p model.Problem) error {
 	sql := "UPDATE tbl_problem SET title = ?, source = ?, difficulty = ?, time_limit = ?, memory_limit = ?, description = ?, input = ?, output = ?, sample_input = ?, sample_output = ?, hint = ?, status = ?, update_time = ? WHERE id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -55,7 +55,7 @@ func UpdateProblemById(p model.Problem) error {
 // 根据ID删除题目
 func DeleteProblemById(id uint64) error {
 	sql := "DELETE FROM tbl_problem WHERE id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func DeleteProblemById(id uint64) error {
 // 根据ID更新提交记录状态更新时间
 func UpdateProblemUpdateTimeById(id uint64) error {
 	sql := "UPDATE tbl_problem SET update_time = ? WHERE id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}

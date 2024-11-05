@@ -13,7 +13,7 @@ func SelectTestcaseById(id uint64) (model.Testcase, error) {
 	t.Id = id
 
 	sql := "SELECT serial, problem_id, test_input, test_output FROM tbl_testcase WHERE id = ?"
-	err := db.Mysql.QueryRow(sql, id).Scan(&t.Serial, &t.ProblemId, &t.TestInput, &t.TestOutput)
+	err := db.SqlDb.QueryRow(sql, id).Scan(&t.Serial, &t.ProblemId, &t.TestInput, &t.TestOutput)
 	log.Println(sql, id)
 	if err != nil {
 		return model.Testcase{}, err
@@ -25,7 +25,7 @@ func SelectTestcaseById(id uint64) (model.Testcase, error) {
 // 通过题目ID查询评测点数据
 func SelectTestcasesByProblemId(problem_id uint64) ([]model.Testcase, error) {
 	sql := "SELECT id, serial, problem_id, test_input, test_output FROM tbl_testcase WHERE problem_id = ?"
-	rows, err := db.Mysql.Query(sql, problem_id)
+	rows, err := db.SqlDb.Query(sql, problem_id)
 	log.Println(sql, problem_id)
 	if err != nil {
 		return nil, err
@@ -53,7 +53,7 @@ func SelectTestcasesByProblemId(problem_id uint64) ([]model.Testcase, error) {
 // 添加评测点数据
 func InsertTestcase(t model.Testcase) (uint64, error) {
 	sql := "INSERT INTO tbl_testcase (serial, problem_id, test_input, test_output) VALUES (?, ?, ?, ?)"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return 0, err
 	}
@@ -82,7 +82,7 @@ func InsertTestcase(t model.Testcase) (uint64, error) {
 // 根据ID更新评测点数据
 func UpdateTestcaseById(t model.Testcase) error {
 	sql := "UPDATE tbl_testcase SET serial = ?, problem_id = ?, test_input = ?, test_output = ? WHERE id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -105,7 +105,7 @@ func UpdateTestcaseById(t model.Testcase) error {
 // 根据ID删除评测点数据
 func DeleteTestcaseById(id uint64) error {
 	sql := "DELETE FROM tbl_testcase WHERE id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}

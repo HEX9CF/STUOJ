@@ -19,7 +19,7 @@ func UpdateUserById(u model.User) error {
 	}
 
 	sql := "UPDATE tbl_user SET username = ?, email = ?, password = ?, avatar = ?, signature = ?, update_time = ? WHERE id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func UpdateUserByIdExceptPassword(u model.User) error {
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 
 	sql := "UPDATE tbl_user SET username = ?, email = ?, signature = ?, update_time = ? WHERE id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func UpdateUserPasswordById(u model.User) error {
 	}
 
 	sql := "UPDATE tbl_user SET password = ?, update_time = ? WHERE id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}
@@ -86,7 +86,7 @@ func UpdateUserPasswordById(u model.User) error {
 // 根据ID更新用户角色
 func UpdateUserRoleById(u model.User) error {
 	sql := "UPDATE tbl_user SET role = ? WHERE id = ?"
-	stmt, err := db.Mysql.Prepare(sql)
+	stmt, err := db.SqlDb.Prepare(sql)
 	if err != nil {
 		return err
 	}
