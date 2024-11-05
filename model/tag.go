@@ -13,8 +13,8 @@ func (Tag) TableName() string {
 
 // 题目标签关系
 type ProblemTag struct {
-	ProblemId uint64 `gorm:"not null;default:0;comment:题目ID" json:"problem_id,omitempty"`
-	TagId     uint64 `gorm:"not null;default:0;comment:标签ID" json:"tag_id,omitempty"`
+	ProblemID uint64 `gorm:"primaryKey;autoIncrement:false;comment:题目ID"`
+	TagID     uint64 `gorm:"primaryKey;autoIncrement:false;comment:标签ID"`
 }
 
 func (ProblemTag) TableName() string {
