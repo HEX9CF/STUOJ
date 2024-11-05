@@ -77,3 +77,11 @@ func (i *Item) ToProblem() Problem {
 		MemoryLimit:  memoryLimit,
 	}
 }
+
+func (i *Item) GetTestCase() []Testcase {
+	var testCases []Testcase
+	for index, output := range i.TestOutput {
+		testCases = append(testCases, Testcase{TestInput: i.TestInput[index], TestOutput: output})
+	}
+	return testCases
+}
