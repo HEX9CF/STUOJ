@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"STUOJ/conf"
 	"fmt"
 	"strconv"
 	"strings"
@@ -11,16 +10,22 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
+var (
+	Expire  uint64
+	Refresh uint64
+	Secret  string
+)
+
 // 生成token
 func GenerateToken(id uint64) (string, error) {
-	config := conf.Conf.Token
+
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["uid"] = id
-	claims["exp"] = time.Now().Add(time.Second * time.Duration(config.Expire)).Unix()
+	claims["exp"] = time.Now().Add(time.Second * time.Duration(Expire)).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	return token.SignedString([]byte(config.Secret))
+	return token.SignedString([]byte(Secret))
 }
 
 // 提取token
@@ -35,14 +40,14 @@ func GetToken(c *gin.Context) string {
 
 // 验证token
 func VerifyToken(c *gin.Context) error {
-	config := conf.Conf.Token
+
 	tokenString := GetToken(c)
 	_, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
 		_, ok := t.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
-		return []byte(config.Secret), nil
+		return []byte(Secret), nil
 	})
 	if err != nil {
 		return err
@@ -52,14 +57,14 @@ func VerifyToken(c *gin.Context) error {
 
 // 提取token中的uid
 func GetTokenUid(c *gin.Context) (uint64, error) {
-	config := conf.Conf.Token
+
 	tokenString := GetToken(c)
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
 		_, ok := t.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
-		return []byte(config.Secret), nil
+		return []byte(Secret), nil
 	})
 	if err != nil {
 		return 0, err
@@ -78,14 +83,14 @@ func GetTokenUid(c *gin.Context) (uint64, error) {
 
 // 提取token过期时间
 func GetTokenExpire(c *gin.Context) (uint64, error) {
-	config := conf.Conf.Token
+
 	tokenString := GetToken(c)
 	token, err := jwt.Parse(tokenString, func(t *jwt.Token) (any, error) {
 		_, ok := t.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
 		}
-		return []byte(config.Secret), nil
+		return []byte(Secret), nil
 	})
 	if err != nil {
 		return 0, err
