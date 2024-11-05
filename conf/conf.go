@@ -23,3 +23,11 @@ func InitConfig() error {
 	utils.Refresh = Conf.Token.Refresh
 	return nil
 }
+
+func (c *Config) Default() {
+	c.Datebase.Default()
+	c.Judge.Default()
+	c.YukiImage.Default()
+	c.Server.Default()
+	c.Token.Default()
+}
