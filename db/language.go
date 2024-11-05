@@ -26,6 +26,18 @@ func SelectAllLanguages() ([]model.Language, error) {
 	return languages, nil
 }
 
+// 根据名字模糊查询语言
+func SelectLanguageLikeName(name string) (model.Language, error) {
+	var l model.Language
+
+	tx := Db.Where("name like ?", "%"+name+"%").First(&l)
+	if tx.Error != nil {
+		return model.Language{}, tx.Error
+	}
+
+	return l, nil
+}
+
 // 删除所有语言
 func DeleteAllLanguages() error {
 	tx := Db.Where("1 = 1").Delete(&model.Language{})
