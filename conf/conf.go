@@ -2,9 +2,6 @@ package conf
 
 import (
 	"STUOJ/utils"
-	"os"
-
-	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
@@ -17,15 +14,7 @@ type Config struct {
 
 // Config 初始化
 func InitConfig() error {
-	file, err := os.Open("config.yaml")
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	decoder := yaml.NewDecoder(file)
-	Conf = &Config{}
-	err = decoder.Decode(Conf)
+	err := utils.ReadYaml(&Conf, "config.yaml")
 	if err != nil {
 		return err
 	}
