@@ -32,15 +32,19 @@ func (r UserRole) String() string {
 
 // 用户
 type User struct {
-	Id         uint64    `json:"id,omitempty"`
-	Username   string    `json:"username,omitempty"`
-	Password   string    `json:"password,omitempty"`
-	Role       UserRole  `json:"role,omitempty"`
-	Email      string    `json:"email,omitempty"`
-	Avatar     string    `json:"avatar,omitempty"`
-	Signature  string    `json:"signature,omitempty"`
-	CreateTime time.Time `json:"create_time,omitempty"`
-	UpdateTime time.Time `json:"update_time,omitempty"`
+	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id,omitempty"`
+	Username   string    `gorm:"type:varchar(255);not null;unique;comment:用户名" json:"username,omitempty"`
+	Password   string    `gorm:"type:varchar(255);not null;default:'123456';comment:密码" json:"password,omitempty"`
+	Role       UserRole  `gorm:"not null;default:1;comment:角色" json:"role,omitempty"`
+	Email      string    `gorm:"type:varchar(255);not null;unique;comment:邮箱" json:"email,omitempty"`
+	Avatar     string    `gorm:"type:text;not null;comment:头像URL" json:"avatar,omitempty"`
+	Signature  string    `gorm:"type:text;not null;comment:个性签名" json:"signature,omitempty"`
+	CreateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time,omitempty"`
+	UpdateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time,omitempty"`
+}
+
+func (User) TableName() string {
+	return "tbl_user"
 }
 
 // 对密码进行哈希

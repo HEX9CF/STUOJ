@@ -130,6 +130,18 @@ func AdminRecordRemove(c *gin.Context) {
 		return
 	}
 
+	// 更新提交更新时间
+	err = db.UpdateSubmissionUpdateTimeById(sid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "更新提交记录更新时间失败",
+			Data: nil,
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, model.Response{
 		Code: model.ResponseCodeOk,
 		Msg:  "删除成功",

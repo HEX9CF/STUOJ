@@ -1,7 +1,7 @@
 package user
 
 import (
-	"STUOJ/db/user-query"
+	"STUOJ/db"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
@@ -24,7 +24,7 @@ func UserInfo(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	user, err := user_query.SelectUserById(uid)
+	user, err := db.SelectUserById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

@@ -1,7 +1,7 @@
 package user
 
 import (
-	user_query "STUOJ/db/user-query"
+	"STUOJ/db"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"STUOJ/yuki"
@@ -43,7 +43,7 @@ func UpdateUserAvatar(c *gin.Context) {
 		})
 		return
 	}
-	oldAvatarUrl, err := user_query.QueryUserAvatar(id)
+	oldAvatarUrl, err := db.SelectUserAvatarById(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
@@ -60,7 +60,7 @@ func UpdateUserAvatar(c *gin.Context) {
 		})
 		return
 	}
-	err = user_query.UpdateUserAvatar(id, image.Url)
+	err = db.UpdateUserAvatarById(id, image.Url)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
@@ -86,7 +86,7 @@ func UserAvatar(c *gin.Context) {
 		})
 	}
 	uid := uint64(id)
-	avatar, err := user_query.QueryUserAvatar(uid)
+	avatar, err := db.SelectUserAvatarById(uid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
@@ -110,7 +110,7 @@ func ThisUserAvatar(c *gin.Context) {
 			Data: nil,
 		})
 	}
-	avatar, err := user_query.QueryUserAvatar(id)
+	avatar, err := db.SelectUserAvatarById(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,

@@ -3,37 +3,64 @@ package db
 import (
 	"STUOJ/conf"
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"log"
+	"os"
+	"time"
 )
 
 var (
-	Mysql *sql.DB
+	SqlDb *sql.DB
+	Db    *gorm.DB
 )
 
-// InitDatabase 函数用于初始化数据库连接
+// 初始化数据库
 func InitDatabase() error {
-	data := conf.Conf.Datebase
 	var err error
+	config := conf.Conf.Datebase
 
-	dsn := data.User + ":" + data.Pwd + "@tcp(" + data.Host + ":" + data.Port + ")/" + data.Name
-	Mysql, err = sql.Open("mysql", dsn)
+	gormConfig := &gorm.Config{
+		Logger: logger.New(
+			log.New(os.Stdout, "\r\n", log.LstdFlags),
+			logger.Config{
+				SlowThreshold: time.Second,
+				LogLevel:      logger.Info,
+				Colorful:      true,
+			},
+		),
+	}
+
+	dsn := config.User + ":" + config.Pwd + "@tcp(" + config.Host + ":" + config.Port + ")/" + config.Name + "?charset=utf8mb4&parseTime=True&loc=Local"
 	log.Println("Connecting to MySQL:", dsn)
-
+	Db, err = gorm.Open(mysql.Open(dsn), gormConfig)
 	if err != nil {
-		log.Println("Open database error!")
-		return err
-	}
-	Mysql.SetMaxIdleConns(data.MaxIdle)
-	Mysql.SetMaxOpenConns(data.MaxConn)
-	//defer db.Close()
-
-	err = Mysql.Ping()
-	if err != nil {
-		log.Println("Error pinging the database!")
+		log.Println("Failed to connect database!")
 		return err
 	}
 
-	log.Println("Successfully connected to MySQL!")
+	SqlDb, err = Db.DB()
+	if err != nil {
+		log.Println("Failed to get sql.SqlDb!")
+		return err
+	}
+
+	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
+	SqlDb.SetMaxIdleConns(config.MaxIdle)
+
+	// SetMaxOpenConns 设置打开数据库连接的最大数量。
+	SqlDb.SetMaxOpenConns(config.MaxConn)
+
+	// SetConnMaxLifetime 设置了连接可复用的最大时间。
+	SqlDb.SetConnMaxLifetime(time.Hour)
+
+	/*		err = SqlDb.Ping()
+			if err != nil {
+				log.Println("Error pinging the database!")
+				return err
+			}
+	*/
+	log.Println("Database init success!")
 	return nil
 }

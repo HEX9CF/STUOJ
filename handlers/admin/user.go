@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"STUOJ/db/user-query"
+	"STUOJ/db"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -23,7 +23,7 @@ func AdminUserInfo(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	user, err := user_query.SelectUserById(uid)
+	user, err := db.SelectUserById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -43,7 +43,7 @@ func AdminUserInfo(c *gin.Context) {
 
 // 获取用户列表
 func AdminUserList(c *gin.Context) {
-	users, err := user_query.SelectAllUsers()
+	users, err := db.SelectAllUsers()
 	if err != nil || users == nil {
 		if err != nil {
 			log.Println(err)
@@ -77,7 +77,7 @@ func AdminUserListByRole(c *gin.Context) {
 	}
 
 	rid := model.UserRole(id)
-	users, err := user_query.SelectUsersByRole(rid)
+	users, err := db.SelectUsersByRole(rid)
 	if err != nil || users == nil {
 		if err != nil {
 			log.Println(err)
@@ -129,7 +129,7 @@ func AdminUserAdd(c *gin.Context) {
 		Avatar:    req.Avatar,
 		Signature: req.Signature,
 	}
-	u.Id, err = user_query.InsertUser(u)
+	u.Id, err = db.InsertUser(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -174,7 +174,7 @@ func AdminUserModify(c *gin.Context) {
 	}
 
 	// 读取用户
-	u, err := user_query.SelectUserById(req.Id)
+	u, err := db.SelectUserById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -192,7 +192,7 @@ func AdminUserModify(c *gin.Context) {
 	u.Avatar = req.Avatar
 	u.Signature = req.Signature
 
-	err = user_query.UpdateUserById(u)
+	err = db.UpdateUserById(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -225,7 +225,7 @@ func AdminUserRemove(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	_, err = user_query.SelectUserById(uid)
+	_, err = db.SelectUserById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -236,7 +236,7 @@ func AdminUserRemove(c *gin.Context) {
 		return
 	}
 
-	err = user_query.DeleteUserById(uid)
+	err = db.DeleteUserById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -276,7 +276,7 @@ func AdminUserModifyRole(c *gin.Context) {
 	}
 
 	// 读取用户
-	u, err := user_query.SelectUserById(req.Id)
+	u, err := db.SelectUserById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -290,7 +290,7 @@ func AdminUserModifyRole(c *gin.Context) {
 	// 修改用户
 	u.Role = req.Role
 
-	err = user_query.UpdateUserRoleById(u)
+	err = db.UpdateUserRoleById(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
