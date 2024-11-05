@@ -1,5 +1,5 @@
 package conf
 
-var(
-	Conf *Config
+var (
+	Conf *Config = &Config{}
 )

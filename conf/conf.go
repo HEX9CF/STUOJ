@@ -14,7 +14,15 @@ type Config struct {
 
 // Config 初始化
 func InitConfig() error {
-	err := utils.ReadYaml(&Conf, "config.yaml")
+	v, err := utils.IsFileExists("config.yaml")
+	if err != nil {
+		return err
+	}
+	if !v {
+		Conf.Default()
+		utils.WriteYaml(&Conf, "config.yaml")
+	}
+	err = utils.ReadYaml(&Conf, "config.yaml")
 	if err != nil {
 		return err
 	}
