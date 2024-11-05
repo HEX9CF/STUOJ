@@ -2,7 +2,6 @@ package admin
 
 import (
 	"STUOJ/db"
-	"STUOJ/db/problem-query"
 	"STUOJ/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
@@ -198,7 +197,7 @@ func AdminProblemAdd(c *gin.Context) {
 		})
 		return
 	}
-	_, err = problem_query.InsertProblemHistory(p, uid, model.OperationAdd)
+	_, err = db.InsertProblemHistory(p, uid, model.OperationAdd)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -296,7 +295,7 @@ func AdminProblemModify(c *gin.Context) {
 		})
 		return
 	}
-	_, err = problem_query.InsertProblemHistory(p, uid, model.OperationUpdate)
+	_, err = db.InsertProblemHistory(p, uid, model.OperationUpdate)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -364,7 +363,7 @@ func AdminProblemRemove(c *gin.Context) {
 	p := model.Problem{
 		Id: pid,
 	}
-	_, err = problem_query.InsertProblemHistory(p, uid, model.OperationDelete)
+	_, err = db.InsertProblemHistory(p, uid, model.OperationDelete)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -395,7 +394,7 @@ func AdminProblemHistoryList(c *gin.Context) {
 
 	// 获取题目历史记录
 	pid := uint64(id)
-	phs, err := problem_query.SelectProblemHistoriesByProblemId(pid)
+	phs, err := db.SelectProblemHistoriesByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -473,7 +472,7 @@ func AdminProblemAddTag(c *gin.Context) {
 	}
 
 	// 初始化标签
-	_, err = db.InsertProblemTag(req.ProblemId, req.TagId)
+	err = db.InsertProblemTag(req.ProblemId, req.TagId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
