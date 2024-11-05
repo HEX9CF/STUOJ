@@ -1,6 +1,9 @@
 package model
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"strconv"
+)
 
 type FPS struct {
 	XMLName   xml.Name  `xml:"fps"`
@@ -44,4 +47,33 @@ type MemoryLimit struct {
 type Solution struct {
 	Language string `xml:"language,attr"`
 	Code     string `xml:",chardata"`
+}
+
+func (i *Item) ToProblem() Problem {
+	var timeLimit float64
+	var memoryLimit uint64
+	timetmp, _ := strconv.ParseFloat(i.TimeLimit.Data, 64)
+	memorytmp, _ := strconv.ParseInt(i.MemoryLimit.Data, 10, 64)
+	if i.TimeLimit.Unit == "ms" {
+		timeLimit = 1000 * timetmp
+	} else if i.TimeLimit.Unit == "s" {
+		timeLimit = timetmp
+	}
+	if i.MemoryLimit.Unit == "kb" {
+		memoryLimit = uint64(memorytmp)
+	} else if i.MemoryLimit.Unit == "mb" {
+		memoryLimit = 1024 * uint64(memorytmp)
+	}
+
+	return Problem{
+		Title:        i.Title,
+		Description:  i.Description,
+		Input:        i.Input,
+		Output:       i.Output,
+		SampleInput:  i.SampleInput,
+		SampleOutput: i.SampleOutput,
+		Hint:         i.Hint,
+		TimeLimit:    timeLimit,
+		MemoryLimit:  memoryLimit,
+	}
 }
