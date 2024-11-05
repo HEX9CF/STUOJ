@@ -50,6 +50,7 @@ func UpdateUserAvatar(c *gin.Context) {
 			Msg:  "获取用户头像失败",
 			Data: nil,
 		})
+		return
 	}
 	err = yuki.DeleteOldAvatar(oldAvatarUrl)
 	if err != nil {
@@ -84,6 +85,7 @@ func UserAvatar(c *gin.Context) {
 			Msg:  "获取用户id失败",
 			Data: nil,
 		})
+		return
 	}
 	uid := uint64(id)
 	avatar, err := db.SelectUserAvatarById(uid)
@@ -93,6 +95,7 @@ func UserAvatar(c *gin.Context) {
 			Msg:  "获取用户头像失败",
 			Data: nil,
 		})
+		return
 	}
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,
@@ -109,6 +112,7 @@ func ThisUserAvatar(c *gin.Context) {
 			Msg:  "获取用户id失败",
 			Data: nil,
 		})
+		return
 	}
 	avatar, err := db.SelectUserAvatarById(id)
 	if err != nil {
@@ -117,6 +121,7 @@ func ThisUserAvatar(c *gin.Context) {
 			Msg:  "获取用户头像失败",
 			Data: nil,
 		})
+		return
 	}
 	c.JSON(http.StatusOK, model.Response{
 		Code: 1,
