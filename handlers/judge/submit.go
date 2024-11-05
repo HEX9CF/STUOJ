@@ -73,7 +73,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 获取题目信息
-	problem, err := problem_query.SelectProblemById(req.ProblemId)
+	problem, err := db.SelectProblemById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -182,6 +182,13 @@ func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission mode
 
 	// 更新评测点结果
 	_, err = db.InsertJudgement(judgement)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	// 更新提交更新时间
+	err = db.UpdateSubmissionUpdateTimeById(submission.Id)
 	if err != nil {
 		log.Println(err)
 		return

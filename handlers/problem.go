@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"STUOJ/db"
-	"STUOJ/db/problem-query"
 	"STUOJ/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -24,7 +23,7 @@ func ProblemPublicInfo(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	problem, err := problem_query.SelectProblemByStatusAndId(pid, model.ProblemStatusPublic)
+	problem, err := db.SelectProblemByStatusAndId(pid, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -36,7 +35,7 @@ func ProblemPublicInfo(c *gin.Context) {
 	}
 
 	// 获取题目标签
-	tags, err := problem_query.SelectTagsByProblemId(pid)
+	tags, err := db.SelectTagsByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -62,7 +61,7 @@ func ProblemPublicInfo(c *gin.Context) {
 
 // 获取公开题目列表
 func ProblemPublicList(c *gin.Context) {
-	problems, err := problem_query.SelectAllProblemsByStatus(model.ProblemStatusPublic)
+	problems, err := db.SelectAllProblemsByStatus(model.ProblemStatusPublic)
 	if err != nil || problems == nil {
 		if err != nil {
 			log.Println(err)
@@ -118,7 +117,7 @@ func ProblemPublicListByTagId(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	problems, err := problem_query.SelectProblemsByStatusAndTagId(tid, model.ProblemStatusPublic)
+	problems, err := db.SelectProblemsByStatusAndTagId(tid, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -150,7 +149,7 @@ func ProblemPublicListByDifficulty(c *gin.Context) {
 	}
 
 	d := model.ProblemDifficulty(id)
-	problems, err := problem_query.SelectProblemsByStatusAndDifficulty(d, model.ProblemStatusPublic)
+	problems, err := db.SelectProblemsByStatusAndDifficulty(d, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
