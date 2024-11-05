@@ -191,6 +191,8 @@ func DeleteUserById(id uint64) error {
 
 // 根据邮箱验证密码
 func VerifyUserByEmail(u model.User) (uint64, error) {
+	password := u.Password
+
 	// 查询用户
 	tx := Db.Where("email = ?", u.Email).First(&u)
 	if tx.Error != nil {
@@ -198,7 +200,7 @@ func VerifyUserByEmail(u model.User) (uint64, error) {
 	}
 
 	// 验证密码
-	err := u.VerifyByHashedPassword(u.Password)
+	err := u.VerifyByPassword(password)
 	if err != nil {
 		return 0, err
 	}
@@ -208,6 +210,8 @@ func VerifyUserByEmail(u model.User) (uint64, error) {
 
 // 根据ID验证密码
 func VerifyUserById(u model.User) (uint64, error) {
+	password := u.Password
+
 	// 查询用户
 	tx := Db.Where("id = ?", u.Id).First(&u)
 	if tx.Error != nil {
@@ -215,7 +219,7 @@ func VerifyUserById(u model.User) (uint64, error) {
 	}
 
 	// 验证密码
-	err := u.VerifyByHashedPassword(u.Password)
+	err := u.VerifyByPassword(password)
 	if err != nil {
 		return 0, err
 	}
