@@ -2,9 +2,6 @@ package conf
 
 import (
 	"STUOJ/utils"
-	"os"
-
-	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
@@ -17,15 +14,15 @@ type Config struct {
 
 // Config 初始化
 func InitConfig() error {
-	file, err := os.Open("config.yaml")
+	v, err := utils.IsFileExists("config.yaml")
 	if err != nil {
 		return err
 	}
-	defer file.Close()
-
-	decoder := yaml.NewDecoder(file)
-	Conf = &Config{}
-	err = decoder.Decode(Conf)
+	if !v {
+		Conf.Default()
+		utils.WriteYaml(&Conf, "config.yaml")
+	}
+	err = utils.ReadYaml(&Conf, "config.yaml")
 	if err != nil {
 		return err
 	}
@@ -33,4 +30,12 @@ func InitConfig() error {
 	utils.Secret = Conf.Token.Secret
 	utils.Refresh = Conf.Token.Refresh
 	return nil
+}
+
+func (c *Config) Default() {
+	c.Datebase.Default()
+	c.Judge.Default()
+	c.YukiImage.Default()
+	c.Server.Default()
+	c.Token.Default()
 }

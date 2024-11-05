@@ -9,3 +9,13 @@ type DatabaseConf struct {
 	MaxConn int    `yaml:"max_open_conns" json:"max_open_conns"`
 	MaxIdle int    `yaml:"max_idle_conns" json:"max_idle_conns"`
 }
+
+func (d *DatabaseConf) Default() {
+	d.Host = "stuoj-db"
+	d.Port = "3306"
+	d.Name = "stuoj-db"
+	d.User = "stuoj"
+	d.Pwd = "stuoj"
+	d.MaxConn = 10
+	d.MaxIdle = 5
+}
