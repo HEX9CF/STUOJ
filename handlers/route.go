@@ -120,38 +120,46 @@ func InitAdminRoute() {
 		// 使用中间件
 		adminPrivateRoute.Use(middlewares.TokenAuthAdmin())
 
-		adminPrivateRoute.GET("/user", admin.AdminUserList)
-		adminPrivateRoute.GET("/user/:id", admin.AdminUserInfo)
-		adminPrivateRoute.GET("/user/role/:id", admin.AdminUserListByRole)
-		adminPrivateRoute.POST("/user", admin.AdminUserAdd)
-		adminPrivateRoute.PUT("/user", admin.AdminUserModify)
-		adminPrivateRoute.DELETE("/user/:id", admin.AdminUserRemove)
+		{
+			adminPrivateRoute.GET("/user", admin.AdminUserList)
+			adminPrivateRoute.GET("/user/:id", admin.AdminUserInfo)
+			adminPrivateRoute.GET("/user/role/:id", admin.AdminUserListByRole)
+			adminPrivateRoute.POST("/user", admin.AdminUserAdd)
+			adminPrivateRoute.PUT("/user", admin.AdminUserModify)
+			adminPrivateRoute.DELETE("/user/:id", admin.AdminUserRemove)
+		}
+		{
 
-		adminPrivateRoute.GET("/problem", admin.AdminProblemList)
-		adminPrivateRoute.GET("/problem/status/:id", admin.AdminProblemListByStatus)
-		adminPrivateRoute.GET("/problem/:id", admin.AdminProblemInfo)
-		adminPrivateRoute.POST("/problem", admin.AdminProblemAdd)
-		adminPrivateRoute.PUT("/problem", admin.AdminProblemModify)
-		adminPrivateRoute.DELETE("/problem/:id", admin.AdminProblemRemove)
-		adminPrivateRoute.GET("/problem/history/:id", admin.AdminProblemHistoryList)
-		adminPrivateRoute.POST("/problem/tag", admin.AdminProblemAddTag)
-		adminPrivateRoute.DELETE("/problem/tag", admin.AdminProblemRemoveTag)
-
-		adminPrivateRoute.GET("/testcase/:id", admin.AdminTestcaseInfo)
-		adminPrivateRoute.POST("/testcase", admin.AdminTestcaseAdd)
-		adminPrivateRoute.PUT("/testcase", admin.AdminTestcaseModify)
-		adminPrivateRoute.DELETE("/testcase/:id", admin.AdminTestcaseRemove)
-
-		adminPrivateRoute.GET("/tag", admin.AdminTagList)
-		adminPrivateRoute.POST("/tag", admin.AdminTagAdd)
-		adminPrivateRoute.PUT("/tag", admin.AdminTagModify)
-		adminPrivateRoute.DELETE("/tag/:id", admin.AdminTagRemove)
-
-		adminPrivateRoute.GET("/record", admin.AdminRecordList)
-		adminPrivateRoute.GET("/record/:id", admin.AdminRecordInfo)
-		adminPrivateRoute.DELETE("/record/:id", admin.AdminRecordRemove)
-
-		adminPrivateRoute.GET("/statistics", admin.AdminStatisticsList)
+			adminPrivateRoute.GET("/problem", admin.AdminProblemList)
+			adminPrivateRoute.GET("/problem/status/:id", admin.AdminProblemListByStatus)
+			adminPrivateRoute.GET("/problem/:id", admin.AdminProblemInfo)
+			adminPrivateRoute.POST("/problem", admin.AdminProblemAdd)
+			adminPrivateRoute.PUT("/problem", admin.AdminProblemModify)
+			adminPrivateRoute.DELETE("/problem/:id", admin.AdminProblemRemove)
+			adminPrivateRoute.GET("/problem/history/:id", admin.AdminProblemHistoryList)
+			adminPrivateRoute.POST("/problem/tag", admin.AdminProblemAddTag)
+			adminPrivateRoute.DELETE("/problem/tag", admin.AdminProblemRemoveTag)
+		}
+		{
+			adminPrivateRoute.GET("/testcase/:id", admin.AdminTestcaseInfo)
+			adminPrivateRoute.POST("/testcase", admin.AdminTestcaseAdd)
+			adminPrivateRoute.PUT("/testcase", admin.AdminTestcaseModify)
+			adminPrivateRoute.DELETE("/testcase/:id", admin.AdminTestcaseRemove)
+		}
+		{
+			adminPrivateRoute.GET("/tag", admin.AdminTagList)
+			adminPrivateRoute.POST("/tag", admin.AdminTagAdd)
+			adminPrivateRoute.PUT("/tag", admin.AdminTagModify)
+			adminPrivateRoute.DELETE("/tag/:id", admin.AdminTagRemove)
+		}
+		{
+			adminPrivateRoute.GET("/record", admin.AdminRecordList)
+			adminPrivateRoute.GET("/record/:id", admin.AdminRecordInfo)
+			adminPrivateRoute.DELETE("/record/:id", admin.AdminRecordRemove)
+		}
+		{
+			adminPrivateRoute.GET("/statistics", admin.AdminStatisticsList)
+		}
 	}
 
 	rootPrivateRoute := ginServer.Group("/admin")
