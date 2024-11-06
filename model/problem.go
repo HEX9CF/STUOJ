@@ -86,9 +86,3 @@ type Problem struct {
 func (Problem) TableName() string {
 	return "tbl_problem"
 }
-
-type ProblemSolution struct {
-	ProblemId  uint64 `json:"problem_id,omitempty"`
-	LanguageId uint64 `json:"language_id,omitempty"`
-	Code       string `json:"code,omitempty"`
-}
