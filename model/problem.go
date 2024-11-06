@@ -191,3 +191,22 @@ type ProblemInfo struct {
 	Testcases []Testcase `json:"testcases,omitempty"`
 	Solution  []Solution `json:"solution,omitempty"`
 }
+
+type CommonTestcaseInput struct {
+	Rows []CommonTestcaseRow `json:"rows,omitempty"`
+}
+
+type CommonTestcaseRow struct {
+	RowSizeId uint64                `json:"row_size_id,omitempty"`
+	Values    []CommonTestcaseValue `json:"values,omitempty"`
+}
+
+type CommonTestcaseValue struct {
+	ValueSizeId uint64  `json:"value_size_id,omitempty"`
+	Id          uint64  `json:"id,omitempty"`
+	Type        string  `json:"type,omitempty"`
+	Max         float64 `json:"max,omitempty"`
+	Min         float64 `json:"min,omitempty"`
+	MaxId       uint64  `json:"max_id,omitempty"`
+	MinId       uint64  `json:"min_id,omitempty"`
+}
