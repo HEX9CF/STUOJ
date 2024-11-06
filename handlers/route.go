@@ -89,7 +89,6 @@ func InitProblemRoute() {
 
 		problemPublicRoute.GET("/tag", TagList)
 
-		problemPublicRoute.POST("/datamake", DataMake)
 	}
 }
 
@@ -142,6 +141,8 @@ func InitAdminRoute() {
 			adminPrivateRoute.GET("/problem/history/:id", admin.AdminProblemHistoryList)
 			adminPrivateRoute.POST("/problem/tag", admin.AdminProblemAddTag)
 			adminPrivateRoute.DELETE("/problem/tag", admin.AdminProblemRemoveTag)
+			adminPrivateRoute.POST("/datamake", DataMake)
+
 		}
 		{
 			adminPrivateRoute.GET("/testcase/:id", admin.AdminTestcaseInfo)
