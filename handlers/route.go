@@ -7,8 +7,9 @@ import (
 	"STUOJ/handlers/user"
 	"STUOJ/middlewares"
 	"STUOJ/model"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func InitRoute() error {
@@ -87,6 +88,8 @@ func InitProblemRoute() {
 		problemPublicRoute.GET("/:id", ProblemPublicInfo)
 
 		problemPublicRoute.GET("/tag", TagList)
+
+		problemPublicRoute.POST("/datamake", DataMake)
 	}
 }
 

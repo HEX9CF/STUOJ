@@ -3,10 +3,11 @@ package handlers
 import (
 	"STUOJ/db"
 	"STUOJ/model"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 获取公开题目信息
@@ -164,5 +165,22 @@ func ProblemPublicListByDifficulty(c *gin.Context) {
 		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: problems,
+	})
+}
+
+func DataMake(c *gin.Context) {
+	var t model.CommonTestcaseInput
+	if err := c.ShouldBindJSON(&t); err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "Bad Request",
+		})
+		return
+	}
+	tc := t.Unfold()
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "OK",
+		Data: tc.String(),
 	})
 }
