@@ -233,7 +233,7 @@ func (c *CommonTestcaseInput) Unfold() utils.CommonTestcaseInput {
 func (c *CommonTestcaseRow) Unfold(hsh *[]float64) utils.CommonTestcaseRow {
 	var row utils.CommonTestcaseRow
 	for _, v := range c.Values {
-		if v.ValueSizeId > 0 {
+		if v.ValueSizeId > 0 && v.ValueSizeId < uint64(len(*hsh)) {
 			for i := 0; i < int((*hsh)[v.ValueSizeId]); i++ {
 				row.AppendValue(v.Unfold(hsh))
 			}
@@ -245,10 +245,10 @@ func (c *CommonTestcaseRow) Unfold(hsh *[]float64) utils.CommonTestcaseRow {
 }
 
 func (c *CommonTestcaseValue) Unfold(hsh *[]float64) utils.CommonTestcaseValue {
-	if c.MaxId > 0 {
+	if c.MaxId > 0 && c.MaxId < uint64(len(*hsh)) {
 		c.Max = (*hsh)[c.MaxId]
 	}
-	if c.MinId > 0 {
+	if c.MinId > 0 && c.MinId < uint64(len(*hsh)) {
 		c.Min = (*hsh)[c.MinId]
 	}
 	t := utils.GetValueType(c.Type)
