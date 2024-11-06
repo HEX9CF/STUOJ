@@ -19,19 +19,19 @@ type Generator struct {
 }
 
 type Item struct {
-	Title        string      `xml:"title"`
-	TimeLimit    TimeLimit   `xml:"time_limit,omitempty"`
-	MemoryLimit  MemoryLimit `xml:"memory_limit,omitempty"`
-	Description  string      `xml:"description"`
-	Input        string      `xml:"input"`
-	Output       string      `xml:"output"`
-	SampleInput  string      `xml:"sample_input"`
-	SampleOutput string      `xml:"sample_output"`
-	TestInput    []string    `xml:"test_input,omitempty"`
-	TestOutput   []string    `xml:"test_output,omitempty"`
-	Hint         string      `xml:"hint,omitempty"`
-	Source       string      `xml:"source,omitempty"`
-	Solution     []Solution  `xml:"solution,omitempty"`
+	Title        string        `xml:"title"`
+	TimeLimit    TimeLimit     `xml:"time_limit,omitempty"`
+	MemoryLimit  MemoryLimit   `xml:"memory_limit,omitempty"`
+	Description  string        `xml:"description"`
+	Input        string        `xml:"input"`
+	Output       string        `xml:"output"`
+	SampleInput  string        `xml:"sample_input"`
+	SampleOutput string        `xml:"sample_output"`
+	TestInput    []string      `xml:"test_input,omitempty"`
+	TestOutput   []string      `xml:"test_output,omitempty"`
+	Hint         string        `xml:"hint,omitempty"`
+	Source       string        `xml:"source,omitempty"`
+	Solution     []FpsSolution `xml:"solution,omitempty"`
 }
 
 type TimeLimit struct {
