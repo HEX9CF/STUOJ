@@ -5,15 +5,15 @@ import (
 	"STUOJ/model"
 )
 
-func Parse(fps model.FPS) ([]model.Problem, error) {
-	var problems []model.Problem
-	for _, fp := range fps.Items {
-		problems = append(problems, fp.ToProblem())
+func Parse(fps model.FPS) []model.ProblemInfo {
+	problems := make([]model.ProblemInfo, 0)
+	for _, item := range fps.Items {
+		problems = append(problems, ParseItem(item))
 	}
-	return problems, nil
+	return problems
 }
 
-func ParseItem(item model.Item) (model.Problem, []model.Testcase, []model.Solution) {
+func ParseItem(item model.Item) model.ProblemInfo {
 	problem := item.ToProblem()
 	testcases := item.GetTestCase()
 	var solutions []model.Solution
@@ -27,5 +27,9 @@ func ParseItem(item model.Item) (model.Problem, []model.Testcase, []model.Soluti
 		}
 		solutions = append(solutions, model.Solution{LanguageId: languageId, SourceCode: solution.Code})
 	}
-	return problem, testcases, solutions
+	return model.ProblemInfo{
+		Problem:   problem,
+		Testcases: testcases,
+		Solution:  solutions,
+	}
 }
