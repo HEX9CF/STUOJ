@@ -103,9 +103,7 @@ func InitJudgeRoute() {
 		judgePrivateRoute.Use(middlewares.TokenAuthUser())
 
 		judgePrivateRoute.POST("/submit", judge.JudgeSubmit)
-
-		judgePrivateRoute.POST("/testrun", TestcaseRun)
-
+		judgePrivateRoute.POST("/testrun", judge.JudgeTestRun)
 	}
 }
 

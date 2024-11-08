@@ -196,3 +196,30 @@ func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission mode
 	// 发送评测点结果到通道
 	c <- judgement
 }
+
+func JudgeTestRun(c *gin.Context) {
+	var t model.JudgeSubmission
+	err := c.ShouldBindJSON(&t)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "参数错误",
+			Data: err,
+		})
+		return
+	}
+	res, err := judge.Submit(t)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "提交失败",
+			Data: err,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "OK",
+		Data: res,
+	})
+}
