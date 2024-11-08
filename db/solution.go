@@ -2,14 +2,10 @@ package db
 
 import (
 	"STUOJ/model"
-	"time"
 )
 
 // 插入题解
 func InsertSolution(s model.Solution) (uint64, error) {
-	updateTime := time.Now()
-	s.UpdateTime = updateTime
-	s.CreateTime = updateTime
 	tx := Db.Create(&s)
 	if tx.Error != nil {
 		return 0, tx.Error
@@ -30,11 +26,11 @@ func SelectSolutionById(id uint64) (model.Solution, error) {
 	return s, nil
 }
 
-// 查询所有题解
+// 查询所有题解（不返回源代码）
 func SelectAllSolutions() ([]model.Solution, error) {
 	var solutions []model.Solution
 
-	tx := Db.Find(&solutions)
+	tx := Db.Omit("source_code").Find(&solutions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -42,11 +38,11 @@ func SelectAllSolutions() ([]model.Solution, error) {
 	return solutions, nil
 }
 
-// 根据题目ID查询题解
+// 根据题目ID查询题解（不返回源代码）
 func SelectSolutionsByProblemId(pid uint64) ([]model.Solution, error) {
 	var solutions []model.Solution
 
-	tx := Db.Where("problem_id = ?", pid).Find(&solutions)
+	tx := Db.Omit("source_code").Where("problem_id = ?", pid).Find(&solutions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -56,12 +52,10 @@ func SelectSolutionsByProblemId(pid uint64) ([]model.Solution, error) {
 
 // 根据ID更新题解
 func UpdateSolutionById(s model.Solution) error {
-	updateTime := time.Now()
 	tx := Db.Model(&model.Solution{}).Where("id = ?", s.Id).Updates(map[string]interface{}{
 		"problem_id":  s.ProblemId,
 		"language_id": s.LanguageId,
 		"source_code": s.SourceCode,
-		"update_time": updateTime,
 	})
 	if tx.Error != nil {
 		return tx.Error
