@@ -4,6 +4,10 @@ token:
   expire: 864000
   refresh: 432000
   secret: stuoj
+limiter:
+  second: 10
+  size: 1
+
 database:
   host: 8.134.48.192
   port: 3306
