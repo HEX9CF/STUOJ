@@ -85,6 +85,7 @@ func InitProblemRoute() {
 		problemPublicRoute.GET("/", ProblemPublicList)
 		problemPublicRoute.GET("/difficulty/:id", ProblemPublicListByDifficulty)
 		problemPublicRoute.GET("/tag/:id", ProblemPublicListByTagId)
+		problemPublicRoute.POST("/title", ProblemPublicListByTitle)
 		problemPublicRoute.GET("/:id", ProblemPublicInfo)
 
 		problemPublicRoute.GET("/tag", TagList)

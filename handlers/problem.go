@@ -118,7 +118,7 @@ func ProblemPublicListByTagId(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	problems, err := db.SelectProblemsByStatusAndTagId(tid, model.ProblemStatusPublic)
+	problems, err := db.SelectProblemsByTagIdAndStatus(tid, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -150,7 +150,43 @@ func ProblemPublicListByDifficulty(c *gin.Context) {
 	}
 
 	d := model.ProblemDifficulty(id)
-	problems, err := db.SelectProblemsByStatusAndDifficulty(d, model.ProblemStatusPublic)
+	problems, err := db.SelectProblemsByDifficultyAndStatus(d, model.ProblemStatusPublic)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取失败",
+			Data: nil,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "OK",
+		Data: problems,
+	})
+}
+
+type ReqProblemPublicListByTitle struct {
+	Title string `json:"title"`
+}
+
+// 根据标题获取公开题目列表
+func ProblemPublicListByTitle(c *gin.Context) {
+	var req ReqProblemPublicListByTitle
+	err := c.BindJSON(&req)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "参数错误",
+			Data: nil,
+		})
+		return
+	}
+
+	problems, err := db.SelectProblemsLikeTitleByStatus(req.Title, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
