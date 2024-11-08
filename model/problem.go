@@ -219,7 +219,7 @@ func (c *CommonTestcaseInput) Unfold() utils.CommonTestcaseInput {
 	var hsh []float64
 	hsh = append(hsh, 0)
 	for _, row := range c.Rows {
-		if row.RowSizeId > 0 {
+		if row.RowSizeId > 0 && row.RowSizeId < uint64(len(hsh)) {
 			for i := 0; i < int(hsh[row.RowSizeId]); i++ {
 				input.AppendRow(row.Unfold(&hsh))
 			}
