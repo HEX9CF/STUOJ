@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/server/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

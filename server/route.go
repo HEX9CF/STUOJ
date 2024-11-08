@@ -2,12 +2,12 @@ package server
 
 import (
 	"STUOJ/internal/conf"
-	"STUOJ/internal/model"
 	"STUOJ/server/handler"
 	"STUOJ/server/handler/admin"
 	"STUOJ/server/handler/judge"
 	"STUOJ/server/handler/user"
 	"STUOJ/server/middlewares"
+	"STUOJ/server/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -18,20 +18,12 @@ func InitRoute() error {
 
 	// index
 	ginServer.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, model.Response{
-			Code: model.ResponseCodeOk,
-			Msg:  "OK",
-			Data: "STUOJ后端启动成功！",
-		})
+		c.JSON(http.StatusOK, model.RespOk("OK", "STUOJ后端启动成功！"))
 	})
 
 	// 404
 	ginServer.NoRoute(func(c *gin.Context) {
-		c.JSON(http.StatusNotFound, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "404 Not Found",
-			Data: nil,
-		})
+		c.JSON(http.StatusNotFound, model.RespError("404 Not Found", nil))
 	})
 
 	// 初始化路由
