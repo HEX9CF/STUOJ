@@ -142,6 +142,7 @@ func InitAdminRoute() {
 			adminPrivateRoute.POST("/problem/tag", admin.AdminProblemAddTag)
 			adminPrivateRoute.DELETE("/problem/tag", admin.AdminProblemRemoveTag)
 			adminPrivateRoute.POST("/datamake", DataMake)
+			adminPrivateRoute.POST("/fps", admin.AdminProblemParseFromFps)
 
 		}
 		{

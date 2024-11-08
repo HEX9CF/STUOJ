@@ -2,12 +2,16 @@ package admin
 
 import (
 	"STUOJ/db"
+	"STUOJ/fps"
 	"STUOJ/model"
 	"STUOJ/utils"
-	"github.com/gin-gonic/gin"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 获取题目信息（题目+评测点数据）
@@ -592,4 +596,26 @@ func AdminProblemRemoveTag(c *gin.Context) {
 		Msg:  "删除成功",
 		Data: nil,
 	})
+}
+
+func AdminProblemParseFromFps(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
+		return
+	}
+	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey())
+	if err := c.SaveUploadedFile(file, dst); err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
+		return
+	}
+	defer os.Remove(dst)
+	f, err := fps.Read(dst)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件解析失败", Data: err})
+		return
+	}
+	p := fps.Parse(f)
+	c.JSON(http.StatusOK, model.Response{Code: 1, Msg: "文件解析成功", Data: p})
+
 }
