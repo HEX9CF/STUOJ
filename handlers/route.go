@@ -88,7 +88,7 @@ func InitProblemRoute() {
 		problemPublicRoute.GET("/:id", ProblemPublicInfo)
 
 		problemPublicRoute.GET("/tag", TagList)
-
+		problemPublicRoute.POST("/testrun", TestcaseRun)
 	}
 }
 
