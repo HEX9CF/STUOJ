@@ -4,7 +4,6 @@ import (
 	"STUOJ/external/judge"
 	"STUOJ/internal/db/dao"
 	model2 "STUOJ/internal/model"
-	"STUOJ/server/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -27,8 +26,8 @@ func JudgeSubmit(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -38,8 +37,8 @@ func JudgeSubmit(c *gin.Context) {
 	// 获取用户ID
 	uid, err := utils.GetTokenUid(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusUnauthorized, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "用户未登录",
 			Data: nil,
 		})
@@ -64,8 +63,8 @@ func JudgeSubmit(c *gin.Context) {
 	submission.Id, err = dao.InsertSubmission(submission)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "提交失败",
 			Data: nil,
 		})
@@ -76,8 +75,8 @@ func JudgeSubmit(c *gin.Context) {
 	problem, err := dao.SelectProblemById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "获取题目信息失败",
 			Data: nil,
 		})
@@ -88,8 +87,8 @@ func JudgeSubmit(c *gin.Context) {
 	testcases, err := dao.SelectTestcasesByProblemId(req.ProblemId)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "获取评测点数据失败",
 			Data: nil,
 		})
@@ -97,8 +96,8 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 返回提交ID
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
+	c.JSON(http.StatusOK, model2.Response{
+		Code: model2.ResponseCodeOk,
 		Msg:  "提交成功，返回记录提交ID",
 		Data: submission.Id,
 	})
@@ -209,8 +208,8 @@ func JudgeTestRun(c *gin.Context) {
 	err := c.ShouldBindJSON(&t)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: err,
 		})
@@ -226,8 +225,8 @@ func JudgeTestRun(c *gin.Context) {
 	res, err := judge.Submit(s)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "提交失败",
 			Data: err,
 		})
@@ -237,8 +236,8 @@ func JudgeTestRun(c *gin.Context) {
 	time, err := strconv.ParseFloat(res.Time, 64)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "解析时间失败",
 			Data: nil,
 		})
@@ -250,8 +249,8 @@ func JudgeTestRun(c *gin.Context) {
 		Memory: uint64(res.Memory),
 	}
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
+	c.JSON(http.StatusOK, model2.Response{
+		Code: model2.ResponseCodeOk,
 		Msg:  "OK",
 		Data: j,
 	})

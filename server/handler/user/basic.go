@@ -3,7 +3,6 @@ package user
 import (
 	model2 "STUOJ/internal/model"
 	"STUOJ/internal/service/user"
-	"STUOJ/server/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -24,8 +23,8 @@ func UserRegister(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -41,8 +40,8 @@ func UserRegister(c *gin.Context) {
 	u.Id, err = user.Register(u)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "注册失败，用户名或邮箱已存在",
 			Data: nil,
 		})
@@ -50,8 +49,8 @@ func UserRegister(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
+	c.JSON(http.StatusOK, model2.Response{
+		Code: model2.ResponseCodeOk,
 		Msg:  "注册成功，返回用户ID",
 		Data: u.Id,
 	})
@@ -70,8 +69,8 @@ func UserLogin(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -80,8 +79,8 @@ func UserLogin(c *gin.Context) {
 
 	// 校验参数
 	if req.Password == "" || req.Email == "" {
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "参数错误，邮箱或密码不能为空",
 			Data: nil,
 		})
@@ -99,8 +98,8 @@ func UserLogin(c *gin.Context) {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "登录失败，用户名或密码错误",
 			Data: nil,
 		})
@@ -114,8 +113,8 @@ func UserLogin(c *gin.Context) {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model2.Response{
+			Code: model2.ResponseCodeError,
 			Msg:  "登录失败，生成token失败",
 			Data: nil,
 		})
@@ -123,8 +122,8 @@ func UserLogin(c *gin.Context) {
 	}
 
 	// 登录成功，返回token
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
+	c.JSON(http.StatusOK, model2.Response{
+		Code: model2.ResponseCodeOk,
 		Msg:  "登录成功，返回token",
 		Data: token,
 	})

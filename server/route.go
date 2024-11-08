@@ -2,12 +2,12 @@ package server
 
 import (
 	"STUOJ/internal/conf"
+	"STUOJ/internal/model"
 	"STUOJ/server/handler"
 	"STUOJ/server/handler/admin"
 	"STUOJ/server/handler/judge"
 	"STUOJ/server/handler/user"
 	"STUOJ/server/middlewares"
-	"STUOJ/server/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
