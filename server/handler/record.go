@@ -1,8 +1,8 @@
 package handler
 
 import (
-	dao2 "STUOJ/internal/dao"
-	model2 "STUOJ/internal/model"
+	dao "STUOJ/internal/dao"
+	model "STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -14,8 +14,8 @@ func RecordInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -24,11 +24,11 @@ func RecordInfo(c *gin.Context) {
 
 	// 获取提交信息
 	sid := uint64(id)
-	submission, err := dao2.SelectSubmissionById(sid)
+	submission, err := dao.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取提交信息失败",
 			Data: nil,
 		})
@@ -36,24 +36,24 @@ func RecordInfo(c *gin.Context) {
 	}
 
 	// 获取评测结果
-	judgements, err := dao2.SelectJudgementsBySubmissionId(sid)
+	judgements, err := dao.SelectJudgementsBySubmissionId(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取评测结果失败",
 			Data: nil,
 		})
 		return
 	}
 
-	record := model2.Record{
+	record := model.Record{
 		Submission: submission,
 		Judgements: judgements,
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: record,
 	})
@@ -61,21 +61,21 @@ func RecordInfo(c *gin.Context) {
 
 // 获取提交记录列表
 func RecordList(c *gin.Context) {
-	submissions, err := dao2.SelectAllSubmissions()
+	submissions, err := dao.SelectAllSubmissions()
 	if err != nil || submissions == nil {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusOK, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusOK, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: submissions,
 	})
@@ -86,8 +86,8 @@ func RecordListOfProblem(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -95,11 +95,11 @@ func RecordListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	submissions, err := dao2.SelectSubmissionsByProblemId(pid)
+	submissions, err := dao.SelectSubmissionsByProblemId(pid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取提交记录信息失败",
 			Data: nil,
 		})
@@ -107,8 +107,8 @@ func RecordListOfProblem(c *gin.Context) {
 	}
 	//log.Println(submissions)
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: submissions,
 	})
@@ -119,8 +119,8 @@ func RecordListOfUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -128,19 +128,19 @@ func RecordListOfUser(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	submisssions, err := dao2.SelectSubmissionsByUserId(uid)
+	submisssions, err := dao.SelectSubmissionsByUserId(uid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取提交记录信息失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: submisssions,
 	})

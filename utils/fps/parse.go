@@ -2,21 +2,21 @@ package fps
 
 import (
 	"STUOJ/internal/dao"
-	model2 "STUOJ/internal/model"
+	model "STUOJ/internal/model"
 )
 
-func Parse(fps model2.FPS) []model2.ProblemInfo {
-	problems := make([]model2.ProblemInfo, 0)
+func Parse(fps model.FPS) []model.ProblemInfo {
+	problems := make([]model.ProblemInfo, 0)
 	for _, item := range fps.Items {
 		problems = append(problems, ParseItem(item))
 	}
 	return problems
 }
 
-func ParseItem(item model2.Item) model2.ProblemInfo {
+func ParseItem(item model.Item) model.ProblemInfo {
 	problem := item.ToProblem()
 	testcases := item.GetTestCase()
-	var solutions []model2.Solution
+	var solutions []model.Solution
 	for _, solution := range item.Solution {
 		var languageId uint64
 		language, err := dao.SelectLanguageLikeName(solution.Language)
@@ -25,9 +25,9 @@ func ParseItem(item model2.Item) model2.ProblemInfo {
 		} else {
 			languageId = language.Id
 		}
-		solutions = append(solutions, model2.Solution{LanguageId: languageId, SourceCode: solution.Code})
+		solutions = append(solutions, model.Solution{LanguageId: languageId, SourceCode: solution.Code})
 	}
-	return model2.ProblemInfo{
+	return model.ProblemInfo{
 		Problem:   problem,
 		Testcases: testcases,
 		Solutions: solutions,

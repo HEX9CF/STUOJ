@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"STUOJ/internal/conf"
-	model2 "STUOJ/internal/model"
+	model "STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
@@ -27,8 +27,8 @@ func TokenAuthUser() gin.HandlerFunc {
 			return
 		}
 		switch role {
-		case model2.UserRoleBanned:
-			c.JSON(http.StatusUnauthorized, model2.RespError("拒绝访问，用户已被封禁", nil))
+		case model.UserRoleBanned:
+			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
 			return
 		default:
@@ -64,16 +64,16 @@ func TokenAuthAdmin() gin.HandlerFunc {
 		}
 		//log.Println(role)
 		switch role {
-		case model2.UserRoleBanned:
-			c.JSON(http.StatusUnauthorized, model2.RespError("拒绝访问，用户已被封禁", nil))
+		case model.UserRoleBanned:
+			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
 			return
-		case model2.UserRoleAdmin:
+		case model.UserRoleAdmin:
 			break
-		case model2.UserRoleRoot:
+		case model.UserRoleRoot:
 			break
 		default:
-			c.JSON(http.StatusUnauthorized, model2.RespError("拒绝访问，用户权限不足", nil))
+			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户权限不足", nil))
 			c.Abort()
 			break
 		}
@@ -106,14 +106,14 @@ func TokenAuthRoot() gin.HandlerFunc {
 			return
 		}
 		switch role {
-		case model2.UserRoleBanned:
-			c.JSON(http.StatusUnauthorized, model2.RespError("拒绝访问，用户已被封禁", nil))
+		case model.UserRoleBanned:
+			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
 			return
-		case model2.UserRoleRoot:
+		case model.UserRoleRoot:
 			break
 		default:
-			c.JSON(http.StatusUnauthorized, model2.RespError("拒绝访问，用户权限不足", nil))
+			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户权限不足", nil))
 			c.Abort()
 			break
 		}
@@ -134,7 +134,7 @@ func tokenAutoRefresh(c *gin.Context) error {
 	config := conf.Conf.Token
 	exp, err := utils.GetTokenExpire(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model2.RespError("token无效，获取用户信息失败", nil))
+		c.JSON(http.StatusUnauthorized, model.RespError("token无效，获取用户信息失败", nil))
 		c.Abort()
 		return err
 	}
@@ -149,7 +149,7 @@ func tokenAutoRefresh(c *gin.Context) error {
 	// 获取用户id
 	uid, err := utils.GetTokenUid(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model2.RespError("token无效，获取用户信息失败", nil))
+		c.JSON(http.StatusUnauthorized, model.RespError("token无效，获取用户信息失败", nil))
 		c.Abort()
 		return err
 	}
@@ -157,21 +157,21 @@ func tokenAutoRefresh(c *gin.Context) error {
 	// 生成新token
 	token, err := utils.GenerateToken(uid)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model2.RespError("token刷新失败", nil))
+		c.JSON(http.StatusUnauthorized, model.RespError("token刷新失败", nil))
 		c.Abort()
 		return err
 	}
 
-	c.JSON(http.StatusUnauthorized, model2.RespRetry("token已刷新，请重新发送请求", token))
+	c.JSON(http.StatusUnauthorized, model.RespRetry("token已刷新，请重新发送请求", token))
 	c.Abort()
 	return nil
 }
 
-func getUserRole(c *gin.Context) (model2.UserRole, error) {
+func getUserRole(c *gin.Context) (model.UserRole, error) {
 	// 获取用户id
 	uid, err := utils.GetTokenUid(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model2.RespError("token无效，获取用户信息失败", nil))
+		c.JSON(http.StatusUnauthorized, model.RespError("token无效，获取用户信息失败", nil))
 		c.Abort()
 		return 0, err
 	}
@@ -179,7 +179,7 @@ func getUserRole(c *gin.Context) (model2.UserRole, error) {
 	// 获取用户信息
 	user, err := user.SelectById(uid)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model2.RespError("token无效，获取用户信息失败", nil))
+		c.JSON(http.StatusUnauthorized, model.RespError("token无效，获取用户信息失败", nil))
 		c.Abort()
 		return 0, err
 	}
@@ -190,7 +190,7 @@ func getUserRole(c *gin.Context) (model2.UserRole, error) {
 func tokenVerify(c *gin.Context) error {
 	err := utils.VerifyToken(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model2.RespError("用户未登录或token过期，请重新登录", nil))
+		c.JSON(http.StatusUnauthorized, model.RespError("用户未登录或token过期，请重新登录", nil))
 		c.Abort()
 		return err
 	}

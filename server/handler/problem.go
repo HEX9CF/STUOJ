@@ -1,8 +1,8 @@
 package handler
 
 import (
-	dao2 "STUOJ/internal/dao"
-	model2 "STUOJ/internal/model"
+	dao "STUOJ/internal/dao"
+	model "STUOJ/internal/model"
 	"log"
 	"net/http"
 	"strconv"
@@ -15,8 +15,8 @@ func ProblemPublicInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -24,11 +24,11 @@ func ProblemPublicInfo(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	problem, err := dao2.SelectProblemByStatusAndId(pid, model2.ProblemStatusPublic)
+	problem, err := dao.SelectProblemByStatusAndId(pid, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取题目信息失败",
 			Data: nil,
 		})
@@ -36,11 +36,11 @@ func ProblemPublicInfo(c *gin.Context) {
 	}
 
 	// 获取题目标签
-	tags, err := dao2.SelectTagsByProblemId(pid)
+	tags, err := dao.SelectTagsByProblemId(pid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取题目标签失败",
 			Data: nil,
 		})
@@ -48,13 +48,13 @@ func ProblemPublicInfo(c *gin.Context) {
 	}
 
 	// 初始化题目信息
-	problemInfo := model2.ProblemInfo{
+	problemInfo := model.ProblemInfo{
 		Problem: problem,
 		Tags:    tags,
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: problemInfo,
 	})
@@ -62,21 +62,21 @@ func ProblemPublicInfo(c *gin.Context) {
 
 // 获取公开题目列表
 func ProblemPublicList(c *gin.Context) {
-	problems, err := dao2.SelectAllProblemsByStatus(model2.ProblemStatusPublic)
+	problems, err := dao.SelectAllProblemsByStatus(model.ProblemStatusPublic)
 	if err != nil || problems == nil {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusOK, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusOK, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: problems,
 	})
@@ -84,21 +84,21 @@ func ProblemPublicList(c *gin.Context) {
 
 // 获取标签列表
 func TagList(c *gin.Context) {
-	tags, err := dao2.SelectAllTags()
+	tags, err := dao.SelectAllTags()
 	if err != nil || tags == nil {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusOK, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusOK, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: tags,
 	})
@@ -109,8 +109,8 @@ func ProblemPublicListByTagId(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -118,19 +118,19 @@ func ProblemPublicListByTagId(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	problems, err := dao2.SelectProblemsByTagIdAndStatus(tid, model2.ProblemStatusPublic)
+	problems, err := dao.SelectProblemsByTagIdAndStatus(tid, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: problems,
 	})
@@ -141,28 +141,28 @@ func ProblemPublicListByDifficulty(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
 		return
 	}
 
-	d := model2.ProblemDifficulty(id)
-	problems, err := dao2.SelectProblemsByDifficultyAndStatus(d, model2.ProblemStatusPublic)
+	d := model.ProblemDifficulty(id)
+	problems, err := dao.SelectProblemsByDifficultyAndStatus(d, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: problems,
 	})
@@ -178,27 +178,27 @@ func ProblemPublicListByTitle(c *gin.Context) {
 	err := c.BindJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
 		return
 	}
 
-	problems, err := dao2.SelectProblemsLikeTitleByStatus(req.Title, model2.ProblemStatusPublic)
+	problems, err := dao.SelectProblemsLikeTitleByStatus(req.Title, model.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: problems,
 	})

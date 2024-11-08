@@ -1,7 +1,7 @@
 package admin
 
 import (
-	model2 "STUOJ/internal/model"
+	model "STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -14,8 +14,8 @@ func AdminUserInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -26,16 +26,16 @@ func AdminUserInfo(c *gin.Context) {
 	user, err := user.SelectById(uid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取用户信息失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: user,
 	})
@@ -48,16 +48,16 @@ func AdminUserList(c *gin.Context) {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusOK, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusOK, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: users,
 	})
@@ -68,30 +68,30 @@ func AdminUserListByRole(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
 		return
 	}
 
-	rid := model2.UserRole(id)
+	rid := model.UserRole(id)
 	users, err := user.SelectByRole(rid)
 	if err != nil || users == nil {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusOK, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusOK, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: users,
 	})
@@ -113,8 +113,8 @@ func AdminUserAdd(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -122,7 +122,7 @@ func AdminUserAdd(c *gin.Context) {
 	}
 
 	// 初始化用户
-	u := model2.User{
+	u := model.User{
 		Username:  req.Username,
 		Password:  req.Password,
 		Email:     req.Email,
@@ -132,8 +132,8 @@ func AdminUserAdd(c *gin.Context) {
 	u.Id, err = user.InsertUser(u)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "添加失败，用户名或邮箱已存在",
 			Data: nil,
 		})
@@ -141,8 +141,8 @@ func AdminUserAdd(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "添加成功，返回用户ID",
 		Data: u.Id,
 	})
@@ -164,8 +164,8 @@ func AdminUserModify(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -176,8 +176,8 @@ func AdminUserModify(c *gin.Context) {
 	u, err := user.SelectById(req.Id)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "修改失败，用户不存在",
 			Data: nil,
 		})
@@ -193,8 +193,8 @@ func AdminUserModify(c *gin.Context) {
 	err = user.UpdateByIdExceptPassword(u)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "修改失败",
 			Data: nil,
 		})
@@ -202,8 +202,8 @@ func AdminUserModify(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "修改成功",
 		Data: nil,
 	})
@@ -214,8 +214,8 @@ func AdminUserRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -226,8 +226,8 @@ func AdminUserRemove(c *gin.Context) {
 	_, err = user.SelectById(uid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "删除失败，用户不存在",
 			Data: nil,
 		})
@@ -237,16 +237,16 @@ func AdminUserRemove(c *gin.Context) {
 	err = user.DeleteById(uid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "删除失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "删除成功",
 		Data: nil,
 	})
@@ -254,8 +254,8 @@ func AdminUserRemove(c *gin.Context) {
 
 // 设置用户角色
 type ReqUserModifyRole struct {
-	Id   uint64          `json:"id" binding:"required"`
-	Role model2.UserRole `json:"role" binding:"required"`
+	Id   uint64         `json:"id" binding:"required"`
+	Role model.UserRole `json:"role" binding:"required"`
 }
 
 func AdminUserModifyRole(c *gin.Context) {
@@ -265,8 +265,8 @@ func AdminUserModifyRole(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -277,8 +277,8 @@ func AdminUserModifyRole(c *gin.Context) {
 	u, err := user.SelectById(req.Id)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "修改失败，用户不存在",
 			Data: nil,
 		})
@@ -291,8 +291,8 @@ func AdminUserModifyRole(c *gin.Context) {
 	err = user.UpdateRoleById(u)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "修改失败",
 			Data: nil,
 		})
@@ -300,8 +300,8 @@ func AdminUserModifyRole(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "修改成功",
 		Data: nil,
 	})

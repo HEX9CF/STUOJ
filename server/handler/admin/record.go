@@ -1,8 +1,8 @@
 package admin
 
 import (
-	dao2 "STUOJ/internal/dao"
-	model2 "STUOJ/internal/model"
+	dao "STUOJ/internal/dao"
+	model "STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -14,8 +14,8 @@ func AdminRecordInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -24,11 +24,11 @@ func AdminRecordInfo(c *gin.Context) {
 
 	// 获取提交信息
 	sid := uint64(id)
-	submission, err := dao2.SelectSubmissionById(sid)
+	submission, err := dao.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取提交信息失败",
 			Data: nil,
 		})
@@ -36,24 +36,24 @@ func AdminRecordInfo(c *gin.Context) {
 	}
 
 	// 获取评测结果
-	judgements, err := dao2.SelectJudgementsBySubmissionId(sid)
+	judgements, err := dao.SelectJudgementsBySubmissionId(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取评测结果失败",
 			Data: nil,
 		})
 		return
 	}
 
-	record := model2.Record{
+	record := model.Record{
 		Submission: submission,
 		Judgements: judgements,
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: record,
 	})
@@ -61,21 +61,21 @@ func AdminRecordInfo(c *gin.Context) {
 
 // 获取提交记录列表
 func AdminRecordList(c *gin.Context) {
-	submissions, err := dao2.SelectAllSubmissions()
+	submissions, err := dao.SelectAllSubmissions()
 	if err != nil || submissions == nil {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusOK, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusOK, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: submissions,
 	})
@@ -86,8 +86,8 @@ func AdminRecordRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -95,11 +95,11 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	sid := uint64(id)
-	_, err = dao2.SelectSubmissionById(sid)
+	_, err = dao.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "删除失败，提交记录不存在",
 			Data: nil,
 		})
@@ -107,11 +107,11 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	// 删除提交信息
-	err = dao2.DeleteSubmissionById(sid)
+	err = dao.DeleteSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "删除提交信息失败",
 			Data: nil,
 		})
@@ -119,11 +119,11 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	// 删除评测结果
-	err = dao2.DeleteJudgementBySubmissionId(sid)
+	err = dao.DeleteJudgementBySubmissionId(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "删除评测结果失败",
 			Data: nil,
 		})
@@ -131,19 +131,19 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	// 更新提交更新时间
-	err = dao2.UpdateSubmissionUpdateTimeById(sid)
+	err = dao.UpdateSubmissionUpdateTimeById(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "更新提交记录更新时间失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "删除成功",
 		Data: nil,
 	})

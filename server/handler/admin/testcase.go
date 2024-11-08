@@ -1,8 +1,8 @@
 package admin
 
 import (
-	dao2 "STUOJ/internal/dao"
-	model2 "STUOJ/internal/model"
+	dao "STUOJ/internal/dao"
+	model "STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -14,8 +14,8 @@ func AdminTestcaseInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -24,19 +24,19 @@ func AdminTestcaseInfo(c *gin.Context) {
 
 	// 获取评测点数据
 	tid := uint64(id)
-	testcase, err := dao2.SelectTestcaseById(tid)
+	testcase, err := dao.SelectTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取评测点数据失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: testcase,
 	})
@@ -57,8 +57,8 @@ func AdminTestcaseAdd(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -66,17 +66,17 @@ func AdminTestcaseAdd(c *gin.Context) {
 	}
 
 	// 初始化题目
-	t := model2.Testcase{
+	t := model.Testcase{
 		Serial:     req.Serial,
 		ProblemId:  req.ProblemId,
 		TestInput:  req.TestInput,
 		TestOutput: req.TestOutput,
 	}
-	t.Id, err = dao2.InsertTestcase(t)
+	t.Id, err = dao.InsertTestcase(t)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "添加失败",
 			Data: nil,
 		})
@@ -84,11 +84,11 @@ func AdminTestcaseAdd(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = dao2.UpdateProblemUpdateTimeById(t.ProblemId)
+	err = dao.UpdateProblemUpdateTimeById(t.ProblemId)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "添加成功，但更新题目更新时间失败",
 			Data: nil,
 		})
@@ -96,8 +96,8 @@ func AdminTestcaseAdd(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "添加成功，返回评测点ID",
 		Data: t.Id,
 	})
@@ -119,8 +119,8 @@ func AdminTestcaseModify(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -128,11 +128,11 @@ func AdminTestcaseModify(c *gin.Context) {
 	}
 
 	// 读取评测点数据
-	t, err := dao2.SelectTestcaseById(req.Id)
+	t, err := dao.SelectTestcaseById(req.Id)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "修改失败，评测点不存在",
 			Data: nil,
 		})
@@ -145,11 +145,11 @@ func AdminTestcaseModify(c *gin.Context) {
 	t.TestInput = req.TestInput
 	t.TestOutput = req.TestOutput
 
-	err = dao2.UpdateTestcaseById(t)
+	err = dao.UpdateTestcaseById(t)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "修改失败",
 			Data: nil,
 		})
@@ -157,11 +157,11 @@ func AdminTestcaseModify(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = dao2.UpdateProblemUpdateTimeById(t.ProblemId)
+	err = dao.UpdateProblemUpdateTimeById(t.ProblemId)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "修改成功，但更新题目更新时间失败",
 			Data: nil,
 		})
@@ -169,8 +169,8 @@ func AdminTestcaseModify(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "修改成功",
 		Data: nil,
 	})
@@ -181,8 +181,8 @@ func AdminTestcaseRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -190,48 +190,48 @@ func AdminTestcaseRemove(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	_, err = dao2.SelectTestcaseById(tid)
+	_, err = dao.SelectTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "删除失败，题目不存在",
 			Data: nil,
 		})
 		return
 	}
 
-	err = dao2.DeleteTestcaseById(tid)
+	err = dao.DeleteTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "删除失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "删除成功",
 		Data: nil,
 	})
 }
 
 func AdminTestcaseDataMake(c *gin.Context) {
-	var t model2.CommonTestcaseInput
+	var t model.CommonTestcaseInput
 	if err := c.ShouldBindJSON(&t); err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 		})
 		return
 	}
 	tc := t.Unfold()
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: tc.String(),
 	})

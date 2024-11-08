@@ -1,8 +1,8 @@
 package admin
 
 import (
-	dao2 "STUOJ/internal/dao"
-	model2 "STUOJ/internal/model"
+	dao "STUOJ/internal/dao"
+	model "STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -11,21 +11,21 @@ import (
 
 // 获取题解列表
 func AdminSolutionList(c *gin.Context) {
-	solutions, err := dao2.SelectAllSolutions()
+	solutions, err := dao.SelectAllSolutions()
 	if err != nil || solutions == nil {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusOK, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusOK, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: solutions,
 	})
@@ -36,8 +36,8 @@ func AdminSolutionListByProblemId(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -45,21 +45,21 @@ func AdminSolutionListByProblemId(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	solutions, err := dao2.SelectSolutionsByProblemId(pid)
+	solutions, err := dao.SelectSolutionsByProblemId(pid)
 	if err != nil || solutions == nil {
 		if err != nil {
 			log.Println(err)
 		}
-		c.JSON(http.StatusOK, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusOK, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: solutions,
 	})
@@ -70,8 +70,8 @@ func AdminSolutionInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -80,19 +80,19 @@ func AdminSolutionInfo(c *gin.Context) {
 
 	// 获取评测点数据
 	sid := uint64(id)
-	solution, err := dao2.SelectSolutionById(sid)
+	solution, err := dao.SelectSolutionById(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "获取题解数据失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: solution,
 	})
@@ -112,24 +112,24 @@ func AdminSolutionAdd(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
 		return
 	}
 
-	s := model2.Solution{
+	s := model.Solution{
 		LanguageId: req.LanguageId,
 		ProblemId:  req.ProblemId,
 		SourceCode: req.SourceCode,
 	}
-	s.Id, err = dao2.InsertSolution(s)
+	s.Id, err = dao.InsertSolution(s)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "添加失败",
 			Data: nil,
 		})
@@ -137,11 +137,11 @@ func AdminSolutionAdd(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = dao2.UpdateProblemUpdateTimeById(s.ProblemId)
+	err = dao.UpdateProblemUpdateTimeById(s.ProblemId)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "添加成功，但更新题目更新时间失败",
 			Data: nil,
 		})
@@ -149,8 +149,8 @@ func AdminSolutionAdd(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "添加成功，返回题解ID",
 		Data: s.Id,
 	})
@@ -171,8 +171,8 @@ func AdminSolutionModify(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -180,11 +180,11 @@ func AdminSolutionModify(c *gin.Context) {
 	}
 
 	// 读取题解
-	s, err := dao2.SelectSolutionById(req.Id)
+	s, err := dao.SelectSolutionById(req.Id)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "修改失败，题解不存在",
 			Data: nil,
 		})
@@ -196,11 +196,11 @@ func AdminSolutionModify(c *gin.Context) {
 	s.ProblemId = req.ProblemId
 	s.SourceCode = req.SourceCode
 
-	err = dao2.UpdateSolutionById(s)
+	err = dao.UpdateSolutionById(s)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "修改失败",
 			Data: nil,
 		})
@@ -208,11 +208,11 @@ func AdminSolutionModify(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = dao2.UpdateProblemUpdateTimeById(s.ProblemId)
+	err = dao.UpdateProblemUpdateTimeById(s.ProblemId)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "修改成功，但更新题目更新时间失败",
 			Data: nil,
 		})
@@ -220,8 +220,8 @@ func AdminSolutionModify(c *gin.Context) {
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "修改成功",
 		Data: nil,
 	})
@@ -232,8 +232,8 @@ func AdminSolutionRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
 			Data: nil,
 		})
@@ -241,30 +241,30 @@ func AdminSolutionRemove(c *gin.Context) {
 	}
 
 	sid := uint64(id)
-	_, err = dao2.SelectSolutionById(sid)
+	_, err = dao.SelectSolutionById(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "删除失败，题解不存在",
 			Data: nil,
 		})
 		return
 	}
 
-	err = dao2.DeleteSolutionById(sid)
+	err = dao.DeleteSolutionById(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model2.Response{
-			Code: model2.ResponseCodeError,
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
 			Msg:  "删除失败",
 			Data: nil,
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, model2.Response{
-		Code: model2.ResponseCodeOk,
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
 		Msg:  "删除成功",
 		Data: nil,
 	})
