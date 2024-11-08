@@ -218,3 +218,20 @@ func AdminTestcaseRemove(c *gin.Context) {
 		Data: nil,
 	})
 }
+
+func AdminTestcaseDataMake(c *gin.Context) {
+	var t model.CommonTestcaseInput
+	if err := c.ShouldBindJSON(&t); err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "Bad Request",
+		})
+		return
+	}
+	tc := t.Unfold()
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "OK",
+		Data: tc.String(),
+	})
+}

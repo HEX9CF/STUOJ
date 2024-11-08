@@ -601,21 +601,23 @@ func AdminProblemRemoveTag(c *gin.Context) {
 func AdminProblemParseFromFps(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
 		return
 	}
 	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey())
 	if err := c.SaveUploadedFile(file, dst); err != nil {
+		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
 		return
 	}
 	defer os.Remove(dst)
 	f, err := fps.Read(dst)
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件解析失败", Data: err})
 		return
 	}
 	p := fps.Parse(f)
 	c.JSON(http.StatusOK, model.Response{Code: 1, Msg: "文件解析成功", Data: p})
-
 }

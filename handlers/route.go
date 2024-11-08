@@ -141,8 +141,7 @@ func InitAdminRoute() {
 			adminPrivateRoute.GET("/problem/history/:id", admin.AdminProblemHistoryList)
 			adminPrivateRoute.POST("/problem/tag", admin.AdminProblemAddTag)
 			adminPrivateRoute.DELETE("/problem/tag", admin.AdminProblemRemoveTag)
-			adminPrivateRoute.POST("/datamake", DataMake)
-			adminPrivateRoute.POST("/fps", admin.AdminProblemParseFromFps)
+			adminPrivateRoute.POST("/problem/fps", admin.AdminProblemParseFromFps)
 
 		}
 		{
@@ -150,6 +149,7 @@ func InitAdminRoute() {
 			adminPrivateRoute.POST("/testcase", admin.AdminTestcaseAdd)
 			adminPrivateRoute.PUT("/testcase", admin.AdminTestcaseModify)
 			adminPrivateRoute.DELETE("/testcase/:id", admin.AdminTestcaseRemove)
+			adminPrivateRoute.POST("/testcase/datamake", admin.AdminTestcaseDataMake)
 		}
 		{
 			adminPrivateRoute.GET("/tag", admin.AdminTagList)
