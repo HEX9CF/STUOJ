@@ -66,7 +66,7 @@ func SelectAllProblemsByStatus(s model.ProblemStatus) ([]model.Problem, error) {
 }
 
 // 根据状态和标签查询题目
-func SelectProblemsByStatusAndTagId(tid uint64, s model.ProblemStatus) ([]model.Problem, error) {
+func SelectProblemsByTagIdAndStatus(tid uint64, s model.ProblemStatus) ([]model.Problem, error) {
 	var problems []model.Problem
 
 	tx := Db.Where("status = ? AND id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id = ?)", s, tid).Find(&problems)
@@ -77,10 +77,22 @@ func SelectProblemsByStatusAndTagId(tid uint64, s model.ProblemStatus) ([]model.
 }
 
 // 根据状态和难度查询题目
-func SelectProblemsByStatusAndDifficulty(d model.ProblemDifficulty, s model.ProblemStatus) ([]model.Problem, error) {
+func SelectProblemsByDifficultyAndStatus(d model.ProblemDifficulty, s model.ProblemStatus) ([]model.Problem, error) {
 	var problems []model.Problem
 
 	tx := Db.Where("status = ? AND difficulty = ?", s, d).Find(&problems)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return problems, nil
+}
+
+// 根据状态查询并根据标题模糊查询题目
+func SelectProblemsLikeTitleByStatus(title string, s model.ProblemStatus) ([]model.Problem, error) {
+	var problems []model.Problem
+
+	tx := Db.Where("status = ? AND title like ?", s, "%"+title+"%").Find(&problems)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

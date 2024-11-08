@@ -1,8 +1,6 @@
 package main
 
-import (
-	"STUOJ/bootstrap"
-)
+import "STUOJ/bootstrap"
 
 func main() {
 	bootstrap.Init()
