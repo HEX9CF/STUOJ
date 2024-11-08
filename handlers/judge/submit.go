@@ -197,10 +197,17 @@ func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission mode
 	c <- judgement
 }
 
+type ReqJudgeTestRun struct {
+	LanguageId uint64 `json:"language_id" binding:"required"`
+	SourceCode string `json:"source_code" binding:"required"`
+	Stdin      string `json:"stdin" binding:"required"`
+}
+
 func JudgeTestRun(c *gin.Context) {
-	var t model.JudgeSubmission
+	var t ReqJudgeTestRun
 	err := c.ShouldBindJSON(&t)
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: model.ResponseCodeError,
 			Msg:  "参数错误",
@@ -208,8 +215,16 @@ func JudgeTestRun(c *gin.Context) {
 		})
 		return
 	}
-	res, err := judge.Submit(t)
+
+	s := model.JudgeSubmission{
+		SourceCode: t.SourceCode,
+		LanguageId: t.LanguageId,
+		Stdin:      t.Stdin,
+	}
+
+	res, err := judge.Submit(s)
 	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
 			Code: model.ResponseCodeError,
 			Msg:  "提交失败",
@@ -217,9 +232,26 @@ func JudgeTestRun(c *gin.Context) {
 		})
 		return
 	}
+
+	time, err := strconv.ParseFloat(res.Time, 64)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "解析时间失败",
+			Data: nil,
+		})
+	}
+
+	j := model.Judgement{
+		Stdout: res.Stdout,
+		Time:   time,
+		Memory: uint64(res.Memory),
+	}
+
 	c.JSON(http.StatusOK, model.Response{
 		Code: model.ResponseCodeOk,
 		Msg:  "OK",
-		Data: res,
+		Data: j,
 	})
 }
