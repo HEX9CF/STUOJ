@@ -30,6 +30,6 @@ func ParseItem(item model.Item) model.ProblemInfo {
 	return model.ProblemInfo{
 		Problem:   problem,
 		Testcases: testcases,
-		Solution:  solutions,
+		Solutions: solutions,
 	}
 }

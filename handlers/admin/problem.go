@@ -64,10 +64,23 @@ func AdminProblemInfo(c *gin.Context) {
 		return
 	}
 
+	// 获取题解
+	solutions, err := db.SelectSolutionsByProblemId(pid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "获取题解失败",
+			Data: nil,
+		})
+		return
+	}
+
 	problemInfo := model.ProblemInfo{
 		Problem:   problem,
 		Tags:      tags,
 		Testcases: testcases,
+		Solutions: solutions,
 	}
 
 	c.JSON(http.StatusOK, model.Response{

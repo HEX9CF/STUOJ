@@ -159,6 +159,12 @@ func InitAdminRoute() {
 			adminPrivateRoute.DELETE("/tag/:id", admin.AdminTagRemove)
 		}
 		{
+			adminPrivateRoute.GET("/solution/:id", admin.AdminSolutionInfo)
+			adminPrivateRoute.POST("/solution", admin.AdminSolutionAdd)
+			adminPrivateRoute.PUT("/solution", admin.AdminSolutionModify)
+			adminPrivateRoute.DELETE("/solution/:id", admin.AdminSolutionRemove)
+		}
+		{
 			adminPrivateRoute.GET("/record", admin.AdminRecordList)
 			adminPrivateRoute.GET("/record/:id", admin.AdminRecordInfo)
 			adminPrivateRoute.DELETE("/record/:id", admin.AdminRecordRemove)
