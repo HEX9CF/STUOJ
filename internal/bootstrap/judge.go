@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	judge2 "STUOJ/external/judge"
-	"STUOJ/internal/db/dao"
+	"STUOJ/internal/dao"
 	"STUOJ/utils"
 	"log"
 )

@@ -6,6 +6,6 @@ import (
 )
 
 var (
-	Db    *gorm.DB
 	SqlDb *sql.DB
+	Db    *gorm.DB
 )

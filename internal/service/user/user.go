@@ -1,6 +1,8 @@
 package user
 
-import "STUOJ/internal/db/dao"
+import (
+	"STUOJ/internal/dao"
+)
 
 // 根据ID删除用户
 func DeleteById(id uint64) error {

@@ -2,18 +2,12 @@ package db
 
 import (
 	"STUOJ/internal/conf"
-	"database/sql"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"
 	"os"
 	"time"
-)
-
-var (
-	SqlDb *sql.DB
-	Db    *gorm.DB
 )
 
 // 初始化数据库

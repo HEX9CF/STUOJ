@@ -1,7 +1,7 @@
 package fps
 
 import (
-	"STUOJ/internal/db/dao"
+	"STUOJ/internal/dao"
 	model2 "STUOJ/internal/model"
 )
 

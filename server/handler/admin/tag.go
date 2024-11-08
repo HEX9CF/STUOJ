@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"STUOJ/internal/db/dao"
+	"STUOJ/internal/dao"
 	model2 "STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
 	"log"

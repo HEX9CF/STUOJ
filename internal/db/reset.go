@@ -1,7 +1,7 @@
 package db
 
 import (
-	"STUOJ/model"
+	"STUOJ/internal/model"
 	"log"
 )
 

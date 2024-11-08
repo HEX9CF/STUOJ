@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"STUOJ/internal/db/dao"
+	dao2 "STUOJ/internal/dao"
 	model2 "STUOJ/internal/model"
 	"log"
 	"net/http"
@@ -24,7 +24,7 @@ func ProblemPublicInfo(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	problem, err := dao.SelectProblemByStatusAndId(pid, model2.ProblemStatusPublic)
+	problem, err := dao2.SelectProblemByStatusAndId(pid, model2.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -36,7 +36,7 @@ func ProblemPublicInfo(c *gin.Context) {
 	}
 
 	// 获取题目标签
-	tags, err := dao.SelectTagsByProblemId(pid)
+	tags, err := dao2.SelectTagsByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -62,7 +62,7 @@ func ProblemPublicInfo(c *gin.Context) {
 
 // 获取公开题目列表
 func ProblemPublicList(c *gin.Context) {
-	problems, err := dao.SelectAllProblemsByStatus(model2.ProblemStatusPublic)
+	problems, err := dao2.SelectAllProblemsByStatus(model2.ProblemStatusPublic)
 	if err != nil || problems == nil {
 		if err != nil {
 			log.Println(err)
@@ -84,7 +84,7 @@ func ProblemPublicList(c *gin.Context) {
 
 // 获取标签列表
 func TagList(c *gin.Context) {
-	tags, err := dao.SelectAllTags()
+	tags, err := dao2.SelectAllTags()
 	if err != nil || tags == nil {
 		if err != nil {
 			log.Println(err)
@@ -118,7 +118,7 @@ func ProblemPublicListByTagId(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	problems, err := dao.SelectProblemsByTagIdAndStatus(tid, model2.ProblemStatusPublic)
+	problems, err := dao2.SelectProblemsByTagIdAndStatus(tid, model2.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -150,7 +150,7 @@ func ProblemPublicListByDifficulty(c *gin.Context) {
 	}
 
 	d := model2.ProblemDifficulty(id)
-	problems, err := dao.SelectProblemsByDifficultyAndStatus(d, model2.ProblemStatusPublic)
+	problems, err := dao2.SelectProblemsByDifficultyAndStatus(d, model2.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -186,7 +186,7 @@ func ProblemPublicListByTitle(c *gin.Context) {
 		return
 	}
 
-	problems, err := dao.SelectProblemsLikeTitleByStatus(req.Title, model2.ProblemStatusPublic)
+	problems, err := dao2.SelectProblemsLikeTitleByStatus(req.Title, model2.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{

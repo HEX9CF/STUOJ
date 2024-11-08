@@ -1,7 +1,7 @@
 package user
 
 import (
-	"STUOJ/internal/db/dao"
+	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 )
 

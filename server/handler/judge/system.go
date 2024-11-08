@@ -1,7 +1,7 @@
 package judge
 
 import (
-	"STUOJ/internal/db/dao"
+	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
 	"log"
