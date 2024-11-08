@@ -8,6 +8,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	golang.org/x/crypto v0.27.0
 	golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c
+	golang.org/x/time v0.8.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.12

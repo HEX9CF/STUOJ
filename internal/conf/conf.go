@@ -10,6 +10,7 @@ type Config struct {
 	YukiImage YukiConf     `yaml:"yuki-image" json:"yuki_image"`
 	Server    ServerConf   `yaml:"server" json:"server"`
 	Token     TokenConf    `yaml:"token" json:"token"`
+	Limiter   LimiterConf  `yaml:"limiter" json:"limiter"`
 }
 
 // Config 初始化
@@ -29,6 +30,7 @@ func InitConfig() error {
 	utils.Expire = Conf.Token.Expire
 	utils.Secret = Conf.Token.Secret
 	utils.Refresh = Conf.Token.Refresh
+	utils.SetupIdRateLimiter(Conf.Limiter.Second, Conf.Limiter.Size)
 	return nil
 }
 
