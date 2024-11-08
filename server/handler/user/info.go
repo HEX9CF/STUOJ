@@ -1,8 +1,8 @@
 package user
 
 import (
-	"STUOJ/internal/db/dao"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/user"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -24,7 +24,7 @@ func UserInfo(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	user, err := dao.SelectUserById(uid)
+	user, err := user.SelectById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -44,7 +44,7 @@ func UserInfo(c *gin.Context) {
 
 // 获取用户列表
 /*func UserList(c *gin.Context) {
-	users, err := user_query.SelectAllUsers()
+	users, err := user_query.SelectAll()
 	if err != nil || users == nil {
 		if err != nil {
 			log.Println(err)

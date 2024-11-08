@@ -2,8 +2,8 @@ package middlewares
 
 import (
 	"STUOJ/internal/conf"
-	"STUOJ/internal/db/dao"
 	model2 "STUOJ/internal/model"
+	"STUOJ/internal/service/user"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -217,7 +217,7 @@ func getUserRole(c *gin.Context) (model2.UserRole, error) {
 	}
 
 	// 获取用户信息
-	user, err := dao.SelectUserById(uid)
+	user, err := user.SelectById(uid)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, model2.Response{
 			Code: model2.ResponseCodeError,

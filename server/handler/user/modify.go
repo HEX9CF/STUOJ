@@ -1,8 +1,8 @@
 package user
 
 import (
-	"STUOJ/internal/db/dao"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/user"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -44,7 +44,7 @@ func UserModify(c *gin.Context) {
 	}
 
 	// 读取用户
-	u, err := dao.SelectUserById(id)
+	u, err := user.SelectById(id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -60,7 +60,7 @@ func UserModify(c *gin.Context) {
 	u.Email = req.Email
 	u.Signature = req.Signature
 
-	err = dao.UpdateUserByIdExceptPassword(u)
+	err = user.UpdateByIdExceptPassword(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -112,7 +112,7 @@ func UserChangePassword(c *gin.Context) {
 	}
 
 	// 读取用户
-	u, err := dao.SelectUserById(id)
+	u, err := user.SelectById(id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -126,7 +126,7 @@ func UserChangePassword(c *gin.Context) {
 	// 修改用户密码
 	u.Password = req.Password
 
-	err = dao.UpdateUserPasswordById(u)
+	err = user.UpdatePasswordById(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

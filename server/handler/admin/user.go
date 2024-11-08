@@ -1,8 +1,8 @@
 package admin
 
 import (
-	"STUOJ/internal/db/dao"
 	model2 "STUOJ/internal/model"
+	"STUOJ/internal/service/user"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -23,7 +23,7 @@ func AdminUserInfo(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	user, err := dao.SelectUserById(uid)
+	user, err := user.SelectById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -43,7 +43,7 @@ func AdminUserInfo(c *gin.Context) {
 
 // 获取用户列表
 func AdminUserList(c *gin.Context) {
-	users, err := dao.SelectAllUsers()
+	users, err := user.SelectAll()
 	if err != nil || users == nil {
 		if err != nil {
 			log.Println(err)
@@ -77,7 +77,7 @@ func AdminUserListByRole(c *gin.Context) {
 	}
 
 	rid := model2.UserRole(id)
-	users, err := dao.SelectUsersByRole(rid)
+	users, err := user.SelectByRole(rid)
 	if err != nil || users == nil {
 		if err != nil {
 			log.Println(err)
@@ -129,7 +129,7 @@ func AdminUserAdd(c *gin.Context) {
 		Avatar:    req.Avatar,
 		Signature: req.Signature,
 	}
-	u.Id, err = dao.InsertUser(u)
+	u.Id, err = user.InsertUser(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -152,7 +152,6 @@ func AdminUserAdd(c *gin.Context) {
 type ReqUserModify struct {
 	Id        uint64 `json:"id" binding:"required"`
 	Username  string `json:"username" binding:"required"`
-	Password  string `json:"password" binding:"required"`
 	Email     string `json:"email" binding:"required"`
 	Avatar    string `json:"avatar" binding:"required"`
 	Signature string `json:"signature" binding:"required"`
@@ -174,7 +173,7 @@ func AdminUserModify(c *gin.Context) {
 	}
 
 	// 读取用户
-	u, err := dao.SelectUserById(req.Id)
+	u, err := user.SelectById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -187,12 +186,11 @@ func AdminUserModify(c *gin.Context) {
 
 	// 修改用户
 	u.Username = req.Username
-	u.Password = req.Password
 	u.Email = req.Email
 	u.Avatar = req.Avatar
 	u.Signature = req.Signature
 
-	err = dao.UpdateUserById(u)
+	err = user.UpdateByIdExceptPassword(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -225,7 +223,7 @@ func AdminUserRemove(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	_, err = dao.SelectUserById(uid)
+	_, err = user.SelectById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -236,7 +234,7 @@ func AdminUserRemove(c *gin.Context) {
 		return
 	}
 
-	err = dao.DeleteUserById(uid)
+	err = user.DeleteById(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -276,7 +274,7 @@ func AdminUserModifyRole(c *gin.Context) {
 	}
 
 	// 读取用户
-	u, err := dao.SelectUserById(req.Id)
+	u, err := user.SelectById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -290,7 +288,7 @@ func AdminUserModifyRole(c *gin.Context) {
 	// 修改用户
 	u.Role = req.Role
 
-	err = dao.UpdateUserRoleById(u)
+	err = user.UpdateRoleById(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{

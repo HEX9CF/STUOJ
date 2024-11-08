@@ -2,8 +2,8 @@ package user
 
 import (
 	yuki2 "STUOJ/external/yuki"
-	"STUOJ/internal/db/dao"
 	model2 "STUOJ/internal/model"
+	"STUOJ/internal/service/user"
 	"STUOJ/utils"
 	"fmt"
 	"net/http"
@@ -43,7 +43,7 @@ func UpdateUserAvatar(c *gin.Context) {
 		})
 		return
 	}
-	oldAvatarUrl, err := dao.SelectUserAvatarById(id)
+	oldAvatarUrl, err := user.SelectAvatarById(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model2.Response{
 			Code: 0,
@@ -61,7 +61,12 @@ func UpdateUserAvatar(c *gin.Context) {
 		})
 		return
 	}
-	err = dao.UpdateUserAvatarById(id, image.Url)
+
+	u := model2.User{
+		Id:     uint64(id),
+		Avatar: image.Url,
+	}
+	err = user.UpdateAvatarById(u)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model2.Response{
 			Code: 0,
@@ -88,7 +93,7 @@ func UserAvatar(c *gin.Context) {
 		return
 	}
 	uid := uint64(id)
-	avatar, err := dao.SelectUserAvatarById(uid)
+	avatar, err := user.SelectAvatarById(uid)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model2.Response{
 			Code: 0,
@@ -114,7 +119,7 @@ func ThisUserAvatar(c *gin.Context) {
 		})
 		return
 	}
-	avatar, err := dao.SelectUserAvatarById(id)
+	avatar, err := user.SelectAvatarById(id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model2.Response{
 			Code: 0,
