@@ -222,9 +222,10 @@ func AdminTestcaseRemove(c *gin.Context) {
 func AdminTestcaseDataMake(c *gin.Context) {
 	var t model.CommonTestcaseInput
 	if err := c.ShouldBindJSON(&t); err != nil {
+		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: model.ResponseCodeError,
-			Msg:  "Bad Request",
+			Msg:  "参数错误",
 		})
 		return
 	}
