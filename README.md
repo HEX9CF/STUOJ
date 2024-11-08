@@ -18,7 +18,7 @@ STUOJ 是汕头大学疾风算法协会的 ACM-ICPC 在线代码评测系统，�
 
 ## 系统架构
 
-- 后端架构：Gin
+- 后端架构：Gin + Gorm
 - 前端架构：Vue
 - 数据库：MySQL
 - 代码沙箱: Judge0
