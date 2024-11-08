@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"STUOJ/model"
+	"STUOJ/internal/model"
 	"STUOJ/utils"
 	"net/http"
 
