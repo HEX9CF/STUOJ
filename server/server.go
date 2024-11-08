@@ -1,7 +1,6 @@
 package server
 
 import (
-	"STUOJ/server/handler"
 	"github.com/gin-gonic/gin"
 )
 
@@ -11,7 +10,7 @@ var (
 
 func InitServer() error {
 	ginServer = gin.Default()
-	err := handler.InitRoute()
+	err := InitRoute()
 	if err != nil {
 		return err
 	}

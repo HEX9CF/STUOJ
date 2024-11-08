@@ -1,9 +1,9 @@
-package handler
+package server
 
 import (
 	"STUOJ/internal/conf"
 	"STUOJ/internal/model"
-	"STUOJ/server"
+	"STUOJ/server/handler"
 	"STUOJ/server/handler/admin"
 	"STUOJ/server/handler/judge"
 	"STUOJ/server/handler/user"
@@ -17,7 +17,7 @@ func InitRoute() error {
 	config := conf.Conf.Server
 
 	// index
-	server.ginServer.GET("/", func(c *gin.Context) {
+	ginServer.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, model.Response{
 			Code: model.ResponseCodeOk,
 			Msg:  "OK",
@@ -26,7 +26,7 @@ func InitRoute() error {
 	})
 
 	// 404
-	server.ginServer.NoRoute(func(c *gin.Context) {
+	ginServer.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, model.Response{
 			Code: model.ResponseCodeError,
 			Msg:  "404 Not Found",
@@ -43,7 +43,7 @@ func InitRoute() error {
 	InitAdminRoute()
 
 	// 启动服务
-	err := server.ginServer.Run(":" + config.Port)
+	err := ginServer.Run(":" + config.Port)
 	if err != nil {
 		return err
 	}
@@ -52,14 +52,14 @@ func InitRoute() error {
 }
 
 func InitTestRoute() {
-	testRoute := server.ginServer.Group("/test")
+	testRoute := ginServer.Group("/test")
 	{
-		testRoute.GET("/", Test)
+		testRoute.GET("/", handler.Test)
 	}
 }
 
 func InitUserRoute() {
-	userPublicRoute := server.ginServer.Group("/user")
+	userPublicRoute := ginServer.Group("/user")
 	{
 		//userPublicRoute.GET("/", user.UserList)
 		userPublicRoute.GET("/avatar/:id", user.UserAvatar)
@@ -68,7 +68,7 @@ func InitUserRoute() {
 		userPublicRoute.POST("/register", user.UserRegister)
 		userPublicRoute.GET("/avatar", user.ThisUserAvatar)
 	}
-	userProtectedRoute := server.ginServer.Group("/user")
+	userProtectedRoute := ginServer.Group("/user")
 	{
 		// 使用中间件
 		userProtectedRoute.Use(middlewares.TokenAuthUser())
@@ -81,24 +81,24 @@ func InitUserRoute() {
 }
 
 func InitProblemRoute() {
-	problemPublicRoute := server.ginServer.Group("/problem")
+	problemPublicRoute := ginServer.Group("/problem")
 	{
-		problemPublicRoute.GET("/", ProblemPublicList)
-		problemPublicRoute.GET("/difficulty/:id", ProblemPublicListByDifficulty)
-		problemPublicRoute.GET("/tag/:id", ProblemPublicListByTagId)
-		problemPublicRoute.POST("/title", ProblemPublicListByTitle)
-		problemPublicRoute.GET("/:id", ProblemPublicInfo)
+		problemPublicRoute.GET("/", handler.ProblemPublicList)
+		problemPublicRoute.GET("/difficulty/:id", handler.ProblemPublicListByDifficulty)
+		problemPublicRoute.GET("/tag/:id", handler.ProblemPublicListByTagId)
+		problemPublicRoute.POST("/title", handler.ProblemPublicListByTitle)
+		problemPublicRoute.GET("/:id", handler.ProblemPublicInfo)
 
-		problemPublicRoute.GET("/tag", TagList)
+		problemPublicRoute.GET("/tag", handler.TagList)
 	}
 }
 
 func InitJudgeRoute() {
-	judgePublicRoute := server.ginServer.Group("/judge")
+	judgePublicRoute := ginServer.Group("/judge")
 	{
 		judgePublicRoute.GET("/language", judge.JudgeLanguageList)
 	}
-	judgePrivateRoute := server.ginServer.Group("/judge")
+	judgePrivateRoute := ginServer.Group("/judge")
 	{
 		// 使用中间件
 		judgePrivateRoute.Use(middlewares.TokenAuthUser())
@@ -109,17 +109,17 @@ func InitJudgeRoute() {
 }
 
 func InitRecordRoute() {
-	recordPublicRoute := server.ginServer.Group("/record")
+	recordPublicRoute := ginServer.Group("/record")
 	{
-		recordPublicRoute.GET("/", RecordList)
-		recordPublicRoute.GET("/:id", RecordInfo)
-		recordPublicRoute.GET("/user/:id", RecordListOfUser)
-		recordPublicRoute.GET("/problem/:id", RecordListOfProblem)
+		recordPublicRoute.GET("/", handler.RecordList)
+		recordPublicRoute.GET("/:id", handler.RecordInfo)
+		recordPublicRoute.GET("/user/:id", handler.RecordListOfUser)
+		recordPublicRoute.GET("/problem/:id", handler.RecordListOfProblem)
 	}
 }
 
 func InitAdminRoute() {
-	adminPrivateRoute := server.ginServer.Group("/admin")
+	adminPrivateRoute := ginServer.Group("/admin")
 	{
 		// 使用中间件
 		adminPrivateRoute.Use(middlewares.TokenAuthAdmin())
@@ -175,7 +175,7 @@ func InitAdminRoute() {
 		}
 	}
 
-	rootPrivateRoute := server.ginServer.Group("/admin")
+	rootPrivateRoute := ginServer.Group("/admin")
 	{
 		// 使用中间件
 		rootPrivateRoute.Use(middlewares.TokenAuthRoot())
