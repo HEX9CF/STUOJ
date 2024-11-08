@@ -2,9 +2,12 @@ package utils
 
 import (
 	"encoding/json"
+	"net"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"golang.org/x/exp/rand"
 )
 
@@ -36,4 +39,29 @@ func IsFileExists(filePath string) (bool, error) {
 		return false, err // 其他错误，返回false和错误
 	}
 	return true, nil // 文件存在，返回true和nil的error
+}
+
+func GetRealIp(r *gin.Context) string {
+	ip, _, err := net.SplitHostPort(r.Request.RemoteAddr)
+	if err != nil {
+		ip = r.Request.RemoteAddr
+	}
+	if ip != "127.0.0.1" {
+		return ip
+	}
+	// Check if behide nginx or apache
+	xRealIP := r.Request.Header.Get("X-Real-Ip")
+	xForwardedFor := r.Request.Header.Get("X-Forwarded-For")
+
+	for _, address := range strings.Split(xForwardedFor, ",") {
+		address = strings.TrimSpace(address)
+		if address != "" {
+			return address
+		}
+	}
+
+	if xRealIP != "" {
+		return xRealIP
+	}
+	return ip
 }
