@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"STUOJ/db"
+	"STUOJ/judge"
 	"STUOJ/model"
 	"log"
 	"net/http"
@@ -201,5 +202,32 @@ func ProblemPublicListByTitle(c *gin.Context) {
 		Code: model.ResponseCodeOk,
 		Msg:  "OK",
 		Data: problems,
+	})
+}
+
+func TestcaseRun(c *gin.Context) {
+	var t model.JudgeSubmission
+	err := c.ShouldBindJSON(&t)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "参数错误",
+			Data: err,
+		})
+		return
+	}
+	res, err := judge.Submit(t)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.Response{
+			Code: model.ResponseCodeError,
+			Msg:  "提交失败",
+			Data: err,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, model.Response{
+		Code: model.ResponseCodeOk,
+		Msg:  "OK",
+		Data: res,
 	})
 }
