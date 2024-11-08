@@ -70,7 +70,7 @@ func InitUserRoute() {
 	{
 		// 使用中间件
 		userProtectedRoute.Use(middlewares.TokenAuthUser())
-
+		userProtectedRoute.Use(middlewares.Limiter())
 		userProtectedRoute.GET("/current", user.UserCurrentId)
 		userPublicRoute.GET("/avatar", user.ThisUserAvatar)
 		userProtectedRoute.PUT("/modify", user.UserModify)

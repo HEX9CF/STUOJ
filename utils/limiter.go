@@ -34,7 +34,7 @@ func IdLimit(id uint64) bool {
 	if !exists {
 		limiter := rate.NewLimiter(idLimiter.second, idLimiter.size)
 		idLimiter.ids[id] = limiter
-		return true
+		return limiter.Allow()
 	}
 	return idl.Allow()
 }

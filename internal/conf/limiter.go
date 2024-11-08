@@ -1,6 +1,6 @@
 package conf
 
 type LimiterConf struct {
-	Second int `yaml:"Second"`
+	Second int `yaml:"second"`
 	Size   int `yaml:"size"`
 }

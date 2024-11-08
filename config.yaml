@@ -5,7 +5,7 @@ token:
   refresh: 432000
   secret: stuoj
 limiter:
-  second: 10
+  second: 2
   size: 1
 
 database:
