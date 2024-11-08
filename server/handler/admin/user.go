@@ -1,7 +1,7 @@
 package admin
 
 import (
-	model "STUOJ/internal/model"
+	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"github.com/gin-gonic/gin"
 	"log"

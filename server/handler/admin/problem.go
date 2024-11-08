@@ -1,8 +1,8 @@
 package admin
 
 import (
-	dao "STUOJ/internal/dao"
-	model "STUOJ/internal/model"
+	"STUOJ/internal/dao"
+	"STUOJ/internal/model"
 	"STUOJ/utils"
 	fps2 "STUOJ/utils/fps"
 	"fmt"

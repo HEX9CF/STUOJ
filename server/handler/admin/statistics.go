@@ -2,7 +2,7 @@ package admin
 
 import (
 	"STUOJ/external/judge"
-	model "STUOJ/internal/model"
+	"STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"

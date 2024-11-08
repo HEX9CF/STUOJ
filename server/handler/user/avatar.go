@@ -2,7 +2,7 @@ package user
 
 import (
 	yuki2 "STUOJ/external/yuki"
-	model "STUOJ/internal/model"
+	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"STUOJ/utils"
 	"fmt"

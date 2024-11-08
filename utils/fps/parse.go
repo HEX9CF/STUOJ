@@ -2,7 +2,7 @@ package fps
 
 import (
 	"STUOJ/internal/dao"
-	model "STUOJ/internal/model"
+	"STUOJ/internal/model"
 )
 
 func Parse(fps model.FPS) []model.ProblemInfo {

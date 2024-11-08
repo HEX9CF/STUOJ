@@ -1,7 +1,7 @@
 package user
 
 import (
-	model "STUOJ/internal/model"
+	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"

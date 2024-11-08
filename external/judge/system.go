@@ -1,7 +1,7 @@
 package judge
 
 import (
-	model "STUOJ/internal/model"
+	"STUOJ/internal/model"
 	"encoding/json"
 )
 

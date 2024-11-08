@@ -1,8 +1,8 @@
 package handler
 
 import (
-	dao "STUOJ/internal/dao"
-	model "STUOJ/internal/model"
+	"STUOJ/internal/dao"
+	"STUOJ/internal/model"
 	"log"
 	"net/http"
 	"strconv"
