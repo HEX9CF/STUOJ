@@ -2,7 +2,7 @@ package bootstrap
 
 import (
 	judge2 "STUOJ/external/judge"
-	"STUOJ/internal/db"
+	"STUOJ/internal/db/dao"
 	"STUOJ/utils"
 	"log"
 )
@@ -40,7 +40,7 @@ func InitJudgeLanguages() error {
 	}
 
 	// 清空数据库语言表
-	err = db.DeleteAllLanguages()
+	err = dao.DeleteAllLanguages()
 	if err != nil {
 		log.Println(err)
 	}
@@ -55,7 +55,7 @@ func InitJudgeLanguages() error {
 		// 	Name: v["name"].(string),
 		// }
 
-		_, err := db.InsertLanguage(language)
+		_, err := dao.InsertLanguage(language)
 		if err != nil {
 			return err
 		}

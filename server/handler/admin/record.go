@@ -1,7 +1,7 @@
 package admin
 
 import (
-	db2 "STUOJ/internal/db"
+	"STUOJ/internal/db/dao"
 	model2 "STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -24,7 +24,7 @@ func AdminRecordInfo(c *gin.Context) {
 
 	// 获取提交信息
 	sid := uint64(id)
-	submission, err := db2.SelectSubmissionById(sid)
+	submission, err := dao.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -36,7 +36,7 @@ func AdminRecordInfo(c *gin.Context) {
 	}
 
 	// 获取评测结果
-	judgements, err := db2.SelectJudgementsBySubmissionId(sid)
+	judgements, err := dao.SelectJudgementsBySubmissionId(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -61,7 +61,7 @@ func AdminRecordInfo(c *gin.Context) {
 
 // 获取提交记录列表
 func AdminRecordList(c *gin.Context) {
-	submissions, err := db2.SelectAllSubmissions()
+	submissions, err := dao.SelectAllSubmissions()
 	if err != nil || submissions == nil {
 		if err != nil {
 			log.Println(err)
@@ -95,7 +95,7 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	sid := uint64(id)
-	_, err = db2.SelectSubmissionById(sid)
+	_, err = dao.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -107,7 +107,7 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	// 删除提交信息
-	err = db2.DeleteSubmissionById(sid)
+	err = dao.DeleteSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -119,7 +119,7 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	// 删除评测结果
-	err = db2.DeleteJudgementBySubmissionId(sid)
+	err = dao.DeleteJudgementBySubmissionId(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -131,7 +131,7 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	// 更新提交更新时间
-	err = db2.UpdateSubmissionUpdateTimeById(sid)
+	err = dao.UpdateSubmissionUpdateTimeById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{

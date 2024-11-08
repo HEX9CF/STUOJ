@@ -1,6 +1,7 @@
-package db
+package dao
 
 import (
+	"STUOJ/internal/db"
 	"STUOJ/internal/model"
 	"html"
 	"strings"
@@ -11,7 +12,7 @@ import (
 func SelectUserById(id uint64) (model.User, error) {
 	var user model.User
 
-	tx := Db.Where("id = ?", id).First(&user)
+	tx := db.Db.Where("id = ?", id).First(&user)
 	if tx.Error != nil {
 		return model.User{}, tx.Error
 	}
@@ -23,7 +24,7 @@ func SelectUserById(id uint64) (model.User, error) {
 func SelectAllUsers() ([]model.User, error) {
 	var users []model.User
 
-	tx := Db.Find(&users)
+	tx := db.Db.Find(&users)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -35,7 +36,7 @@ func SelectAllUsers() ([]model.User, error) {
 func SelectUsersByRole(r model.UserRole) ([]model.User, error) {
 	var users []model.User
 
-	tx := Db.Where("role = ?", r).Find(&users)
+	tx := db.Db.Where("role = ?", r).Find(&users)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -46,7 +47,7 @@ func SelectUsersByRole(r model.UserRole) ([]model.User, error) {
 // 查询用户头像
 func SelectUserAvatarById(id uint64) (string, error) {
 	var user model.User
-	tx := Db.Where("id = ?", id).First(&user)
+	tx := db.Db.Where("id = ?", id).First(&user)
 	if tx.Error != nil {
 		return "", tx.Error
 	}
@@ -66,7 +67,7 @@ func InsertUser(u model.User) (uint64, error) {
 	time := time.Now()
 	u.CreateTime = time
 	u.UpdateTime = time
-	tx := Db.Create(&u)
+	tx := db.Db.Create(&u)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
@@ -89,7 +90,7 @@ func InsertUserForRegister(u model.User) (uint64, error) {
 	updateTime := time.Now()
 	u.CreateTime = updateTime
 	u.UpdateTime = updateTime
-	tx := Db.Create(&u)
+	tx := db.Db.Create(&u)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
@@ -105,7 +106,7 @@ func UpdateUserById(u model.User) error {
 		return err
 	}
 
-	tx := Db.Save(&u)
+	tx := db.Db.Save(&u)
 	if tx.Error != nil {
 		return tx.Error
 	}
@@ -118,7 +119,7 @@ func UpdateUserByIdExceptPassword(u model.User) error {
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 
 	updateTime := time.Now()
-	tx := Db.Model(&model.User{}).Where("id = ?", u.Id).Updates(map[string]interface{}{
+	tx := db.Db.Model(&model.User{}).Where("id = ?", u.Id).Updates(map[string]interface{}{
 		"username":    u.Username,
 		"email":       u.Email,
 		"signature":   u.Signature,
@@ -140,7 +141,7 @@ func UpdateUserPasswordById(u model.User) error {
 	}
 
 	updateTime := time.Now()
-	tx := Db.Model(&model.User{}).Where("id = ?", u.Id).Updates(map[string]interface{}{
+	tx := db.Db.Model(&model.User{}).Where("id = ?", u.Id).Updates(map[string]interface{}{
 		"password":    u.Password,
 		"update_time": updateTime,
 	})
@@ -154,7 +155,7 @@ func UpdateUserPasswordById(u model.User) error {
 // 根据ID更新用户角色
 func UpdateUserRoleById(u model.User) error {
 	updateTime := time.Now()
-	tx := Db.Model(&model.User{}).Where("id = ?", u.Id).Updates(map[string]interface{}{
+	tx := db.Db.Model(&model.User{}).Where("id = ?", u.Id).Updates(map[string]interface{}{
 		"role":        u.Role,
 		"update_time": updateTime,
 	})
@@ -168,7 +169,7 @@ func UpdateUserRoleById(u model.User) error {
 // 更新用户头像
 func UpdateUserAvatarById(id uint64, avatarUrl string) error {
 	updateTime := time.Now()
-	tx := Db.Model(&model.User{}).Where("id = ?", id).Updates(map[string]interface{}{
+	tx := db.Db.Model(&model.User{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"avatar":      avatarUrl,
 		"update_time": updateTime,
 	})
@@ -181,7 +182,7 @@ func UpdateUserAvatarById(id uint64, avatarUrl string) error {
 
 // 根据ID删除用户
 func DeleteUserById(id uint64) error {
-	tx := Db.Where("id = ?", id).Delete(&model.User{})
+	tx := db.Db.Where("id = ?", id).Delete(&model.User{})
 	if tx.Error != nil {
 		return tx.Error
 	}
@@ -194,7 +195,7 @@ func VerifyUserByEmail(u model.User) (uint64, error) {
 	password := u.Password
 
 	// 查询用户
-	tx := Db.Where("email = ?", u.Email).First(&u)
+	tx := db.Db.Where("email = ?", u.Email).First(&u)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
@@ -213,7 +214,7 @@ func VerifyUserById(u model.User) (uint64, error) {
 	password := u.Password
 
 	// 查询用户
-	tx := Db.Where("id = ?", u.Id).First(&u)
+	tx := db.Db.Where("id = ?", u.Id).First(&u)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}

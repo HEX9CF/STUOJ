@@ -1,6 +1,7 @@
-package db
+package dao
 
 import (
+	"STUOJ/internal/db"
 	"STUOJ/internal/model"
 	"time"
 )
@@ -10,7 +11,7 @@ func InsertSubmission(s model.Submission) (uint64, error) {
 	updateTime := time.Now()
 	s.UpdateTime = updateTime
 	s.CreateTime = updateTime
-	tx := Db.Create(&s)
+	tx := db.Db.Create(&s)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
@@ -22,7 +23,7 @@ func InsertSubmission(s model.Submission) (uint64, error) {
 func SelectAllSubmissions() ([]model.Submission, error) {
 	var submissions []model.Submission
 
-	tx := Db.Omit("source_code").Find(&submissions)
+	tx := db.Db.Omit("source_code").Find(&submissions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -34,7 +35,7 @@ func SelectAllSubmissions() ([]model.Submission, error) {
 func SelectSubmissionById(id uint64) (model.Submission, error) {
 	var s model.Submission
 
-	tx := Db.Where("id = ?", id).First(&s)
+	tx := db.Db.Where("id = ?", id).First(&s)
 	if tx.Error != nil {
 		return model.Submission{}, tx.Error
 	}
@@ -46,7 +47,7 @@ func SelectSubmissionById(id uint64) (model.Submission, error) {
 func SelectSubmissionsByUserId(userId uint64) ([]model.Submission, error) {
 	var submissions []model.Submission
 
-	tx := Db.Omit("source_code").Where("user_id = ?", userId).Find(&submissions)
+	tx := db.Db.Omit("source_code").Where("user_id = ?", userId).Find(&submissions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -58,7 +59,7 @@ func SelectSubmissionsByUserId(userId uint64) ([]model.Submission, error) {
 func SelectSubmissionsByProblemId(problemId uint64) ([]model.Submission, error) {
 	var submissions []model.Submission
 
-	tx := Db.Omit("source_code").Where("problem_id = ?", problemId).Find(&submissions)
+	tx := db.Db.Omit("source_code").Where("problem_id = ?", problemId).Find(&submissions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -69,7 +70,7 @@ func SelectSubmissionsByProblemId(problemId uint64) ([]model.Submission, error) 
 // 更新提交记录
 func UpdateSubmissionById(s model.Submission) error {
 	updateTime := time.Now()
-	tx := Db.Model(&s).Where("id = ?", s.Id).Updates(map[string]interface{}{
+	tx := db.Db.Model(&s).Where("id = ?", s.Id).Updates(map[string]interface{}{
 		"user_id":     s.UserId,
 		"problem_id":  s.ProblemId,
 		"status":      s.Status,
@@ -91,7 +92,7 @@ func UpdateSubmissionById(s model.Submission) error {
 // 根据ID更新提交记录状态更新时间
 func UpdateSubmissionUpdateTimeById(id uint64) error {
 	updateTime := time.Now()
-	tx := Db.Model(&model.Submission{}).Where("id = ?", id).Updates(map[string]interface{}{
+	tx := db.Db.Model(&model.Submission{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"update_time": updateTime,
 	})
 	if tx.Error != nil {
@@ -103,7 +104,7 @@ func UpdateSubmissionUpdateTimeById(id uint64) error {
 
 // 根据ID删除提交记录
 func DeleteSubmissionById(id uint64) error {
-	tx := Db.Where("id = ?", id).Delete(&model.Submission{})
+	tx := db.Db.Where("id = ?", id).Delete(&model.Submission{})
 	if tx.Error != nil {
 		return tx.Error
 	}

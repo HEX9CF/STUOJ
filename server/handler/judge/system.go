@@ -1,7 +1,7 @@
 package judge
 
 import (
-	"STUOJ/internal/db"
+	"STUOJ/internal/db/dao"
 	"STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -10,7 +10,7 @@ import (
 
 // 获取语言列表
 func JudgeLanguageList(c *gin.Context) {
-	languages, err := db.SelectAllLanguages()
+	languages, err := dao.SelectAllLanguages()
 	if err != nil || languages == nil {
 		if err != nil {
 			log.Println(err)

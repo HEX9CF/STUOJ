@@ -1,7 +1,7 @@
 package fps
 
 import (
-	"STUOJ/internal/db"
+	"STUOJ/internal/db/dao"
 	model2 "STUOJ/internal/model"
 )
 
@@ -19,7 +19,7 @@ func ParseItem(item model2.Item) model2.ProblemInfo {
 	var solutions []model2.Solution
 	for _, solution := range item.Solution {
 		var languageId uint64
-		language, err := db.SelectLanguageLikeName(solution.Language)
+		language, err := dao.SelectLanguageLikeName(solution.Language)
 		if err != nil {
 			languageId = 0
 		} else {

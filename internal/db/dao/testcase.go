@@ -1,12 +1,13 @@
-package db
+package dao
 
 import (
+	"STUOJ/internal/db"
 	"STUOJ/internal/model"
 )
 
 // 添加评测点数据
 func InsertTestcase(t model.Testcase) (uint64, error) {
-	tx := Db.Create(&t)
+	tx := db.Db.Create(&t)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
@@ -18,7 +19,7 @@ func InsertTestcase(t model.Testcase) (uint64, error) {
 func SelectTestcaseById(id uint64) (model.Testcase, error) {
 	var t model.Testcase
 
-	tx := Db.Where("id = ?", id).First(&t)
+	tx := db.Db.Where("id = ?", id).First(&t)
 	if tx.Error != nil {
 		return model.Testcase{}, tx.Error
 	}
@@ -30,7 +31,7 @@ func SelectTestcaseById(id uint64) (model.Testcase, error) {
 func SelectTestcasesByProblemId(problemId uint64) ([]model.Testcase, error) {
 	var testcases []model.Testcase
 
-	tx := Db.Where("problem_id = ?", problemId).Find(&testcases)
+	tx := db.Db.Where("problem_id = ?", problemId).Find(&testcases)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -40,7 +41,7 @@ func SelectTestcasesByProblemId(problemId uint64) ([]model.Testcase, error) {
 
 // 根据ID更新评测点数据
 func UpdateTestcaseById(t model.Testcase) error {
-	tx := Db.Model(&t).Where("id = ?", t.Id).Updates(map[string]interface{}{
+	tx := db.Db.Model(&t).Where("id = ?", t.Id).Updates(map[string]interface{}{
 		"serial":      t.Serial,
 		"problem_id":  t.ProblemId,
 		"test_input":  t.TestInput,
@@ -55,7 +56,7 @@ func UpdateTestcaseById(t model.Testcase) error {
 
 // 根据ID删除评测点数据
 func DeleteTestcaseById(id uint64) error {
-	tx := Db.Where("id = ?", id).Delete(&model.Testcase{})
+	tx := db.Db.Where("id = ?", id).Delete(&model.Testcase{})
 	if tx.Error != nil {
 		return tx.Error
 	}

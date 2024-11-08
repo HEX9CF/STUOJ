@@ -1,6 +1,7 @@
-package db
+package dao
 
 import (
+	"STUOJ/internal/db"
 	"STUOJ/internal/model"
 	"time"
 )
@@ -10,7 +11,7 @@ func InsertProblem(p model.Problem) (uint64, error) {
 	updateTime := time.Now()
 	p.UpdateTime = updateTime
 	p.CreateTime = updateTime
-	tx := Db.Create(&p)
+	tx := db.Db.Create(&p)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
@@ -22,7 +23,7 @@ func InsertProblem(p model.Problem) (uint64, error) {
 func SelectProblemById(id uint64) (model.Problem, error) {
 	var p model.Problem
 
-	tx := Db.Where("id = ?", id).First(&p)
+	tx := db.Db.Where("id = ?", id).First(&p)
 	if tx.Error != nil {
 		return model.Problem{}, tx.Error
 	}
@@ -34,7 +35,7 @@ func SelectProblemById(id uint64) (model.Problem, error) {
 func SelectProblemByStatusAndId(id uint64, s model.ProblemStatus) (model.Problem, error) {
 	var p model.Problem
 
-	tx := Db.Where("status = ? AND id = ?", s, id).First(&p)
+	tx := db.Db.Where("status = ? AND id = ?", s, id).First(&p)
 	if tx.Error != nil {
 		return model.Problem{}, tx.Error
 	}
@@ -45,7 +46,7 @@ func SelectProblemByStatusAndId(id uint64, s model.ProblemStatus) (model.Problem
 func SelectAllProblems() ([]model.Problem, error) {
 	var problems []model.Problem
 
-	tx := Db.Find(&problems)
+	tx := db.Db.Find(&problems)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -57,7 +58,7 @@ func SelectAllProblems() ([]model.Problem, error) {
 func SelectAllProblemsByStatus(s model.ProblemStatus) ([]model.Problem, error) {
 	var problems []model.Problem
 
-	tx := Db.Where("status = ?", s).Find(&problems)
+	tx := db.Db.Where("status = ?", s).Find(&problems)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -69,7 +70,7 @@ func SelectAllProblemsByStatus(s model.ProblemStatus) ([]model.Problem, error) {
 func SelectProblemsByTagIdAndStatus(tid uint64, s model.ProblemStatus) ([]model.Problem, error) {
 	var problems []model.Problem
 
-	tx := Db.Where("status = ? AND id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id = ?)", s, tid).Find(&problems)
+	tx := db.Db.Where("status = ? AND id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id = ?)", s, tid).Find(&problems)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -80,7 +81,7 @@ func SelectProblemsByTagIdAndStatus(tid uint64, s model.ProblemStatus) ([]model.
 func SelectProblemsByDifficultyAndStatus(d model.ProblemDifficulty, s model.ProblemStatus) ([]model.Problem, error) {
 	var problems []model.Problem
 
-	tx := Db.Where("status = ? AND difficulty = ?", s, d).Find(&problems)
+	tx := db.Db.Where("status = ? AND difficulty = ?", s, d).Find(&problems)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -92,7 +93,7 @@ func SelectProblemsByDifficultyAndStatus(d model.ProblemDifficulty, s model.Prob
 func SelectProblemsLikeTitleByStatus(title string, s model.ProblemStatus) ([]model.Problem, error) {
 	var problems []model.Problem
 
-	tx := Db.Where("status = ? AND title like ?", s, "%"+title+"%").Find(&problems)
+	tx := db.Db.Where("status = ? AND title like ?", s, "%"+title+"%").Find(&problems)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -103,7 +104,7 @@ func SelectProblemsLikeTitleByStatus(title string, s model.ProblemStatus) ([]mod
 // 根据ID更新题目
 func UpdateProblemById(p model.Problem) error {
 	updateTime := time.Now()
-	tx := Db.Model(&model.Problem{}).Where("id = ?", p.Id).Updates(map[string]interface{}{
+	tx := db.Db.Model(&model.Problem{}).Where("id = ?", p.Id).Updates(map[string]interface{}{
 		"title":         p.Title,
 		"source":        p.Source,
 		"difficulty":    p.Difficulty,
@@ -128,7 +129,7 @@ func UpdateProblemById(p model.Problem) error {
 // 根据ID更新提交记录状态更新时间
 func UpdateProblemUpdateTimeById(id uint64) error {
 	updateTime := time.Now()
-	tx := Db.Model(&model.Problem{}).Where("id = ?", id).Updates(map[string]interface{}{
+	tx := db.Db.Model(&model.Problem{}).Where("id = ?", id).Updates(map[string]interface{}{
 		"update_time": updateTime,
 	})
 	if tx.Error != nil {
@@ -140,7 +141,7 @@ func UpdateProblemUpdateTimeById(id uint64) error {
 
 // 根据ID删除题目
 func DeleteProblemById(id uint64) error {
-	tx := Db.Where("id = ?", id).Delete(&model.Problem{})
+	tx := db.Db.Where("id = ?", id).Delete(&model.Problem{})
 	if tx.Error != nil {
 		return tx.Error
 	}

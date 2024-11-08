@@ -1,7 +1,7 @@
 package admin
 
 import (
-	db2 "STUOJ/internal/db"
+	"STUOJ/internal/db/dao"
 	model2 "STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -24,7 +24,7 @@ func AdminTestcaseInfo(c *gin.Context) {
 
 	// 获取评测点数据
 	tid := uint64(id)
-	testcase, err := db2.SelectTestcaseById(tid)
+	testcase, err := dao.SelectTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -72,7 +72,7 @@ func AdminTestcaseAdd(c *gin.Context) {
 		TestInput:  req.TestInput,
 		TestOutput: req.TestOutput,
 	}
-	t.Id, err = db2.InsertTestcase(t)
+	t.Id, err = dao.InsertTestcase(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -84,7 +84,7 @@ func AdminTestcaseAdd(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = db2.UpdateProblemUpdateTimeById(t.ProblemId)
+	err = dao.UpdateProblemUpdateTimeById(t.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -128,7 +128,7 @@ func AdminTestcaseModify(c *gin.Context) {
 	}
 
 	// 读取评测点数据
-	t, err := db2.SelectTestcaseById(req.Id)
+	t, err := dao.SelectTestcaseById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -145,7 +145,7 @@ func AdminTestcaseModify(c *gin.Context) {
 	t.TestInput = req.TestInput
 	t.TestOutput = req.TestOutput
 
-	err = db2.UpdateTestcaseById(t)
+	err = dao.UpdateTestcaseById(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -157,7 +157,7 @@ func AdminTestcaseModify(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = db2.UpdateProblemUpdateTimeById(t.ProblemId)
+	err = dao.UpdateProblemUpdateTimeById(t.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -190,7 +190,7 @@ func AdminTestcaseRemove(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	_, err = db2.SelectTestcaseById(tid)
+	_, err = dao.SelectTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -201,7 +201,7 @@ func AdminTestcaseRemove(c *gin.Context) {
 		return
 	}
 
-	err = db2.DeleteTestcaseById(tid)
+	err = dao.DeleteTestcaseById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{

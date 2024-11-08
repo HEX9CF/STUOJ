@@ -1,12 +1,13 @@
-package db
+package dao
 
 import (
+	"STUOJ/internal/db"
 	"STUOJ/internal/model"
 )
 
 // 插入语言
 func InsertLanguage(l model.Language) (uint64, error) {
-	tx := Db.Create(&l)
+	tx := db.Db.Create(&l)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
@@ -18,7 +19,7 @@ func InsertLanguage(l model.Language) (uint64, error) {
 func SelectAllLanguages() ([]model.Language, error) {
 	var languages []model.Language
 
-	tx := Db.Find(&languages)
+	tx := db.Db.Find(&languages)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -30,7 +31,7 @@ func SelectAllLanguages() ([]model.Language, error) {
 func SelectLanguageLikeName(name string) (model.Language, error) {
 	var l model.Language
 
-	tx := Db.Where("name like ?", "%"+name+"%").First(&l)
+	tx := db.Db.Where("name like ?", "%"+name+"%").First(&l)
 	if tx.Error != nil {
 		return model.Language{}, tx.Error
 	}
@@ -40,7 +41,7 @@ func SelectLanguageLikeName(name string) (model.Language, error) {
 
 // 删除所有语言
 func DeleteAllLanguages() error {
-	tx := Db.Where("1 = 1").Delete(&model.Language{})
+	tx := db.Db.Where("1 = 1").Delete(&model.Language{})
 	if tx.Error != nil {
 		return tx.Error
 	}

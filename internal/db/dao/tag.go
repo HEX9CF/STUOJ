@@ -1,12 +1,13 @@
-package db
+package dao
 
 import (
+	"STUOJ/internal/db"
 	"STUOJ/internal/model"
 )
 
 // 插入标签
 func InsertTag(t model.Tag) (uint64, error) {
-	tx := Db.Create(&t)
+	tx := db.Db.Create(&t)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
@@ -17,7 +18,7 @@ func InsertTag(t model.Tag) (uint64, error) {
 // 根据ID查询标签
 func SelectTagById(id uint64) (model.Tag, error) {
 	var t model.Tag
-	tx := Db.Where("id = ?", id).First(&t)
+	tx := db.Db.Where("id = ?", id).First(&t)
 	if tx.Error != nil {
 		return model.Tag{}, tx.Error
 	}
@@ -28,7 +29,7 @@ func SelectTagById(id uint64) (model.Tag, error) {
 // 查询所有标签
 func SelectAllTags() ([]model.Tag, error) {
 	var tags []model.Tag
-	tx := Db.Find(&tags)
+	tx := db.Db.Find(&tags)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -38,7 +39,7 @@ func SelectAllTags() ([]model.Tag, error) {
 
 // 根据ID更新标签
 func UpdateTagById(t model.Tag) error {
-	tx := Db.Model(&t).Where("id = ?", t.Id).Updates(map[string]interface{}{
+	tx := db.Db.Model(&t).Where("id = ?", t.Id).Updates(map[string]interface{}{
 		"name": t.Name,
 	})
 	if tx.Error != nil {
@@ -50,7 +51,7 @@ func UpdateTagById(t model.Tag) error {
 
 // 根据ID删除标签
 func DeleteTagById(id uint64) error {
-	tx := Db.Where("id = ?", id).Delete(&model.Tag{})
+	tx := db.Db.Where("id = ?", id).Delete(&model.Tag{})
 	if tx.Error != nil {
 		return tx.Error
 	}

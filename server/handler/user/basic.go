@@ -1,7 +1,7 @@
 package user
 
 import (
-	"STUOJ/internal/db"
+	"STUOJ/internal/db/dao"
 	model2 "STUOJ/internal/model"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
@@ -37,7 +37,7 @@ func UserRegister(c *gin.Context) {
 		Password: req.Password,
 		Email:    req.Email,
 	}
-	u.Id, err = db.InsertUserForRegister(u)
+	u.Id, err = dao.InsertUserForRegister(u)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -93,7 +93,7 @@ func UserLogin(c *gin.Context) {
 		Password: req.Password,
 	}
 
-	u.Id, err = db.VerifyUserByEmail(u)
+	u.Id, err = dao.VerifyUserByEmail(u)
 	if err != nil || u.Id == 0 {
 		if err != nil {
 			log.Println(err)

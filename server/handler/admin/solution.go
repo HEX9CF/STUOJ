@@ -1,7 +1,7 @@
 package admin
 
 import (
-	db2 "STUOJ/internal/db"
+	"STUOJ/internal/db/dao"
 	model2 "STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -11,7 +11,7 @@ import (
 
 // 获取题解列表
 func AdminSolutionList(c *gin.Context) {
-	solutions, err := db2.SelectAllSolutions()
+	solutions, err := dao.SelectAllSolutions()
 	if err != nil || solutions == nil {
 		if err != nil {
 			log.Println(err)
@@ -45,7 +45,7 @@ func AdminSolutionListByProblemId(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	solutions, err := db2.SelectSolutionsByProblemId(pid)
+	solutions, err := dao.SelectSolutionsByProblemId(pid)
 	if err != nil || solutions == nil {
 		if err != nil {
 			log.Println(err)
@@ -80,7 +80,7 @@ func AdminSolutionInfo(c *gin.Context) {
 
 	// 获取评测点数据
 	sid := uint64(id)
-	solution, err := db2.SelectSolutionById(sid)
+	solution, err := dao.SelectSolutionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -125,7 +125,7 @@ func AdminSolutionAdd(c *gin.Context) {
 		ProblemId:  req.ProblemId,
 		SourceCode: req.SourceCode,
 	}
-	s.Id, err = db2.InsertSolution(s)
+	s.Id, err = dao.InsertSolution(s)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -137,7 +137,7 @@ func AdminSolutionAdd(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = db2.UpdateProblemUpdateTimeById(s.ProblemId)
+	err = dao.UpdateProblemUpdateTimeById(s.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -180,7 +180,7 @@ func AdminSolutionModify(c *gin.Context) {
 	}
 
 	// 读取题解
-	s, err := db2.SelectSolutionById(req.Id)
+	s, err := dao.SelectSolutionById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -196,7 +196,7 @@ func AdminSolutionModify(c *gin.Context) {
 	s.ProblemId = req.ProblemId
 	s.SourceCode = req.SourceCode
 
-	err = db2.UpdateSolutionById(s)
+	err = dao.UpdateSolutionById(s)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -208,7 +208,7 @@ func AdminSolutionModify(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = db2.UpdateProblemUpdateTimeById(s.ProblemId)
+	err = dao.UpdateProblemUpdateTimeById(s.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -241,7 +241,7 @@ func AdminSolutionRemove(c *gin.Context) {
 	}
 
 	sid := uint64(id)
-	_, err = db2.SelectSolutionById(sid)
+	_, err = dao.SelectSolutionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
@@ -252,7 +252,7 @@ func AdminSolutionRemove(c *gin.Context) {
 		return
 	}
 
-	err = db2.DeleteSolutionById(sid)
+	err = dao.DeleteSolutionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model2.Response{
