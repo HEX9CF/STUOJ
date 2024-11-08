@@ -88,7 +88,6 @@ func InitProblemRoute() {
 		problemPublicRoute.GET("/:id", ProblemPublicInfo)
 
 		problemPublicRoute.GET("/tag", TagList)
-		problemPublicRoute.POST("/testrun", TestcaseRun)
 	}
 }
 
@@ -103,6 +102,9 @@ func InitJudgeRoute() {
 		judgePrivateRoute.Use(middlewares.TokenAuthUser())
 
 		judgePrivateRoute.POST("/submit", judge.JudgeSubmit)
+
+		judgePrivateRoute.POST("/testrun", TestcaseRun)
+
 	}
 }
 
