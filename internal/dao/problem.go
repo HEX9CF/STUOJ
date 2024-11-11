@@ -71,6 +71,7 @@ func SelectProblemsByTagIdAndStatus(tid uint64, s model.ProblemStatus) ([]model.
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
+
 	return problems, nil
 }
 
