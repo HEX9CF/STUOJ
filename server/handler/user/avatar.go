@@ -2,6 +2,7 @@ package user
 
 import (
 	yuki "STUOJ/external/yuki"
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"STUOJ/utils"
@@ -62,7 +63,7 @@ func UpdateUserAvatar(c *gin.Context) {
 		return
 	}
 
-	u := model.User{
+	u := entity.User{
 		Id:     uint64(id),
 		Avatar: image.Url,
 	}

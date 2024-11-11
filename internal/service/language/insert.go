@@ -2,11 +2,11 @@ package language
 
 import (
 	"STUOJ/internal/dao"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 )
 
 // 插入语言
-func Insert(l model.Language) (uint64, error) {
+func Insert(l entity.Language) (uint64, error) {
 	var err error
 
 	l.Id, err = dao.InsertLanguage(l)

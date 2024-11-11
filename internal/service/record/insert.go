@@ -2,13 +2,13 @@ package record
 
 import (
 	"STUOJ/internal/dao"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 	"errors"
 	"time"
 )
 
 // 插入提交记录
-func InsertSubmission(s model.Submission) (uint64, error) {
+func InsertSubmission(s entity.Submission) (uint64, error) {
 	var err error
 
 	updateTime := time.Now()
@@ -24,7 +24,7 @@ func InsertSubmission(s model.Submission) (uint64, error) {
 }
 
 // 插入评测结果
-func InsertJudgement(j model.Judgement) (uint64, error) {
+func InsertJudgement(j entity.Judgement) (uint64, error) {
 	var err error
 
 	j.Id, err = dao.InsertJudgement(j)

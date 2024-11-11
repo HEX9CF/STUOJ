@@ -2,6 +2,7 @@ package judge
 
 import (
 	"STUOJ/external/judge0"
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/record"
@@ -12,7 +13,7 @@ import (
 	"strconv"
 )
 
-func Submit(s model.Submission) (uint64, error) {
+func Submit(s entity.Submission) (uint64, error) {
 	var err error
 
 	// 获取代码长度
@@ -46,9 +47,9 @@ func Submit(s model.Submission) (uint64, error) {
 }
 
 // 异步提交
-func asyncSubmit(s model.Submission, p model.Problem, ts []model.Testcase) {
-	s.Status = model.SubmitStatusAC
-	chJudgement := make(chan model.Judgement)
+func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
+	s.Status = entity.SubmitStatusAC
+	chJudgement := make(chan entity.Judgement)
 
 	// 提交评测点
 	for _, t := range ts {
@@ -72,8 +73,8 @@ func asyncSubmit(s model.Submission, p model.Problem, ts []model.Testcase) {
 		s.Time = math.Max(s.Time, j.Time)
 		s.Memory = max(s.Memory, j.Memory)
 		// 如果评测点结果不是AC，更新提交状态
-		if j.Status != model.SubmitStatusAC {
-			if s.Status != model.SubmitStatusWA {
+		if j.Status != entity.SubmitStatusAC {
+			if s.Status != entity.SubmitStatusWA {
 				s.Status = max(s.Status, j.Status)
 			}
 		}
@@ -88,14 +89,14 @@ func asyncSubmit(s model.Submission, p model.Problem, ts []model.Testcase) {
 }
 
 // 异步评测
-func asyncJudge(s model.Submission, p model.Problem, t model.Testcase, ch chan model.Judgement) {
+func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch chan entity.Judgement) {
 	var err error
 
 	// 初始化评测点结果对象
-	j := model.Judgement{
+	j := entity.Judgement{
 		SubmissionId: s.Id,
 		TestcaseId:   t.Id,
-		Status:       model.SubmitStatusPend,
+		Status:       entity.SubmitStatusPend,
 	}
 
 	// 插入评测点结果
@@ -121,7 +122,7 @@ func asyncJudge(s model.Submission, p model.Problem, t model.Testcase, ch chan m
 	result, err := judge0.Submit(judgeSubmission)
 	if err != nil {
 		log.Println(err)
-		j.Status = model.SubmitStatusIE
+		j.Status = entity.SubmitStatusIE
 		ch <- j
 		return
 	}
@@ -133,7 +134,7 @@ func asyncJudge(s model.Submission, p model.Problem, t model.Testcase, ch chan m
 		time, err = strconv.ParseFloat(result.Time, 64)
 		if err != nil {
 			log.Println(err)
-			j.Status = model.SubmitStatusIE
+			j.Status = entity.SubmitStatusIE
 			ch <- j
 			return
 		}
@@ -146,14 +147,14 @@ func asyncJudge(s model.Submission, p model.Problem, t model.Testcase, ch chan m
 	j.Stderr = result.Stderr
 	j.CompileOutput = result.CompileOutput
 	j.Message = result.Message
-	j.Status = model.SubmitStatus(result.Status.Id)
+	j.Status = entity.SubmitStatus(result.Status.Id)
 	//log.Println(j)
 
 	// 发送评测点结果到通道
 	ch <- j
 }
 
-func TestRun(s model.Submission, stdin string) (model.Judgement, error) {
+func TestRun(s entity.Submission, stdin string) (entity.Judgement, error) {
 	js := model.JudgeSubmission{
 		SourceCode: s.SourceCode,
 		LanguageId: s.LanguageId,
@@ -163,16 +164,16 @@ func TestRun(s model.Submission, stdin string) (model.Judgement, error) {
 	res, err := judge0.Submit(js)
 	if err != nil {
 		log.Println(err)
-		return model.Judgement{}, errors.New("提交失败")
+		return entity.Judgement{}, errors.New("提交失败")
 	}
 
 	time, err := strconv.ParseFloat(res.Time, 64)
 	if err != nil {
 		log.Println(err)
-		return model.Judgement{}, errors.New("时间解析失败")
+		return entity.Judgement{}, errors.New("时间解析失败")
 	}
 
-	j := model.Judgement{
+	j := entity.Judgement{
 		Stdout: res.Stdout,
 		Time:   time,
 		Memory: uint64(res.Memory),

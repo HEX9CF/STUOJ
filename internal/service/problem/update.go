@@ -2,12 +2,12 @@ package problem
 
 import (
 	"STUOJ/internal/dao"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 	"time"
 )
 
 // 根据ID更新题目
-func UpdateById(p model.Problem) error {
+func UpdateById(p entity.Problem) error {
 	updateTime := time.Now()
 	p.UpdateTime = updateTime
 
@@ -23,7 +23,7 @@ func UpdateById(p model.Problem) error {
 func UpdateUpdateTimeById(id uint64) error {
 	updateTime := time.Now()
 
-	p := model.Problem{
+	p := entity.Problem{
 		Id:         id,
 		UpdateTime: updateTime,
 	}

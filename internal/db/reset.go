@@ -1,14 +1,14 @@
 package db
 
 import (
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 	"log"
 )
 
 func ResetDatabase() error {
 	log.Println("Resetting database...")
 
-	err := Db.AutoMigrate(&model.Judgement{}, &model.Language{}, &model.Problem{}, &model.ProblemHistory{}, &model.ProblemTag{}, &model.Solution{}, &model.Submission{}, &model.Tag{}, &model.Testcase{}, &model.User{})
+	err := Db.AutoMigrate(&entity.Judgement{}, &entity.Language{}, &entity.Problem{}, &entity.ProblemHistory{}, &entity.ProblemTag{}, &entity.Solution{}, &entity.Submission{}, &entity.Tag{}, &entity.Testcase{}, &entity.User{})
 	if err != nil {
 		log.Println("Failed to migrate database!")
 		return err

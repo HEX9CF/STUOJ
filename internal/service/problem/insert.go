@@ -2,12 +2,12 @@ package problem
 
 import (
 	"STUOJ/internal/dao"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 	"time"
 )
 
 // 插入题目
-func Insert(p model.Problem) (uint64, error) {
+func Insert(p entity.Problem) (uint64, error) {
 	var err error
 
 	updateTime := time.Now()
@@ -24,7 +24,7 @@ func Insert(p model.Problem) (uint64, error) {
 
 // 给题目添加标签
 func InsertTag(pid uint64, tid uint64) error {
-	pt := model.ProblemTag{
+	pt := entity.ProblemTag{
 		ProblemId: pid,
 		TagId:     tid,
 	}
@@ -38,11 +38,11 @@ func InsertTag(pid uint64, tid uint64) error {
 }
 
 // 插入题目历史记录
-func InsertHistory(p model.Problem, uid uint64, op model.Operation) (uint64, error) {
+func InsertHistory(p entity.Problem, uid uint64, op entity.Operation) (uint64, error) {
 	var err error
 
 	updateTime := time.Now()
-	ph := model.ProblemHistory{
+	ph := entity.ProblemHistory{
 		UserId:       uid,
 		ProblemId:    p.Id,
 		Title:        p.Title,

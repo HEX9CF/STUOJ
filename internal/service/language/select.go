@@ -2,12 +2,12 @@ package language
 
 import (
 	"STUOJ/internal/dao"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 )
 
 // 查询所有语言
-func SelectAll() ([]model.Language, error) {
-	var languages []model.Language
+func SelectAll() ([]entity.Language, error) {
+	var languages []entity.Language
 
 	languages, err := dao.SelectAllLanguages()
 	if err != nil {
@@ -18,12 +18,12 @@ func SelectAll() ([]model.Language, error) {
 }
 
 // 根据名字模糊查询语言
-func SelectLikeName(name string) (model.Language, error) {
-	var l model.Language
+func SelectLikeName(name string) (entity.Language, error) {
+	var l entity.Language
 
 	l, err := dao.SelectLanguageLikeName(name)
 	if err != nil {
-		return model.Language{}, err
+		return entity.Language{}, err
 	}
 
 	return l, nil

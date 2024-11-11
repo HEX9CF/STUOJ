@@ -2,21 +2,21 @@ package tag
 
 import (
 	"STUOJ/internal/dao"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 )
 
 // 根据ID查询标签
-func SelectById(id uint64) (model.Tag, error) {
+func SelectById(id uint64) (entity.Tag, error) {
 	t, err := dao.SelectTagById(id)
 	if err != nil {
-		return model.Tag{}, err
+		return entity.Tag{}, err
 	}
 
 	return t, nil
 }
 
 // 查询所有标签
-func SelectAll() ([]model.Tag, error) {
+func SelectAll() ([]entity.Tag, error) {
 	tags, err := dao.SelectAllTags()
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func SelectAll() ([]model.Tag, error) {
 }
 
 // 根据题目ID查询标签
-func SelectByProblemId(pid uint64) ([]model.Tag, error) {
+func SelectByProblemId(pid uint64) ([]entity.Tag, error) {
 	tags, err := dao.SelectTagsByProblemId(pid)
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func SelectByProblemId(pid uint64) ([]model.Tag, error) {
 
 // 查询题目标签关系是否存在
 func CountProblemTag(pid uint64, tid uint64) (int64, error) {
-	pt := model.ProblemTag{
+	pt := entity.ProblemTag{
 		ProblemId: pid,
 		TagId:     tid,
 	}

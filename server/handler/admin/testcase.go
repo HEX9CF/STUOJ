@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/testcase"
@@ -67,7 +68,7 @@ func AdminTestcaseAdd(c *gin.Context) {
 	}
 
 	// 初始化题目
-	t := model.Testcase{
+	t := entity.Testcase{
 		Serial:     req.Serial,
 		ProblemId:  req.ProblemId,
 		TestInput:  req.TestInput,

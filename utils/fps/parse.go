@@ -1,6 +1,7 @@
 package fps
 
 import (
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/language"
 )
@@ -16,16 +17,16 @@ func Parse(fps model.FPS) []model.ProblemInfo {
 func ParseItem(item model.Item) model.ProblemInfo {
 	problem := item.ToProblem()
 	testcases := item.GetTestCase()
-	var solutions []model.Solution
+	var solutions []entity.Solution
 	for _, solution := range item.Solution {
 		var languageId uint64
-		language, err := language.SelectLikeName(solution.Language)
+		l, err := language.SelectLikeName(solution.Language)
 		if err != nil {
 			languageId = 0
 		} else {
-			languageId = language.Id
+			languageId = l.Id
 		}
-		solutions = append(solutions, model.Solution{LanguageId: languageId, SourceCode: solution.Code})
+		solutions = append(solutions, entity.Solution{LanguageId: languageId, SourceCode: solution.Code})
 	}
 	return model.ProblemInfo{
 		Problem:   problem,

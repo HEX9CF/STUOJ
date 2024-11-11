@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func InitJudge() {
+func InitJudge0() {
 	var err error
 	err = judge0.InitJudge()
 	if err != nil {
@@ -50,7 +50,7 @@ func InitJudgeLanguages() error {
 		//log.Println(v)
 
 		// 初始化对象
-		// language := model.Language{
+		// language := entity.Language{
 		// 	Id:   uint64(v["id"].(float64)),
 		// 	Name: v["name"].(string),
 		// }

@@ -2,14 +2,14 @@ package record
 
 import (
 	"STUOJ/internal/dao"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 	"errors"
 	"log"
 	"time"
 )
 
 // 更新提交记录
-func UpdateSubmissionById(s model.Submission) error {
+func UpdateSubmissionById(s entity.Submission) error {
 	updateTime := time.Now()
 	s.UpdateTime = updateTime
 
@@ -25,7 +25,7 @@ func UpdateSubmissionById(s model.Submission) error {
 func UpdateSubmissionUpdateTimeById(id uint64) error {
 	updateTime := time.Now()
 
-	s := model.Submission{
+	s := entity.Submission{
 		Id:         id,
 		UpdateTime: updateTime,
 	}
@@ -39,7 +39,7 @@ func UpdateSubmissionUpdateTimeById(id uint64) error {
 }
 
 // 更新评测结果
-func UpdateJudgementById(j model.Judgement) error {
+func UpdateJudgementById(j entity.Judgement) error {
 	err := dao.UpdateJudgementById(j)
 	if err != nil {
 		return err

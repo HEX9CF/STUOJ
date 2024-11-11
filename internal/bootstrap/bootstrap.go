@@ -5,7 +5,7 @@ func Init() {
 	InitDatabase()
 
 	// 异步初始化
-	go InitJudge()
+	go InitJudge0()
 	go InitYuki()
 
 	InitServer()

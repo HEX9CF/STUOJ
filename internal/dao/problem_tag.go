@@ -2,11 +2,11 @@ package dao
 
 import (
 	"STUOJ/internal/db"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 )
 
 // 给题目添加标签
-func InsertProblemTag(pt model.ProblemTag) error {
+func InsertProblemTag(pt entity.ProblemTag) error {
 	tx := db.Db.Create(&pt)
 	if tx.Error != nil {
 		return tx.Error
@@ -15,8 +15,8 @@ func InsertProblemTag(pt model.ProblemTag) error {
 	return nil
 }
 
-func SelectTagsByProblemId(pid uint64) ([]model.Tag, error) {
-	var tags []model.Tag
+func SelectTagsByProblemId(pid uint64) ([]entity.Tag, error) {
+	var tags []entity.Tag
 
 	tx := db.Db.Table("tbl_tag").Select("tbl_tag.id, tbl_tag.name").Joins("JOIN tbl_problem_tag ON tbl_tag.id = tbl_problem_tag.tag_id").Where("tbl_problem_tag.problem_id = ?", pid).Scan(&tags)
 	if tx.Error != nil {
@@ -27,10 +27,10 @@ func SelectTagsByProblemId(pid uint64) ([]model.Tag, error) {
 }
 
 // 查询题目标签关系是否存在
-func CountProblemTag(pt model.ProblemTag) (int64, error) {
+func CountProblemTag(pt entity.ProblemTag) (int64, error) {
 	var count int64
 
-	tx := db.Db.Model(&model.ProblemTag{}).Where("problem_id = ? AND tag_id = ?", pt.ProblemId, pt.TagId).Count(&count)
+	tx := db.Db.Model(&entity.ProblemTag{}).Where("problem_id = ? AND tag_id = ?", pt.ProblemId, pt.TagId).Count(&count)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
@@ -39,8 +39,8 @@ func CountProblemTag(pt model.ProblemTag) (int64, error) {
 }
 
 // 删除题目的某个标签
-func DeleteProblemTag(pt model.ProblemTag) error {
-	tx := db.Db.Where("problem_id = ? AND tag_id = ?", pt.ProblemId, pt.TagId).Delete(&model.ProblemTag{})
+func DeleteProblemTag(pt entity.ProblemTag) error {
+	tx := db.Db.Where("problem_id = ? AND tag_id = ?", pt.ProblemId, pt.TagId).Delete(&entity.ProblemTag{})
 	if tx.Error != nil {
 		return tx.Error
 	}

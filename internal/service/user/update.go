@@ -2,14 +2,14 @@ package user
 
 import (
 	"STUOJ/internal/dao"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 	"html"
 	"strings"
 	"time"
 )
 
 // 根据ID更新用户
-func UpdateById(u model.User) error {
+func UpdateById(u entity.User) error {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 	err := u.HashPassword()
@@ -42,7 +42,7 @@ func UpdateById(u model.User) error {
 }
 
 // 根据ID更新用户（除了密码）
-func UpdateByIdExceptPassword(u model.User) error {
+func UpdateByIdExceptPassword(u entity.User) error {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 
@@ -70,7 +70,7 @@ func UpdateByIdExceptPassword(u model.User) error {
 }
 
 // 根据ID更新用户密码
-func UpdatePasswordById(u model.User) error {
+func UpdatePasswordById(u entity.User) error {
 	// 预处理
 	err := u.HashPassword()
 	if err != nil {
@@ -97,7 +97,7 @@ func UpdatePasswordById(u model.User) error {
 }
 
 // 根据ID更新用户角色
-func UpdateRoleById(u model.User) error {
+func UpdateRoleById(u entity.User) error {
 	// 读取用户
 	user, err := SelectById(u.Id)
 	if err != nil {
@@ -118,7 +118,7 @@ func UpdateRoleById(u model.User) error {
 }
 
 // 更新用户头像
-func UpdateAvatarById(u model.User) error {
+func UpdateAvatarById(u entity.User) error {
 	// 读取用户
 	user, err := SelectById(u.Id)
 	if err != nil {

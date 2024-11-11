@@ -2,21 +2,21 @@ package solution
 
 import (
 	"STUOJ/internal/dao"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 )
 
 // 根据ID查询题解
-func SelectById(id uint64) (model.Solution, error) {
+func SelectById(id uint64) (entity.Solution, error) {
 	s, err := dao.SelectSolutionById(id)
 	if err != nil {
-		return model.Solution{}, err
+		return entity.Solution{}, err
 	}
 
 	return s, nil
 }
 
 // 查询所有题解（不返回源代码）
-func SelectAllSolutions() ([]model.Solution, error) {
+func SelectAllSolutions() ([]entity.Solution, error) {
 	solutions, err := dao.SelectAllSolutions()
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func SelectAllSolutions() ([]model.Solution, error) {
 }
 
 // 根据题目ID查询题解（不返回源代码）
-func SelectSolutionsByProblemId(pid uint64) ([]model.Solution, error) {
+func SelectSolutionsByProblemId(pid uint64) ([]entity.Solution, error) {
 	solutions, err := dao.SelectSolutionsByProblemId(pid)
 	if err != nil {
 		return nil, err

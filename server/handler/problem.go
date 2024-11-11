@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/tag"
@@ -25,7 +26,7 @@ func ProblemPublicInfo(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	problem, err := problem.SelectProblemByIdAndStatus(pid, model.ProblemStatusPublic)
+	problem, err := problem.SelectProblemByIdAndStatus(pid, entity.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -63,7 +64,7 @@ func ProblemPublicInfo(c *gin.Context) {
 
 // 获取公开题目列表
 func ProblemPublicList(c *gin.Context) {
-	problems, err := problem.SelectByStatus(model.ProblemStatusPublic)
+	problems, err := problem.SelectByStatus(entity.ProblemStatusPublic)
 	if err != nil || problems == nil {
 		if err != nil {
 			log.Println(err)
@@ -119,7 +120,7 @@ func ProblemPublicListByTagId(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	problems, err := problem.SelectByTagIdAndStatus(tid, model.ProblemStatusPublic)
+	problems, err := problem.SelectByTagIdAndStatus(tid, entity.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -150,8 +151,8 @@ func ProblemPublicListByDifficulty(c *gin.Context) {
 		return
 	}
 
-	d := model.ProblemDifficulty(id)
-	problems, err := problem.SelectByDifficultyAndStatus(d, model.ProblemStatusPublic)
+	d := entity.Difficulty(id)
+	problems, err := problem.SelectByDifficultyAndStatus(d, entity.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -187,7 +188,7 @@ func ProblemPublicListByTitle(c *gin.Context) {
 		return
 	}
 
-	problems, err := problem.SelectLikeTitleByStatus(req.Title, model.ProblemStatusPublic)
+	problems, err := problem.SelectLikeTitleByStatus(req.Title, entity.ProblemStatusPublic)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

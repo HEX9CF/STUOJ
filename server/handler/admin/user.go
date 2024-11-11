@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"github.com/gin-gonic/gin"
@@ -76,7 +77,7 @@ func AdminUserListByRole(c *gin.Context) {
 		return
 	}
 
-	rid := model.UserRole(id)
+	rid := entity.UserRole(id)
 	users, err := user.SelectByRole(rid)
 	if err != nil || users == nil {
 		if err != nil {
@@ -122,7 +123,7 @@ func AdminUserAdd(c *gin.Context) {
 	}
 
 	// 初始化用户
-	u := model.User{
+	u := entity.User{
 		Username:  req.Username,
 		Password:  req.Password,
 		Email:     req.Email,
@@ -254,8 +255,8 @@ func AdminUserRemove(c *gin.Context) {
 
 // 设置用户角色
 type ReqUserModifyRole struct {
-	Id   uint64         `json:"id" binding:"required"`
-	Role model.UserRole `json:"role" binding:"required"`
+	Id   uint64          `json:"id" binding:"required"`
+	Role entity.UserRole `json:"role" binding:"required"`
 }
 
 func AdminUserModifyRole(c *gin.Context) {

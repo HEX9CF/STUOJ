@@ -1,16 +1,17 @@
 package judge0
 
 import (
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"encoding/json"
 )
 
-func GetLanguage() ([]model.Language, error) {
+func GetLanguage() ([]entity.Language, error) {
 	bodystr, err := httpInteraction("/languages", "GET", nil)
 	if err != nil {
 		return nil, err
 	}
-	var languages []model.Language
+	var languages []entity.Language
 	err = json.Unmarshal([]byte(bodystr), &languages)
 	if err != nil {
 		return nil, err

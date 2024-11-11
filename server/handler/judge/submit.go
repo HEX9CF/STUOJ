@@ -1,6 +1,7 @@
 package judge
 
 import (
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/judge"
 	"STUOJ/utils"
@@ -35,7 +36,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 初始化提交对象
-	s := model.Submission{
+	s := entity.Submission{
 		UserId:     uid,
 		ProblemId:  req.ProblemId,
 		LanguageId: req.LanguageId,
@@ -71,7 +72,7 @@ func JudgeTestRun(c *gin.Context) {
 	}
 
 	// 初始化提交对象
-	s := model.Submission{
+	s := entity.Submission{
 		LanguageId: req.LanguageId,
 		SourceCode: req.SourceCode,
 	}

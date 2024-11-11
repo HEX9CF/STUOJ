@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/tag"
 	"github.com/gin-gonic/gin"
@@ -52,7 +53,7 @@ func AdminTagAdd(c *gin.Context) {
 	}
 
 	// 初始化标签
-	t := model.Tag{
+	t := entity.Tag{
 		Name: req.Name,
 	}
 	t.Id, err = tag.Insert(t)

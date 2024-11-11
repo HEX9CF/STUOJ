@@ -1,6 +1,7 @@
 package user
 
 import (
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"STUOJ/utils"
@@ -32,7 +33,7 @@ func UserRegister(c *gin.Context) {
 	}
 
 	// 初始化用户
-	u := model.User{
+	u := entity.User{
 		Username: req.Username,
 		Password: req.Password,
 		Email:    req.Email,
@@ -88,7 +89,7 @@ func UserLogin(c *gin.Context) {
 	}
 
 	// 初始化用户
-	u := model.User{
+	u := entity.User{
 		Email:    req.Email,
 		Password: req.Password,
 	}

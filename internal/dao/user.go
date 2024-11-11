@@ -2,11 +2,11 @@ package dao
 
 import (
 	"STUOJ/internal/db"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 )
 
 // 插入用户
-func InsertUser(u model.User) (uint64, error) {
+func InsertUser(u entity.User) (uint64, error) {
 	tx := db.Db.Create(&u)
 	if tx.Error != nil {
 		return 0, tx.Error
@@ -15,32 +15,32 @@ func InsertUser(u model.User) (uint64, error) {
 }
 
 // 根据ID查询用户
-func SelectUserById(id uint64) (model.User, error) {
-	var user model.User
+func SelectUserById(id uint64) (entity.User, error) {
+	var user entity.User
 
 	tx := db.Db.Where("id = ?", id).First(&user)
 	if tx.Error != nil {
-		return model.User{}, tx.Error
+		return entity.User{}, tx.Error
 	}
 
 	return user, nil
 }
 
 // 根据邮箱查询用户
-func SelectUserByEmail(e string) (model.User, error) {
-	var user model.User
+func SelectUserByEmail(e string) (entity.User, error) {
+	var user entity.User
 
 	tx := db.Db.Where("email = ?", e).First(&user)
 	if tx.Error != nil {
-		return model.User{}, tx.Error
+		return entity.User{}, tx.Error
 	}
 
 	return user, nil
 }
 
 // 查询所有用户
-func SelectAllUsers() ([]model.User, error) {
-	var users []model.User
+func SelectAllUsers() ([]entity.User, error) {
+	var users []entity.User
 
 	tx := db.Db.Find(&users)
 	if tx.Error != nil {
@@ -51,8 +51,8 @@ func SelectAllUsers() ([]model.User, error) {
 }
 
 // 根据角色ID查询用户
-func SelectUsersByRole(r model.UserRole) ([]model.User, error) {
-	var users []model.User
+func SelectUsersByRole(r entity.UserRole) ([]entity.User, error) {
+	var users []entity.User
 
 	tx := db.Db.Where("role = ?", r).Find(&users)
 	if tx.Error != nil {
@@ -63,7 +63,7 @@ func SelectUsersByRole(r model.UserRole) ([]model.User, error) {
 }
 
 // 根据ID更新用户
-func UpdateUserById(u model.User) error {
+func UpdateUserById(u entity.User) error {
 	tx := db.Db.Model(&u).Where("id = ?", u.Id).Updates(u)
 	if tx.Error != nil {
 		return tx.Error
@@ -74,7 +74,7 @@ func UpdateUserById(u model.User) error {
 
 // 根据ID删除用户
 func DeleteUserById(id uint64) error {
-	tx := db.Db.Where("id = ?", id).Delete(&model.User{})
+	tx := db.Db.Where("id = ?", id).Delete(&entity.User{})
 	if tx.Error != nil {
 		return tx.Error
 	}

@@ -2,12 +2,12 @@ package dao
 
 import (
 	"STUOJ/internal/db"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 	"time"
 )
 
 // 插入提交记录
-func InsertSubmission(s model.Submission) (uint64, error) {
+func InsertSubmission(s entity.Submission) (uint64, error) {
 	updateTime := time.Now()
 	s.UpdateTime = updateTime
 	s.CreateTime = updateTime
@@ -20,8 +20,8 @@ func InsertSubmission(s model.Submission) (uint64, error) {
 }
 
 // 查询所有提交记录
-func SelectAllSubmissions() ([]model.Submission, error) {
-	var submissions []model.Submission
+func SelectAllSubmissions() ([]entity.Submission, error) {
+	var submissions []entity.Submission
 
 	tx := db.Db.Find(&submissions)
 	if tx.Error != nil {
@@ -32,20 +32,20 @@ func SelectAllSubmissions() ([]model.Submission, error) {
 }
 
 // 根据ID查询提交记录
-func SelectSubmissionById(id uint64) (model.Submission, error) {
-	var s model.Submission
+func SelectSubmissionById(id uint64) (entity.Submission, error) {
+	var s entity.Submission
 
 	tx := db.Db.Where("id = ?", id).First(&s)
 	if tx.Error != nil {
-		return model.Submission{}, tx.Error
+		return entity.Submission{}, tx.Error
 	}
 
 	return s, nil
 }
 
 // 根据用户ID查询提交记录（不返回源代码）
-func SelectSubmissionsByUserId(userId uint64) ([]model.Submission, error) {
-	var submissions []model.Submission
+func SelectSubmissionsByUserId(userId uint64) ([]entity.Submission, error) {
+	var submissions []entity.Submission
 
 	tx := db.Db.Where("user_id = ?", userId).Find(&submissions)
 	if tx.Error != nil {
@@ -56,8 +56,8 @@ func SelectSubmissionsByUserId(userId uint64) ([]model.Submission, error) {
 }
 
 // 根据题目ID查询提交记录（不返回源代码）
-func SelectSubmissionsByProblemId(problemId uint64) ([]model.Submission, error) {
-	var submissions []model.Submission
+func SelectSubmissionsByProblemId(problemId uint64) ([]entity.Submission, error) {
+	var submissions []entity.Submission
 
 	tx := db.Db.Where("problem_id = ?", problemId).Find(&submissions)
 	if tx.Error != nil {
@@ -68,7 +68,7 @@ func SelectSubmissionsByProblemId(problemId uint64) ([]model.Submission, error) 
 }
 
 // 更新提交记录
-func UpdateSubmissionById(s model.Submission) error {
+func UpdateSubmissionById(s entity.Submission) error {
 	tx := db.Db.Model(&s).Where("id = ?", s.Id).Updates(s)
 	if tx.Error != nil {
 		return tx.Error
@@ -79,7 +79,7 @@ func UpdateSubmissionById(s model.Submission) error {
 
 // 根据ID删除提交记录
 func DeleteSubmissionById(id uint64) error {
-	tx := db.Db.Where("id = ?", id).Delete(&model.Submission{})
+	tx := db.Db.Where("id = ?", id).Delete(&entity.Submission{})
 	if tx.Error != nil {
 		return tx.Error
 	}

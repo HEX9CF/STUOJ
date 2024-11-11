@@ -2,14 +2,14 @@ package user
 
 import (
 	"STUOJ/internal/dao"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 	"html"
 	"strings"
 	"time"
 )
 
 // 插入用户
-func InsertUser(u model.User) (uint64, error) {
+func InsertUser(u entity.User) (uint64, error) {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 	err := u.HashPassword()
@@ -30,7 +30,7 @@ func InsertUser(u model.User) (uint64, error) {
 }
 
 // 插入用户（注册）
-func Register(u model.User) (uint64, error) {
+func Register(u entity.User) (uint64, error) {
 	// 预处理
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 	err := u.HashPassword()

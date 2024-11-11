@@ -1,6 +1,7 @@
 package model
 
 import (
+	"STUOJ/internal/entity"
 	"encoding/xml"
 	"strconv"
 )
@@ -49,7 +50,7 @@ type FpsSolution struct {
 	Code     string `xml:",chardata"`
 }
 
-func (i *Item) ToProblem() Problem {
+func (i *Item) ToProblem() entity.Problem {
 	var timeLimit float64
 	var memoryLimit uint64
 	timetmp, _ := strconv.ParseFloat(i.TimeLimit.Data, 64)
@@ -65,7 +66,7 @@ func (i *Item) ToProblem() Problem {
 		memoryLimit = 1024 * uint64(memorytmp)
 	}
 
-	return Problem{
+	return entity.Problem{
 		Title:        i.Title,
 		Description:  i.Description,
 		Input:        i.Input,
@@ -78,10 +79,10 @@ func (i *Item) ToProblem() Problem {
 	}
 }
 
-func (i *Item) GetTestCase() []Testcase {
-	var testCases []Testcase
+func (i *Item) GetTestCase() []entity.Testcase {
+	var testCases []entity.Testcase
 	for index, output := range i.TestOutput {
-		testCases = append(testCases, Testcase{TestInput: i.TestInput[index], TestOutput: output})
+		testCases = append(testCases, entity.Testcase{TestInput: i.TestInput[index], TestOutput: output})
 	}
 	return testCases
 }

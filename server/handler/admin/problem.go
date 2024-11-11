@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/solution"
@@ -128,7 +129,7 @@ func AdminProblemListByStatus(c *gin.Context) {
 		return
 	}
 
-	s := model.ProblemStatus(id)
+	s := entity.ProblemStatus(id)
 	problems, err := problem.SelectByStatus(s)
 	if err != nil || problems == nil {
 		if err != nil {
@@ -151,18 +152,18 @@ func AdminProblemListByStatus(c *gin.Context) {
 
 // 添加题目
 type ReqProblemAdd struct {
-	Title        string                  `json:"title" binding:"required"`
-	Source       string                  `json:"source" binding:"required"`
-	Difficulty   model.ProblemDifficulty `json:"difficulty" binding:"required"`
-	TimeLimit    float64                 `json:"time_limit" binding:"required"`
-	MemoryLimit  uint64                  `json:"memory_limit" binding:"required"`
-	Description  string                  `json:"description" binding:"required"`
-	Input        string                  `json:"input" binding:"required"`
-	Output       string                  `json:"output" binding:"required"`
-	SampleInput  string                  `json:"sample_input" binding:"required"`
-	SampleOutput string                  `json:"sample_output" binding:"required"`
-	Hint         string                  `json:"hint" binding:"required"`
-	Status       model.ProblemStatus     `json:"status" binding:"required"`
+	Title        string               `json:"title" binding:"required"`
+	Source       string               `json:"source" binding:"required"`
+	Difficulty   entity.Difficulty    `json:"difficulty" binding:"required"`
+	TimeLimit    float64              `json:"time_limit" binding:"required"`
+	MemoryLimit  uint64               `json:"memory_limit" binding:"required"`
+	Description  string               `json:"description" binding:"required"`
+	Input        string               `json:"input" binding:"required"`
+	Output       string               `json:"output" binding:"required"`
+	SampleInput  string               `json:"sample_input" binding:"required"`
+	SampleOutput string               `json:"sample_output" binding:"required"`
+	Hint         string               `json:"hint" binding:"required"`
+	Status       entity.ProblemStatus `json:"status" binding:"required"`
 }
 
 func AdminProblemAdd(c *gin.Context) {
@@ -181,7 +182,7 @@ func AdminProblemAdd(c *gin.Context) {
 	}
 
 	// 初始化题目
-	p := model.Problem{
+	p := entity.Problem{
 		Title:        req.Title,
 		Source:       req.Source,
 		Difficulty:   req.Difficulty,
@@ -217,7 +218,7 @@ func AdminProblemAdd(c *gin.Context) {
 		})
 		return
 	}
-	_, err = problem.InsertHistory(p, uid, model.OperationAdd)
+	_, err = problem.InsertHistory(p, uid, entity.OperationAdd)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -237,19 +238,19 @@ func AdminProblemAdd(c *gin.Context) {
 
 // 修改题目
 type ReqProblemModify struct {
-	Id           uint64                  `json:"id" binding:"required"`
-	Title        string                  `json:"title" binding:"required"`
-	Source       string                  `json:"source" binding:"required"`
-	Difficulty   model.ProblemDifficulty `json:"difficulty" binding:"required"`
-	TimeLimit    float64                 `json:"time_limit" binding:"required"`
-	MemoryLimit  uint64                  `json:"memory_limit" binding:"required"`
-	Description  string                  `json:"description" binding:"required"`
-	Input        string                  `json:"input" binding:"required"`
-	Output       string                  `json:"output" binding:"required"`
-	SampleInput  string                  `json:"sample_input" binding:"required"`
-	SampleOutput string                  `json:"sample_output" binding:"required"`
-	Hint         string                  `json:"hint" binding:"required"`
-	Status       model.ProblemStatus     `json:"status" binding:"required"`
+	Id           uint64               `json:"id" binding:"required"`
+	Title        string               `json:"title" binding:"required"`
+	Source       string               `json:"source" binding:"required"`
+	Difficulty   entity.Difficulty    `json:"difficulty" binding:"required"`
+	TimeLimit    float64              `json:"time_limit" binding:"required"`
+	MemoryLimit  uint64               `json:"memory_limit" binding:"required"`
+	Description  string               `json:"description" binding:"required"`
+	Input        string               `json:"input" binding:"required"`
+	Output       string               `json:"output" binding:"required"`
+	SampleInput  string               `json:"sample_input" binding:"required"`
+	SampleOutput string               `json:"sample_output" binding:"required"`
+	Hint         string               `json:"hint" binding:"required"`
+	Status       entity.ProblemStatus `json:"status" binding:"required"`
 }
 
 func AdminProblemModify(c *gin.Context) {
@@ -315,7 +316,7 @@ func AdminProblemModify(c *gin.Context) {
 		})
 		return
 	}
-	_, err = problem.InsertHistory(p, uid, model.OperationUpdate)
+	_, err = problem.InsertHistory(p, uid, entity.OperationUpdate)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -380,10 +381,10 @@ func AdminProblemRemove(c *gin.Context) {
 		})
 		return
 	}
-	p := model.Problem{
+	p := entity.Problem{
 		Id: pid,
 	}
-	_, err = problem.InsertHistory(p, uid, model.OperationDelete)
+	_, err = problem.InsertHistory(p, uid, entity.OperationDelete)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

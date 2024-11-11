@@ -2,24 +2,24 @@ package user
 
 import (
 	"STUOJ/internal/dao"
-	"STUOJ/internal/model"
+	"STUOJ/internal/entity"
 )
 
 // 根据ID查询用户
-func SelectById(id uint64) (model.User, error) {
-	var user model.User
+func SelectById(id uint64) (entity.User, error) {
+	var user entity.User
 
 	user, err := dao.SelectUserById(id)
 	if err != nil {
-		return model.User{}, err
+		return entity.User{}, err
 	}
 
 	return user, nil
 }
 
 // 查询所有用户
-func SelectAll() ([]model.User, error) {
-	var users []model.User
+func SelectAll() ([]entity.User, error) {
+	var users []entity.User
 
 	users, err := dao.SelectAllUsers()
 	if err != nil {
@@ -30,8 +30,8 @@ func SelectAll() ([]model.User, error) {
 }
 
 // 根据角色ID查询用户
-func SelectByRole(r model.UserRole) ([]model.User, error) {
-	var users []model.User
+func SelectByRole(r entity.UserRole) ([]entity.User, error) {
+	var users []entity.User
 
 	users, err := dao.SelectUsersByRole(r)
 	if err != nil {
@@ -43,7 +43,7 @@ func SelectByRole(r model.UserRole) ([]model.User, error) {
 
 // 查询用户头像
 func SelectAvatarById(id uint64) (string, error) {
-	var user model.User
+	var user entity.User
 
 	user, err := dao.SelectUserById(id)
 	if err != nil {
@@ -54,7 +54,7 @@ func SelectAvatarById(id uint64) (string, error) {
 }
 
 // 根据邮箱验证密码
-func VerifyByEmail(u model.User) (uint64, error) {
+func VerifyByEmail(u entity.User) (uint64, error) {
 	password := u.Password
 
 	// 查询用户
@@ -73,7 +73,7 @@ func VerifyByEmail(u model.User) (uint64, error) {
 }
 
 // 根据ID验证密码
-func VerifyById(u model.User) (uint64, error) {
+func VerifyById(u entity.User) (uint64, error) {
 	password := u.Password
 
 	// 查询用户

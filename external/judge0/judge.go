@@ -1,7 +1,7 @@
 package judge0
 
 import (
-	conf "STUOJ/internal/conf"
+	"STUOJ/internal/conf"
 	"bytes"
 	"errors"
 	"io/ioutil"

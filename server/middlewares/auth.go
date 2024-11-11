@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"STUOJ/internal/conf"
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"STUOJ/utils"
@@ -27,7 +28,7 @@ func TokenAuthUser() gin.HandlerFunc {
 			return
 		}
 		switch role {
-		case model.UserRoleBanned:
+		case entity.UserRoleBanned:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
 			return
@@ -64,13 +65,13 @@ func TokenAuthAdmin() gin.HandlerFunc {
 		}
 		//log.Println(role)
 		switch role {
-		case model.UserRoleBanned:
+		case entity.UserRoleBanned:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
 			return
-		case model.UserRoleAdmin:
+		case entity.UserRoleAdmin:
 			break
-		case model.UserRoleRoot:
+		case entity.UserRoleRoot:
 			break
 		default:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户权限不足", nil))
@@ -106,11 +107,11 @@ func TokenAuthRoot() gin.HandlerFunc {
 			return
 		}
 		switch role {
-		case model.UserRoleBanned:
+		case entity.UserRoleBanned:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
 			return
-		case model.UserRoleRoot:
+		case entity.UserRoleRoot:
 			break
 		default:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户权限不足", nil))
@@ -167,7 +168,7 @@ func tokenAutoRefresh(c *gin.Context) error {
 	return nil
 }
 
-func getUserRole(c *gin.Context) (model.UserRole, error) {
+func getUserRole(c *gin.Context) (entity.UserRole, error) {
 	// 获取用户id
 	uid, err := utils.GetTokenUid(c)
 	if err != nil {

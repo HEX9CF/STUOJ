@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/solution"
@@ -121,7 +122,7 @@ func AdminSolutionAdd(c *gin.Context) {
 		return
 	}
 
-	s := model.Solution{
+	s := entity.Solution{
 		LanguageId: req.LanguageId,
 		ProblemId:  req.ProblemId,
 		SourceCode: req.SourceCode,
