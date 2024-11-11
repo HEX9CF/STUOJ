@@ -3,29 +3,10 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/model"
-	"time"
 )
 
 // 插入题目历史记录
-func InsertProblemHistory(p model.Problem, uid uint64, op model.Operation) (uint64, error) {
-	updateTime := time.Now()
-	ph := model.ProblemHistory{
-		UserId:       uid,
-		ProblemId:    p.Id,
-		Title:        p.Title,
-		Source:       p.Source,
-		Difficulty:   p.Difficulty,
-		TimeLimit:    p.TimeLimit,
-		MemoryLimit:  p.MemoryLimit,
-		Description:  p.Description,
-		Input:        p.Input,
-		Output:       p.Output,
-		SampleInput:  p.SampleInput,
-		SampleOutput: p.SampleOutput,
-		Hint:         p.Hint,
-		Operation:    op,
-		CreateTime:   updateTime,
-	}
+func InsertProblemHistory(ph model.ProblemHistory) (uint64, error) {
 	tx := db.Db.Create(&ph)
 	if tx.Error != nil {
 		return 0, tx.Error
