@@ -110,6 +110,6 @@ func (Language) TableName() string {
 
 // 提交记录（提交信息+评测结果）
 type Record struct {
-	Submission Submission  `json:"submission,omitempty"`
+	Submission Submission  `json:"record,omitempty"`
 	Judgements []Judgement `json:"judgements,omitempty"`
 }

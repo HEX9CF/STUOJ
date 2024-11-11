@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	judge2 "STUOJ/external/judge"
+	judge "STUOJ/external/judge"
 	"STUOJ/internal/service/language"
 	"STUOJ/utils"
 	"log"
@@ -9,7 +9,7 @@ import (
 
 func InitJudge() {
 	var err error
-	err = judge2.InitJudge()
+	err = judge.InitJudge()
 	if err != nil {
 		log.Println("Init judge failed!")
 	}
@@ -29,7 +29,7 @@ func InitJudge() {
 // 初始化评测机语言
 func InitJudgeLanguages() error {
 	// 读取评测机语言列表
-	languages, err := judge2.GetLanguage()
+	languages, err := judge.GetLanguage()
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func InitJudgeLanguages() error {
 
 // 打印评测机信息
 func InitJudgePrintInfo() error {
-	config, err := judge2.GetConfigInfo()
+	config, err := judge.GetConfigInfo()
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func InitJudgePrintInfo() error {
 		log.Println("Judge config info:", configtmp)
 	}
 
-	system, err := judge2.GetSystemInfo()
+	system, err := judge.GetSystemInfo()
 	if err != nil {
 		return err
 	}
@@ -107,7 +107,7 @@ func InitJudgePrintInfo() error {
 		log.Println("Judge about:", about)
 	*/
 
-	workers, err := judge2.GetWorkers()
+	workers, err := judge.GetWorkers()
 	if err != nil {
 		return err
 	}
@@ -135,7 +135,7 @@ func InitJudgePrintInfo() error {
 		log.Println("Judge isolate:", isolate)
 	*/
 
-	version, err := judge2.GetVersion()
+	version, err := judge.GetVersion()
 	if err != nil {
 		return err
 	}

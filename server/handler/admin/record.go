@@ -1,8 +1,8 @@
 package admin
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/record"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -24,7 +24,7 @@ func AdminRecordInfo(c *gin.Context) {
 
 	// 获取提交信息
 	sid := uint64(id)
-	submission, err := dao.SelectSubmissionById(sid)
+	submission, err := record.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -36,7 +36,7 @@ func AdminRecordInfo(c *gin.Context) {
 	}
 
 	// 获取评测结果
-	judgements, err := dao.SelectJudgementsBySubmissionId(sid)
+	judgements, err := record.SelectJudgementsBySubmissionId(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -61,7 +61,7 @@ func AdminRecordInfo(c *gin.Context) {
 
 // 获取提交记录列表
 func AdminRecordList(c *gin.Context) {
-	submissions, err := dao.SelectAllSubmissions()
+	submissions, err := record.SelectAllSubmissions()
 	if err != nil || submissions == nil {
 		if err != nil {
 			log.Println(err)
@@ -95,7 +95,7 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	sid := uint64(id)
-	_, err = dao.SelectSubmissionById(sid)
+	_, err = record.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -107,7 +107,7 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	// 删除提交信息
-	err = dao.DeleteSubmissionById(sid)
+	err = record.DeleteSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -119,7 +119,7 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	// 删除评测结果
-	err = dao.DeleteJudgementBySubmissionId(sid)
+	err = record.DeleteJudgementBySubmissionId(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -131,7 +131,7 @@ func AdminRecordRemove(c *gin.Context) {
 	}
 
 	// 更新提交更新时间
-	err = dao.UpdateSubmissionUpdateTimeById(sid)
+	err = record.UpdateSubmissionUpdateTimeById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

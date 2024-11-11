@@ -2,9 +2,9 @@ package judge
 
 import (
 	"STUOJ/external/judge"
-	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
+	"STUOJ/internal/service/record"
 	"STUOJ/internal/service/testcase"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
@@ -62,7 +62,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 插入提交
-	submission.Id, err = dao.InsertSubmission(submission)
+	submission.Id, err = record.InsertSubmission(submission)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -130,7 +130,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 更新提交信息
-	err = dao.UpdateSubmissionById(submission)
+	err = record.UpdateSubmissionById(submission)
 	if err != nil {
 		log.Println(err)
 		return
@@ -182,14 +182,14 @@ func asyncJudgeSubmit(req ReqJudgeSubmit, problem model.Problem, submission mode
 	//log.Println(judgement)
 
 	// 更新评测点结果
-	_, err = dao.InsertJudgement(judgement)
+	_, err = record.InsertJudgement(judgement)
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
 	// 更新提交更新时间
-	err = dao.UpdateSubmissionUpdateTimeById(submission.Id)
+	err = record.UpdateSubmissionUpdateTimeById(submission.Id)
 	if err != nil {
 		log.Println(err)
 		return

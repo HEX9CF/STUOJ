@@ -19,11 +19,11 @@ func InsertSubmission(s model.Submission) (uint64, error) {
 	return s.Id, nil
 }
 
-// 查询所有提交记录（不返回源代码）
+// 查询所有提交记录
 func SelectAllSubmissions() ([]model.Submission, error) {
 	var submissions []model.Submission
 
-	tx := db.Db.Omit("source_code").Find(&submissions)
+	tx := db.Db.Find(&submissions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -47,7 +47,7 @@ func SelectSubmissionById(id uint64) (model.Submission, error) {
 func SelectSubmissionsByUserId(userId uint64) ([]model.Submission, error) {
 	var submissions []model.Submission
 
-	tx := db.Db.Omit("source_code").Where("user_id = ?", userId).Find(&submissions)
+	tx := db.Db.Where("user_id = ?", userId).Find(&submissions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -59,7 +59,7 @@ func SelectSubmissionsByUserId(userId uint64) ([]model.Submission, error) {
 func SelectSubmissionsByProblemId(problemId uint64) ([]model.Submission, error) {
 	var submissions []model.Submission
 
-	tx := db.Db.Omit("source_code").Where("problem_id = ?", problemId).Find(&submissions)
+	tx := db.Db.Where("problem_id = ?", problemId).Find(&submissions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -69,32 +69,7 @@ func SelectSubmissionsByProblemId(problemId uint64) ([]model.Submission, error) 
 
 // 更新提交记录
 func UpdateSubmissionById(s model.Submission) error {
-	updateTime := time.Now()
-	tx := db.Db.Model(&s).Where("id = ?", s.Id).Updates(map[string]interface{}{
-		"user_id":     s.UserId,
-		"problem_id":  s.ProblemId,
-		"status":      s.Status,
-		"score":       s.Score,
-		"language_id": s.LanguageId,
-		"length":      s.Length,
-		"memory":      s.Memory,
-		"time":        s.Time,
-		"source_code": s.SourceCode,
-		"update_time": updateTime,
-	})
-	if tx.Error != nil {
-		return tx.Error
-	}
-
-	return nil
-}
-
-// 根据ID更新提交记录状态更新时间
-func UpdateSubmissionUpdateTimeById(id uint64) error {
-	updateTime := time.Now()
-	tx := db.Db.Model(&model.Submission{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"update_time": updateTime,
-	})
+	tx := db.Db.Model(&s).Where("id = ?", s.Id).Updates(s)
 	if tx.Error != nil {
 		return tx.Error
 	}

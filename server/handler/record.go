@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/record"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -24,7 +24,7 @@ func RecordInfo(c *gin.Context) {
 
 	// 获取提交信息
 	sid := uint64(id)
-	submission, err := dao.SelectSubmissionById(sid)
+	submission, err := record.SelectSubmissionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -36,7 +36,7 @@ func RecordInfo(c *gin.Context) {
 	}
 
 	// 获取评测结果
-	judgements, err := dao.SelectJudgementsBySubmissionId(sid)
+	judgements, err := record.SelectJudgementsBySubmissionId(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -61,7 +61,7 @@ func RecordInfo(c *gin.Context) {
 
 // 获取提交记录列表
 func RecordList(c *gin.Context) {
-	submissions, err := dao.SelectAllSubmissions()
+	submissions, err := record.SelectAllSubmissions()
 	if err != nil || submissions == nil {
 		if err != nil {
 			log.Println(err)
@@ -95,7 +95,7 @@ func RecordListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	submissions, err := dao.SelectSubmissionsByProblemId(pid)
+	submissions, err := record.SelectSubmissionsByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -128,7 +128,7 @@ func RecordListOfUser(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	submisssions, err := dao.SelectSubmissionsByUserId(uid)
+	submisssions, err := record.SelectSubmissionsByUserId(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

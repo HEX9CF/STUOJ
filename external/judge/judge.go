@@ -1,7 +1,7 @@
 package judge
 
 import (
-	conf2 "STUOJ/internal/conf"
+	conf "STUOJ/internal/conf"
 	"bytes"
 	"errors"
 	"io/ioutil"
@@ -10,12 +10,12 @@ import (
 )
 
 var (
-	config conf2.JudgeConf
+	config conf.JudgeConf
 	preUrl string
 )
 
 func InitJudge() error {
-	config = conf2.Conf.Judge
+	config = conf.Conf.Judge
 	preUrl = config.Host + ":" + config.Port
 	response, err := About()
 	if err != nil || response.StatusCode != http.StatusOK {

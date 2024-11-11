@@ -1,7 +1,7 @@
 package user
 
 import (
-	yuki2 "STUOJ/external/yuki"
+	yuki "STUOJ/external/yuki"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"STUOJ/utils"
@@ -24,7 +24,7 @@ func UpdateUserAvatar(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
 		return
 	}
-	image, err := yuki2.UploadImage(dst, model.RoleAvatar)
+	image, err := yuki.UploadImage(dst, model.RoleAvatar)
 	_ = os.Remove(dst)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
@@ -52,7 +52,7 @@ func UpdateUserAvatar(c *gin.Context) {
 		})
 		return
 	}
-	err = yuki2.DeleteOldAvatar(oldAvatarUrl)
+	err = yuki.DeleteOldAvatar(oldAvatarUrl)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.Response{
 			Code: 0,
