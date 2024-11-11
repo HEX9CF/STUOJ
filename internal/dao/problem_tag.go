@@ -6,11 +6,7 @@ import (
 )
 
 // 给题目添加标签
-func InsertProblemTag(pid uint64, tid uint64) error {
-	pt := model.ProblemTag{
-		ProblemId: pid,
-		TagId:     tid,
-	}
+func InsertProblemTag(pt model.ProblemTag) error {
 	tx := db.Db.Create(&pt)
 	if tx.Error != nil {
 		return tx.Error
@@ -31,10 +27,10 @@ func SelectTagsByProblemId(pid uint64) ([]model.Tag, error) {
 }
 
 // 查询题目标签关系是否存在
-func CountProblemTagByProblemIdAndTagId(pid uint64, tid uint64) (int64, error) {
+func CountProblemTag(pt model.ProblemTag) (int64, error) {
 	var count int64
 
-	tx := db.Db.Model(&model.ProblemTag{}).Where("problem_id = ? AND tag_id = ?", pid, tid).Count(&count)
+	tx := db.Db.Model(&model.ProblemTag{}).Where("problem_id = ? AND tag_id = ?", pt.ProblemId, pt.TagId).Count(&count)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
@@ -43,8 +39,8 @@ func CountProblemTagByProblemIdAndTagId(pid uint64, tid uint64) (int64, error) {
 }
 
 // 删除题目的某个标签
-func DeleteProblemTagByProblemIdAndTagId(pid uint64, tid uint64) error {
-	tx := db.Db.Where("problem_id = ? AND tag_id = ?", pid, tid).Delete(&model.ProblemTag{})
+func DeleteProblemTag(pt model.ProblemTag) error {
+	tx := db.Db.Where("problem_id = ? AND tag_id = ?", pt.ProblemId, pt.TagId).Delete(&model.ProblemTag{})
 	if tx.Error != nil {
 		return tx.Error
 	}

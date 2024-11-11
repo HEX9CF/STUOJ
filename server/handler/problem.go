@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/tag"
@@ -38,7 +37,7 @@ func ProblemPublicInfo(c *gin.Context) {
 	}
 
 	// 获取题目标签
-	tags, err := dao.SelectTagsByProblemId(pid)
+	tags, err := tag.SelectByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

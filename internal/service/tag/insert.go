@@ -16,3 +16,18 @@ func Insert(t model.Tag) (uint64, error) {
 
 	return t.Id, nil
 }
+
+// 给题目添加标签
+func InsertProblemTag(pid uint64, tid uint64) error {
+	pt := model.ProblemTag{
+		ProblemId: pid,
+		TagId:     tid,
+	}
+
+	err := dao.InsertProblemTag(pt)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

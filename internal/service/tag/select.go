@@ -24,3 +24,28 @@ func SelectAll() ([]model.Tag, error) {
 
 	return tags, nil
 }
+
+// 根据题目ID查询标签
+func SelectByProblemId(pid uint64) ([]model.Tag, error) {
+	tags, err := dao.SelectTagsByProblemId(pid)
+	if err != nil {
+		return nil, err
+	}
+
+	return tags, nil
+}
+
+// 查询题目标签关系是否存在
+func CountProblemTag(pid uint64, tid uint64) (int64, error) {
+	pt := model.ProblemTag{
+		ProblemId: pid,
+		TagId:     tid,
+	}
+
+	count, err := dao.CountProblemTag(pt)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}

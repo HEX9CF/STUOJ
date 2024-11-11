@@ -55,7 +55,7 @@ func AdminProblemInfo(c *gin.Context) {
 	}
 
 	// 获取题目标签
-	tags, err := dao.SelectTagsByProblemId(pid)
+	tags, err := tag.SelectByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -477,7 +477,7 @@ func AdminProblemAddTag(c *gin.Context) {
 	}
 
 	// 检查题目标签关系是否存在
-	count, err := dao.CountProblemTagByProblemIdAndTagId(req.ProblemId, req.TagId)
+	count, err := tag.CountProblemTag(req.ProblemId, req.TagId)
 	if err != nil || count > 0 {
 		if err != nil {
 			log.Println(err)
@@ -491,7 +491,7 @@ func AdminProblemAddTag(c *gin.Context) {
 	}
 
 	// 初始化标签
-	err = dao.InsertProblemTag(req.ProblemId, req.TagId)
+	err = tag.InsertProblemTag(req.ProblemId, req.TagId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -568,7 +568,7 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	}
 
 	// 检查题目标签关系是否存在
-	count, err := dao.CountProblemTagByProblemIdAndTagId(req.ProblemId, req.TagId)
+	count, err := tag.CountProblemTag(req.ProblemId, req.TagId)
 	if err != nil || count == 0 {
 		if err != nil {
 			log.Println(err)
@@ -582,7 +582,7 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	}
 
 	// 初始化标签
-	err = dao.DeleteProblemTagByProblemIdAndTagId(req.ProblemId, req.TagId)
+	err = tag.DeleteProblemTag(req.ProblemId, req.TagId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
