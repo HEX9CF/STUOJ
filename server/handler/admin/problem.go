@@ -3,6 +3,7 @@ package admin
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/problem"
 	"STUOJ/utils"
 	fps2 "STUOJ/utils/fps"
 	"fmt"
@@ -29,7 +30,7 @@ func AdminProblemInfo(c *gin.Context) {
 
 	// 获取题目信息
 	pid := uint64(id)
-	problem, err := dao.SelectProblemById(pid)
+	problem, err := problem.SelectById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -92,7 +93,7 @@ func AdminProblemInfo(c *gin.Context) {
 
 // 获取题目列表
 func AdminProblemList(c *gin.Context) {
-	problems, err := dao.SelectAllProblems()
+	problems, err := problem.SelectAll()
 	if err != nil || problems == nil {
 		if err != nil {
 			log.Println(err)
@@ -126,7 +127,7 @@ func AdminProblemListByStatus(c *gin.Context) {
 	}
 
 	s := model.ProblemStatus(id)
-	problems, err := dao.SelectAllProblemsByStatus(s)
+	problems, err := problem.SelectByStatus(s)
 	if err != nil || problems == nil {
 		if err != nil {
 			log.Println(err)
@@ -192,7 +193,7 @@ func AdminProblemAdd(c *gin.Context) {
 		Hint:         req.Hint,
 		Status:       req.Status,
 	}
-	p.Id, err = dao.InsertProblem(p)
+	p.Id, err = problem.Insert(p)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -265,7 +266,7 @@ func AdminProblemModify(c *gin.Context) {
 	}
 
 	// 读取题目
-	p, err := dao.SelectProblemById(req.Id)
+	p, err := problem.SelectById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -290,7 +291,7 @@ func AdminProblemModify(c *gin.Context) {
 	p.Hint = req.Hint
 	p.Status = req.Status
 
-	err = dao.UpdateProblemById(p)
+	err = problem.UpdateProblemById(p)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -344,7 +345,7 @@ func AdminProblemRemove(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	_, err = dao.SelectProblemById(pid)
+	_, err = problem.SelectById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -355,7 +356,7 @@ func AdminProblemRemove(c *gin.Context) {
 		return
 	}
 
-	err = dao.DeleteProblemById(pid)
+	err = problem.DeleteProblemById(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -451,7 +452,7 @@ func AdminProblemAddTag(c *gin.Context) {
 	}
 
 	// 读取题目
-	_, err = dao.SelectProblemById(req.ProblemId)
+	_, err = problem.SelectById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -501,7 +502,7 @@ func AdminProblemAddTag(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = dao.UpdateProblemUpdateTimeById(req.ProblemId)
+	err = problem.UpdateUpdateTimeById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -542,7 +543,7 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	}
 
 	// 读取题目
-	_, err = dao.SelectProblemById(req.ProblemId)
+	_, err = problem.SelectById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -592,7 +593,7 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = dao.UpdateProblemUpdateTimeById(req.ProblemId)
+	err = problem.UpdateUpdateTimeById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

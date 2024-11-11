@@ -4,6 +4,7 @@ import (
 	"STUOJ/external/judge"
 	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/problem"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -72,7 +73,7 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 获取题目信息
-	problem, err := dao.SelectProblemById(req.ProblemId)
+	problem, err := problem.SelectById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

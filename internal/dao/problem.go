@@ -3,14 +3,10 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/model"
-	"time"
 )
 
 // 插入题目
 func InsertProblem(p model.Problem) (uint64, error) {
-	updateTime := time.Now()
-	p.UpdateTime = updateTime
-	p.CreateTime = updateTime
 	tx := db.Db.Create(&p)
 	if tx.Error != nil {
 		return 0, tx.Error
@@ -32,13 +28,14 @@ func SelectProblemById(id uint64) (model.Problem, error) {
 }
 
 // 根据状态和ID查询题目
-func SelectProblemByStatusAndId(id uint64, s model.ProblemStatus) (model.Problem, error) {
+func SelectProblemByIdAndStatus(id uint64, s model.ProblemStatus) (model.Problem, error) {
 	var p model.Problem
 
 	tx := db.Db.Where("status = ? AND id = ?", s, id).First(&p)
 	if tx.Error != nil {
 		return model.Problem{}, tx.Error
 	}
+
 	return p, nil
 }
 
@@ -55,7 +52,7 @@ func SelectAllProblems() ([]model.Problem, error) {
 }
 
 // 根据状态查询题目
-func SelectAllProblemsByStatus(s model.ProblemStatus) ([]model.Problem, error) {
+func SelectByStatus(s model.ProblemStatus) ([]model.Problem, error) {
 	var problems []model.Problem
 
 	tx := db.Db.Where("status = ?", s).Find(&problems)
@@ -103,35 +100,7 @@ func SelectProblemsLikeTitleByStatus(title string, s model.ProblemStatus) ([]mod
 
 // 根据ID更新题目
 func UpdateProblemById(p model.Problem) error {
-	updateTime := time.Now()
-	tx := db.Db.Model(&model.Problem{}).Where("id = ?", p.Id).Updates(map[string]interface{}{
-		"title":         p.Title,
-		"source":        p.Source,
-		"difficulty":    p.Difficulty,
-		"time_limit":    p.TimeLimit,
-		"memory_limit":  p.MemoryLimit,
-		"description":   p.Description,
-		"input":         p.Input,
-		"output":        p.Output,
-		"sample_input":  p.SampleInput,
-		"sample_output": p.SampleOutput,
-		"hint":          p.Hint,
-		"status":        p.Status,
-		"update_time":   updateTime,
-	})
-	if tx.Error != nil {
-		return tx.Error
-	}
-
-	return nil
-}
-
-// 根据ID更新提交记录状态更新时间
-func UpdateProblemUpdateTimeById(id uint64) error {
-	updateTime := time.Now()
-	tx := db.Db.Model(&model.Problem{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"update_time": updateTime,
-	})
+	tx := db.Db.Model(&model.Problem{}).Where("id = ?", p.Id).Updates(p)
 	if tx.Error != nil {
 		return tx.Error
 	}

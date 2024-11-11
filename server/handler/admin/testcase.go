@@ -3,6 +3,7 @@ package admin
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/problem"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -84,7 +85,7 @@ func AdminTestcaseAdd(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = dao.UpdateProblemUpdateTimeById(t.ProblemId)
+	err = problem.UpdateUpdateTimeById(t.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -157,7 +158,7 @@ func AdminTestcaseModify(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = dao.UpdateProblemUpdateTimeById(t.ProblemId)
+	err = problem.UpdateUpdateTimeById(t.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
