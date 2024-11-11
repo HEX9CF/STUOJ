@@ -5,6 +5,7 @@ import (
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/tag"
+	"STUOJ/internal/service/testcase"
 	"STUOJ/utils"
 	"STUOJ/utils/fps"
 	"fmt"
@@ -43,7 +44,7 @@ func AdminProblemInfo(c *gin.Context) {
 	}
 
 	// 获取评测点数据
-	testcases, err := dao.SelectTestcasesByProblemId(pid)
+	testcases, err := testcase.SelectByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

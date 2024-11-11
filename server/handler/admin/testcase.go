@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
+	"STUOJ/internal/service/testcase"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -25,7 +25,7 @@ func AdminTestcaseInfo(c *gin.Context) {
 
 	// 获取评测点数据
 	tid := uint64(id)
-	testcase, err := dao.SelectTestcaseById(tid)
+	testcase, err := testcase.SelectById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -73,7 +73,7 @@ func AdminTestcaseAdd(c *gin.Context) {
 		TestInput:  req.TestInput,
 		TestOutput: req.TestOutput,
 	}
-	t.Id, err = dao.InsertTestcase(t)
+	t.Id, err = testcase.Insert(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -129,7 +129,7 @@ func AdminTestcaseModify(c *gin.Context) {
 	}
 
 	// 读取评测点数据
-	t, err := dao.SelectTestcaseById(req.Id)
+	t, err := testcase.SelectById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -146,7 +146,7 @@ func AdminTestcaseModify(c *gin.Context) {
 	t.TestInput = req.TestInput
 	t.TestOutput = req.TestOutput
 
-	err = dao.UpdateTestcaseById(t)
+	err = testcase.UpdateById(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -191,7 +191,7 @@ func AdminTestcaseRemove(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	_, err = dao.SelectTestcaseById(tid)
+	_, err = testcase.SelectById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -202,7 +202,7 @@ func AdminTestcaseRemove(c *gin.Context) {
 		return
 	}
 
-	err = dao.DeleteTestcaseById(tid)
+	err = testcase.DeleteById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
