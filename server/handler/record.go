@@ -14,71 +14,27 @@ func RecordInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
-	// 获取提交信息
 	sid := uint64(id)
-	submission, err := record.SelectSubmissionById(sid)
+	r, err := record.SelectBySubmissionId(sid)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取提交信息失败",
-			Data: nil,
-		})
-		return
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 	}
 
-	// 获取评测结果
-	judgements, err := record.SelectJudgementsBySubmissionId(sid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取评测结果失败",
-			Data: nil,
-		})
-		return
-	}
-
-	record := model.Record{
-		Submission: submission,
-		Judgements: judgements,
-	}
-
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: record,
-	})
+	c.JSON(http.StatusOK, model.RespOk("OK", r))
 }
 
 // 获取提交记录列表
 func RecordList(c *gin.Context) {
-	submissions, err := record.SelectAllSubmissions()
-	if err != nil || submissions == nil {
-		if err != nil {
-			log.Println(err)
-		}
-		c.JSON(http.StatusOK, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取失败",
-			Data: nil,
-		})
-		return
+	records, err := record.SelectAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 	}
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: submissions,
-	})
+	c.JSON(http.StatusOK, model.RespOk("OK", records))
 }
 
 // 获取题目的提交记录列表
@@ -86,32 +42,18 @@ func RecordListOfProblem(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
 	pid := uint64(id)
-	submissions, err := record.SelectSubmissionsByProblemId(pid)
+	records, err := record.SelectByProblemId(pid)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取提交记录信息失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
-	//log.Println(submissions)
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: submissions,
-	})
+	c.JSON(http.StatusOK, model.RespOk("OK", records))
 }
 
 // 获取用户的提交记录列表
@@ -119,29 +61,17 @@ func RecordListOfUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
 	uid := uint64(id)
-	submisssions, err := record.SelectSubmissionsByUserId(uid)
+	records, err := record.SelectByUserId(uid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取提交记录信息失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: submisssions,
-	})
+	c.JSON(http.StatusOK, model.RespOk("OK", records))
 }

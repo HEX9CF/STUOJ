@@ -14,71 +14,30 @@ func AdminRecordInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
 	// 获取提交信息
 	sid := uint64(id)
-	submission, err := record.SelectSubmissionById(sid)
+	records, err := record.SelectBySubmissionId(sid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取提交信息失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	// 获取评测结果
-	judgements, err := record.SelectJudgementsBySubmissionId(sid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取评测结果失败",
-			Data: nil,
-		})
-		return
-	}
-
-	record := model.Record{
-		Submission: submission,
-		Judgements: judgements,
-	}
-
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: record,
-	})
+	c.JSON(http.StatusOK, model.RespOk("OK", records))
 }
 
 // 获取提交记录列表
 func AdminRecordList(c *gin.Context) {
-	submissions, err := record.SelectAllSubmissions()
-	if err != nil || submissions == nil {
-		if err != nil {
-			log.Println(err)
-		}
-		c.JSON(http.StatusOK, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取失败",
-			Data: nil,
-		})
-		return
+	records, err := record.SelectAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 	}
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: submissions,
-	})
+	c.JSON(http.StatusOK, model.RespOk("OK", records))
 }
 
 // 删除提交记录（提交信息+评测结果）
@@ -86,65 +45,15 @@ func AdminRecordRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
 	sid := uint64(id)
-	_, err = record.SelectSubmissionById(sid)
+	err = record.DeleteBySubmissionId(sid)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除失败，提交记录不存在",
-			Data: nil,
-		})
-		return
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 	}
 
-	// 删除提交信息
-	err = record.DeleteSubmissionById(sid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除提交信息失败",
-			Data: nil,
-		})
-		return
-	}
-
-	// 删除评测结果
-	err = record.DeleteJudgementBySubmissionId(sid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除评测结果失败",
-			Data: nil,
-		})
-		return
-	}
-
-	// 更新提交更新时间
-	err = record.UpdateSubmissionUpdateTimeById(sid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "更新提交记录更新时间失败",
-			Data: nil,
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "删除成功",
-		Data: nil,
-	})
+	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
 }
