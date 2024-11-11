@@ -36,3 +36,13 @@ func DeleteJudgementBySubmissionId(id uint64) error {
 
 	return nil
 }
+
+// 更新评测结果
+func UpdateJudgementById(j model.Judgement) error {
+	tx := db.Db.Model(&j).Where("id = ?", j.Id).Updates(j)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
+}

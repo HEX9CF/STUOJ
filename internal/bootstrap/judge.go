@@ -1,7 +1,7 @@
 package bootstrap
 
 import (
-	judge "STUOJ/external/judge"
+	"STUOJ/external/judge0"
 	"STUOJ/internal/service/language"
 	"STUOJ/utils"
 	"log"
@@ -9,19 +9,19 @@ import (
 
 func InitJudge() {
 	var err error
-	err = judge.InitJudge()
+	err = judge0.InitJudge()
 	if err != nil {
-		log.Println("Init judge failed!")
+		log.Println("Init judge0 failed!")
 	}
 
 	err = InitJudgePrintInfo()
 	if err != nil {
-		log.Println("Init judge failed!")
+		log.Println("Init judge0 failed!")
 	}
 
 	err = InitJudgeLanguages()
 	if err != nil {
-		log.Println("Init judge failed!")
+		log.Println("Init judge0 failed!")
 	}
 
 }
@@ -29,7 +29,7 @@ func InitJudge() {
 // 初始化评测机语言
 func InitJudgeLanguages() error {
 	// 读取评测机语言列表
-	languages, err := judge.GetLanguage()
+	languages, err := judge0.GetLanguage()
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func InitJudgeLanguages() error {
 
 // 打印评测机信息
 func InitJudgePrintInfo() error {
-	config, err := judge.GetConfigInfo()
+	config, err := judge0.GetConfigInfo()
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func InitJudgePrintInfo() error {
 		log.Println("Judge config info:", configtmp)
 	}
 
-	system, err := judge.GetSystemInfo()
+	system, err := judge0.GetSystemInfo()
 	if err != nil {
 		return err
 	}
@@ -88,7 +88,7 @@ func InitJudgePrintInfo() error {
 		log.Println("Judge system info:", systemtmp)
 	}
 
-	/*	statistics, err := judge.GetStatistics()
+	/*	statistics, err := judge0.GetStatistics()
 		if err != nil {
 			return err
 		}
@@ -100,14 +100,14 @@ func InitJudgePrintInfo() error {
 		}
 	*/
 
-	/*	about, err := judge.GetAbout()
+	/*	about, err := judge0.GetAbout()
 		if err != nil {
 			return err
 		}
 		log.Println("Judge about:", about)
 	*/
 
-	workers, err := judge.GetWorkers()
+	workers, err := judge0.GetWorkers()
 	if err != nil {
 		return err
 	}
@@ -121,21 +121,21 @@ func InitJudgePrintInfo() error {
 		}
 	}
 
-	/*	license, err := judge.GetLicense()
+	/*	license, err := judge0.GetLicense()
 		if err != nil {
 			return err
 		}
 		log.Println("Judge license:", license)
 	*/
 
-	/*	isolate, err := judge.GetIsolate()
+	/*	isolate, err := judge0.GetIsolate()
 		if err != nil {
 			return err
 		}
 		log.Println("Judge isolate:", isolate)
 	*/
 
-	version, err := judge.GetVersion()
+	version, err := judge0.GetVersion()
 	if err != nil {
 		return err
 	}

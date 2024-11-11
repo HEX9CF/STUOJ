@@ -1,4 +1,4 @@
-package judge
+package judge0
 
 import (
 	conf "STUOJ/internal/conf"
@@ -32,7 +32,7 @@ func httpInteraction(route string, httpMethod string, reader *bytes.Reader) (str
 	var req *http.Request
 	var err error
 	if route == "/submissions" && httpMethod == "POST" {
-		log.Println("Wait for judge server to finish checking...")
+		log.Println("Wait for judge0 server to finish checking...")
 		url = url + "?wait=true"
 	}
 	if reader == nil {

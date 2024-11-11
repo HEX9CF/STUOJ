@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"STUOJ/external/judge"
+	"STUOJ/external/judge0"
 	"STUOJ/internal/conf"
 	"STUOJ/internal/model"
 	"github.com/gin-gonic/gin"
@@ -15,7 +15,7 @@ func AdminConfigList(c *gin.Context) {
 	configuration := model.Configuration{}
 
 	configuration.System = *conf.Conf
-	configuration.Judge, err = judge.GetConfigInfo()
+	configuration.Judge, err = judge0.GetConfigInfo()
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

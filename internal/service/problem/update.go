@@ -7,11 +7,11 @@ import (
 )
 
 // 根据ID更新题目
-func UpdateProblemById(p model.Problem) error {
+func UpdateById(p model.Problem) error {
 	updateTime := time.Now()
 	p.UpdateTime = updateTime
 
-	err := UpdateUpdateTimeById(p.Id)
+	err := dao.UpdateProblemById(p)
 	if err != nil {
 		return err
 	}

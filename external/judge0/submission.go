@@ -1,4 +1,4 @@
-package judge
+package judge0
 
 import (
 	"STUOJ/internal/model"

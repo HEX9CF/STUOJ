@@ -6,30 +6,30 @@ import "time"
 type SubmitStatus uint64
 
 const (
-	SubmitStatusPending         SubmitStatus = 0
-	SubmitStatusInQueue         SubmitStatus = 1
-	SubmitStatusProcessing      SubmitStatus = 2
-	SubmitStatusAC              SubmitStatus = 3
-	SubmitStatusWA              SubmitStatus = 4
-	SubmitStatusTLE             SubmitStatus = 5
-	SubmitStatusCE              SubmitStatus = 6
-	SubmitStatusRE_SIGSEGV      SubmitStatus = 7
-	SubmitStatusRE_SIGXFSZ      SubmitStatus = 8
-	SubmitStatusRE_SIGFPE       SubmitStatus = 9
-	SubmitStatusRE_SIGABRT      SubmitStatus = 10
-	SubmitStatusRE_NZEC         SubmitStatus = 11
-	SubmitStatusRE_Other        SubmitStatus = 12
-	SubmitStatusInternalError   SubmitStatus = 13
-	SubmitStatusExecFormatError SubmitStatus = 14
+	SubmitStatusPend      SubmitStatus = 0
+	SubmitStatusIQ        SubmitStatus = 1
+	SubmitStatusProc      SubmitStatus = 2
+	SubmitStatusAC        SubmitStatus = 3
+	SubmitStatusWA        SubmitStatus = 4
+	SubmitStatusTLE       SubmitStatus = 5
+	SubmitStatusCE        SubmitStatus = 6
+	SubmitStatusRESIGSEGV SubmitStatus = 7
+	SubmitStatusRESIGXFSZ SubmitStatus = 8
+	SubmitStatusRESIGFPE  SubmitStatus = 9
+	SubmitStatusRESIGABRT SubmitStatus = 10
+	SubmitStatusRENZEC    SubmitStatus = 11
+	SubmitStatusREOther   SubmitStatus = 12
+	SubmitStatusIE        SubmitStatus = 13
+	SubmitStatusEFE       SubmitStatus = 14
 )
 
 func (s SubmitStatus) String() string {
 	switch s {
-	case SubmitStatusPending:
+	case SubmitStatusPend:
 		return "Pending"
-	case SubmitStatusInQueue:
+	case SubmitStatusIQ:
 		return "In Queue"
-	case SubmitStatusProcessing:
+	case SubmitStatusProc:
 		return "Processing"
 	case SubmitStatusAC:
 		return "Accepted"
@@ -39,21 +39,21 @@ func (s SubmitStatus) String() string {
 		return "Time Limit Exceeded"
 	case SubmitStatusCE:
 		return "Compilation Error"
-	case SubmitStatusRE_SIGSEGV:
+	case SubmitStatusRESIGSEGV:
 		return "Runtime Error (SIGSEGV)"
-	case SubmitStatusRE_SIGXFSZ:
+	case SubmitStatusRESIGXFSZ:
 		return "Runtime Error (SIGXFSZ)"
-	case SubmitStatusRE_SIGFPE:
+	case SubmitStatusRESIGFPE:
 		return "Runtime Error (SIGFPE)"
-	case SubmitStatusRE_SIGABRT:
+	case SubmitStatusRESIGABRT:
 		return "Runtime Error (SIGABRT)"
-	case SubmitStatusRE_NZEC:
+	case SubmitStatusRENZEC:
 		return "Runtime Error (NZEC)"
-	case SubmitStatusRE_Other:
+	case SubmitStatusREOther:
 		return "Runtime Error (Other)"
-	case SubmitStatusInternalError:
+	case SubmitStatusIE:
 		return "Internal Error"
-	case SubmitStatusExecFormatError:
+	case SubmitStatusEFE:
 		return "Exec Format Error"
 	default:
 		return "Unknown"

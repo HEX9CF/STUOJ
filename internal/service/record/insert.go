@@ -3,6 +3,7 @@ package record
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
+	"errors"
 	"time"
 )
 
@@ -29,6 +30,12 @@ func InsertJudgement(j model.Judgement) (uint64, error) {
 	j.Id, err = dao.InsertJudgement(j)
 	if err != nil {
 		return 0, err
+	}
+
+	// 更新提交记录状态更新时间
+	err = UpdateSubmissionUpdateTimeById(j.SubmissionId)
+	if err != nil {
+		return 0, errors.New("更新提交记录状态更新时间失败")
 	}
 
 	return j.Id, nil
