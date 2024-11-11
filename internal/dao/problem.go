@@ -101,7 +101,7 @@ func SelectProblemsLikeTitleByStatus(title string, s model.ProblemStatus) ([]mod
 
 // 根据ID更新题目
 func UpdateProblemById(p model.Problem) error {
-	tx := db.Db.Model(&model.Problem{}).Where("id = ?", p.Id).Updates(p)
+	tx := db.Db.Model(&p).Where("id = ?", p.Id).Updates(p)
 	if tx.Error != nil {
 		return tx.Error
 	}

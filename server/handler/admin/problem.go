@@ -4,8 +4,9 @@ import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
+	"STUOJ/internal/service/tag"
 	"STUOJ/utils"
-	fps2 "STUOJ/utils/fps"
+	"STUOJ/utils/fps"
 	"fmt"
 	"log"
 	"net/http"
@@ -464,7 +465,7 @@ func AdminProblemAddTag(c *gin.Context) {
 	}
 
 	// 读取标签
-	_, err = dao.SelectTagById(req.TagId)
+	_, err = tag.SelectById(req.TagId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -555,7 +556,7 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	}
 
 	// 读取标签
-	_, err = dao.SelectTagById(req.TagId)
+	_, err = tag.SelectById(req.TagId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -626,12 +627,12 @@ func AdminProblemParseFromFps(c *gin.Context) {
 		return
 	}
 	defer os.Remove(dst)
-	f, err := fps2.Read(dst)
+	f, err := fps.Read(dst)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件解析失败", Data: err})
 		return
 	}
-	p := fps2.Parse(f)
+	p := fps.Parse(f)
 	c.JSON(http.StatusOK, model.Response{Code: 1, Msg: "文件解析成功", Data: p})
 }

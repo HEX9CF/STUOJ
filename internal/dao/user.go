@@ -64,7 +64,7 @@ func SelectUsersByRole(r model.UserRole) ([]model.User, error) {
 
 // 根据ID更新用户
 func UpdateUserById(u model.User) error {
-	tx := db.Db.Save(&u)
+	tx := db.Db.Model(&u).Where("id = ?", u.Id).Updates(u)
 	if tx.Error != nil {
 		return tx.Error
 	}

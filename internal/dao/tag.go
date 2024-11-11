@@ -39,9 +39,7 @@ func SelectAllTags() ([]model.Tag, error) {
 
 // 根据ID更新标签
 func UpdateTagById(t model.Tag) error {
-	tx := db.Db.Model(&t).Where("id = ?", t.Id).Updates(map[string]interface{}{
-		"name": t.Name,
-	})
+	tx := db.Db.Model(&t).Where("id = ?", t.Id).Updates(t)
 	if tx.Error != nil {
 		return tx.Error
 	}

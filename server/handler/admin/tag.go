@@ -1,8 +1,8 @@
 package admin
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/tag"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -11,7 +11,7 @@ import (
 
 // 获取标签列表
 func AdminTagList(c *gin.Context) {
-	tags, err := dao.SelectAllTags()
+	tags, err := tag.SelectAll()
 	if err != nil || tags == nil {
 		if err != nil {
 			log.Println(err)
@@ -55,7 +55,7 @@ func AdminTagAdd(c *gin.Context) {
 	t := model.Tag{
 		Name: req.Name,
 	}
-	t.Id, err = dao.InsertTag(t)
+	t.Id, err = tag.Insert(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -96,7 +96,7 @@ func AdminTagModify(c *gin.Context) {
 	}
 
 	// 读取标签
-	t, err := dao.SelectTagById(req.Id)
+	t, err := tag.SelectById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -110,7 +110,7 @@ func AdminTagModify(c *gin.Context) {
 	// 修改标签
 	t.Name = req.Name
 
-	err = dao.UpdateTagById(t)
+	err = tag.UpdateById(t)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -143,7 +143,7 @@ func AdminTagRemove(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	_, err = dao.SelectTagById(tid)
+	_, err = tag.SelectById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -154,7 +154,7 @@ func AdminTagRemove(c *gin.Context) {
 		return
 	}
 
-	err = dao.DeleteTagById(tid)
+	err = tag.DeleteById(tid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

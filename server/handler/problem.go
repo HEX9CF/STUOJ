@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
+	"STUOJ/internal/service/tag"
 	"log"
 	"net/http"
 	"strconv"
@@ -85,7 +86,7 @@ func ProblemPublicList(c *gin.Context) {
 
 // 获取标签列表
 func TagList(c *gin.Context) {
-	tags, err := dao.SelectAllTags()
+	tags, err := tag.SelectAll()
 	if err != nil || tags == nil {
 		if err != nil {
 			log.Println(err)
