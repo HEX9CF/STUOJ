@@ -5,7 +5,6 @@ import (
 	"STUOJ/internal/model"
 	"STUOJ/server/handler"
 	"STUOJ/server/handler/admin"
-	"STUOJ/server/handler/judge"
 	"STUOJ/server/handler/user"
 	"STUOJ/server/middlewares"
 	"net/http"
@@ -88,15 +87,15 @@ func InitProblemRoute() {
 func InitJudgeRoute() {
 	judgePublicRoute := ginServer.Group("/judge")
 	{
-		judgePublicRoute.GET("/language", judge.JudgeLanguageList)
+		judgePublicRoute.GET("/language", handler.JudgeLanguageList)
 	}
 	judgePrivateRoute := ginServer.Group("/judge")
 	{
 		// 使用中间件
 		judgePrivateRoute.Use(middlewares.TokenAuthUser())
 
-		judgePrivateRoute.POST("/submit", judge.JudgeSubmit)
-		judgePrivateRoute.POST("/testrun", judge.JudgeTestRun)
+		judgePrivateRoute.POST("/submit", handler.JudgeSubmit)
+		judgePrivateRoute.POST("/testrun", handler.JudgeTestRun)
 	}
 }
 

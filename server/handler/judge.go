@@ -1,14 +1,26 @@
-package judge
+package handler
 
 import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/judge"
+	"STUOJ/internal/service/language"
 	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 )
+
+// 获取语言列表
+func JudgeLanguageList(c *gin.Context) {
+	languages, err := language.SelectAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", languages))
+}
 
 // 提交评测
 type ReqJudgeSubmit struct {

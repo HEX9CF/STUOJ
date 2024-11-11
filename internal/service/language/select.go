@@ -3,6 +3,8 @@ package language
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"errors"
+	"log"
 )
 
 // 查询所有语言
@@ -11,7 +13,8 @@ func SelectAll() ([]entity.Language, error) {
 
 	languages, err := dao.SelectAllLanguages()
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("查询语言失败")
 	}
 
 	return languages, nil
@@ -23,7 +26,8 @@ func SelectLikeName(name string) (entity.Language, error) {
 
 	l, err := dao.SelectLanguageLikeName(name)
 	if err != nil {
-		return entity.Language{}, err
+		log.Println(err)
+		return entity.Language{}, errors.New("查询语言失败")
 	}
 
 	return l, nil
