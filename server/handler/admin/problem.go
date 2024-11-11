@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
+	"STUOJ/internal/service/solution"
 	"STUOJ/internal/service/tag"
 	"STUOJ/internal/service/testcase"
 	"STUOJ/utils"
@@ -68,7 +68,7 @@ func AdminProblemInfo(c *gin.Context) {
 	}
 
 	// 获取题解
-	solutions, err := dao.SelectSolutionsByProblemId(pid)
+	solutions, err := solution.SelectSolutionsByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

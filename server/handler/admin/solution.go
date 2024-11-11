@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
+	"STUOJ/internal/service/solution"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -12,7 +12,7 @@ import (
 
 // 获取题解列表
 func AdminSolutionList(c *gin.Context) {
-	solutions, err := dao.SelectAllSolutions()
+	solutions, err := solution.SelectAllSolutions()
 	if err != nil || solutions == nil {
 		if err != nil {
 			log.Println(err)
@@ -46,7 +46,7 @@ func AdminSolutionListByProblemId(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	solutions, err := dao.SelectSolutionsByProblemId(pid)
+	solutions, err := solution.SelectSolutionsByProblemId(pid)
 	if err != nil || solutions == nil {
 		if err != nil {
 			log.Println(err)
@@ -81,7 +81,7 @@ func AdminSolutionInfo(c *gin.Context) {
 
 	// 获取评测点数据
 	sid := uint64(id)
-	solution, err := dao.SelectSolutionById(sid)
+	solution, err := solution.SelectById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -126,7 +126,7 @@ func AdminSolutionAdd(c *gin.Context) {
 		ProblemId:  req.ProblemId,
 		SourceCode: req.SourceCode,
 	}
-	s.Id, err = dao.InsertSolution(s)
+	s.Id, err = solution.Insert(s)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -181,7 +181,7 @@ func AdminSolutionModify(c *gin.Context) {
 	}
 
 	// 读取题解
-	s, err := dao.SelectSolutionById(req.Id)
+	s, err := solution.SelectById(req.Id)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -197,7 +197,7 @@ func AdminSolutionModify(c *gin.Context) {
 	s.ProblemId = req.ProblemId
 	s.SourceCode = req.SourceCode
 
-	err = dao.UpdateSolutionById(s)
+	err = solution.UpdateSolutionById(s)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -242,7 +242,7 @@ func AdminSolutionRemove(c *gin.Context) {
 	}
 
 	sid := uint64(id)
-	_, err = dao.SelectSolutionById(sid)
+	_, err = solution.SelectById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -253,7 +253,7 @@ func AdminSolutionRemove(c *gin.Context) {
 		return
 	}
 
-	err = dao.DeleteSolutionById(sid)
+	err = solution.DeleteSolutionById(sid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

@@ -27,11 +27,11 @@ func SelectSolutionById(id uint64) (model.Solution, error) {
 	return s, nil
 }
 
-// 查询所有题解（不返回源代码）
+// 查询所有题解
 func SelectAllSolutions() ([]model.Solution, error) {
 	var solutions []model.Solution
 
-	tx := db.Db.Omit("source_code").Find(&solutions)
+	tx := db.Db.Find(&solutions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -39,11 +39,11 @@ func SelectAllSolutions() ([]model.Solution, error) {
 	return solutions, nil
 }
 
-// 根据题目ID查询题解（不返回源代码）
+// 根据题目ID查询题解
 func SelectSolutionsByProblemId(pid uint64) ([]model.Solution, error) {
 	var solutions []model.Solution
 
-	tx := db.Db.Omit("source_code").Where("problem_id = ?", pid).Find(&solutions)
+	tx := db.Db.Where("problem_id = ?", pid).Find(&solutions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -53,11 +53,7 @@ func SelectSolutionsByProblemId(pid uint64) ([]model.Solution, error) {
 
 // 根据ID更新题解
 func UpdateSolutionById(s model.Solution) error {
-	tx := db.Db.Model(&model.Solution{}).Where("id = ?", s.Id).Updates(map[string]interface{}{
-		"problem_id":  s.ProblemId,
-		"language_id": s.LanguageId,
-		"source_code": s.SourceCode,
-	})
+	tx := db.Db.Model(&s).Where("id = ?", s.Id).Updates(s)
 	if tx.Error != nil {
 		return tx.Error
 	}
