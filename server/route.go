@@ -54,7 +54,7 @@ func InitUserRoute() {
 	{
 		//userPublicRoute.GET("/", user.UserList)
 		userPublicRoute.GET("/avatar/:id", user.UserAvatar)
-		userPublicRoute.GET("/:id", user.UserInfo)
+		userPublicRoute.GET("/:id", handler.UserInfo)
 		userPublicRoute.POST("/login", handler.UserLogin)
 		userPublicRoute.POST("/register", handler.UserRegister)
 		userPublicRoute.GET("/avatar", user.ThisUserAvatar)
@@ -64,7 +64,7 @@ func InitUserRoute() {
 		// 使用中间件
 		userProtectedRoute.Use(middlewares.TokenAuthUser())
 
-		userProtectedRoute.GET("/current", user.UserCurrentId)
+		userProtectedRoute.GET("/current", handler.UserCurrentId)
 		userProtectedRoute.PUT("/modify", user.UserModify)
 		userProtectedRoute.PUT("/password", user.UserChangePassword)
 		userProtectedRoute.POST("/avatar", user.UpdateUserAvatar)

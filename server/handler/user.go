@@ -4,9 +4,11 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
+	"STUOJ/utils"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 // 用户注册
@@ -74,4 +76,34 @@ func UserLogin(c *gin.Context) {
 
 	// 登录成功，返回token
 	c.JSON(http.StatusOK, model.RespOk("登录成功，返回token", token))
+}
+
+// 获取用户信息
+func UserInfo(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	uid := uint64(id)
+	u, err := user.SelectById(uid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", u))
+}
+
+// 获取当前用户id
+func UserCurrentId(c *gin.Context) {
+	id, err := utils.GetTokenUid(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusUnauthorized, model.RespError("用户未登录", nil))
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", id))
 }
