@@ -86,7 +86,7 @@ func AdminTestcaseAdd(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = problem.UpdateUpdateTimeById(t.ProblemId)
+	err = problem.UpdateProblemUpdateTimeById(t.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -159,7 +159,7 @@ func AdminTestcaseModify(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = problem.UpdateUpdateTimeById(t.ProblemId)
+	err = problem.UpdateProblemUpdateTimeById(t.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

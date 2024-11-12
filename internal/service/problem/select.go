@@ -3,9 +3,12 @@ package problem
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
+	"errors"
+	"log"
 )
 
-// 根据ID查询题目
+// 根据ID查询题目数据
 func SelectById(id uint64) (entity.Problem, error) {
 	p, err := dao.SelectProblemById(id)
 	if err != nil {
@@ -15,64 +18,113 @@ func SelectById(id uint64) (entity.Problem, error) {
 	return p, nil
 }
 
-// 根据状态和ID查询题目
-func SelectProblemByIdAndStatus(id uint64, s entity.ProblemStatus) (entity.Problem, error) {
-	p, err := dao.SelectProblemByIdAndStatus(id, s)
-	if err != nil {
-		return entity.Problem{}, err
-	}
+// 查询所有题目数据
+func SelectAll() ([]model.ProblemData, error) {
+	var pds []model.ProblemData
 
-	return p, nil
-}
-
-// 查询所有题目
-func SelectAll() ([]entity.Problem, error) {
 	problems, err := dao.SelectAllProblems()
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("获取题目信息失败")
 	}
 
-	return problems, nil
+	// 封装题目数据
+	for _, p := range problems {
+		pd := model.ProblemData{
+			Problem: p,
+		}
+
+		pds = append(pds, pd)
+	}
+
+	return pds, nil
 }
 
-// 根据状态查询题目
-func SelectByStatus(s entity.ProblemStatus) ([]entity.Problem, error) {
-	problems, err := dao.SelectByStatus(s)
+// 根据状态查询题目数据
+func SelectByStatus(s entity.ProblemStatus) ([]model.ProblemData, error) {
+	var pds []model.ProblemData
+
+	problems, err := dao.SelectProblemsByStatus(s)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("获取题目信息失败")
 	}
 
-	return problems, nil
+	// 封装题目数据
+	for _, p := range problems {
+		pd := model.ProblemData{
+			Problem: p,
+		}
+
+		pds = append(pds, pd)
+	}
+
+	return pds, nil
 }
 
 // 根据状态和标签查询题目
-func SelectByTagIdAndStatus(tid uint64, s entity.ProblemStatus) ([]entity.Problem, error) {
-	problems, err := dao.SelectProblemsByTagIdAndStatus(tid, s)
+func SelectPublicByTagId(tid uint64) ([]model.ProblemData, error) {
+	var pds []model.ProblemData
+
+	problems, err := dao.SelectProblemsByTagIdAndStatus(tid, entity.ProblemStatusPublic)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("获取题目信息失败")
 	}
 
-	return problems, nil
+	// 封装题目数据
+	for _, p := range problems {
+		pd := model.ProblemData{
+			Problem: p,
+		}
+
+		pds = append(pds, pd)
+	}
+
+	return pds, nil
 }
 
 // 根据状态和难度查询题目
-func SelectByDifficultyAndStatus(d entity.Difficulty, s entity.ProblemStatus) ([]entity.Problem, error) {
-	problems, err := dao.SelectProblemsByDifficultyAndStatus(d, s)
+func SelectPublicByDifficulty(d entity.Difficulty) ([]model.ProblemData, error) {
+	var pds []model.ProblemData
+
+	problems, err := dao.SelectProblemsByDifficultyAndStatus(d, entity.ProblemStatusPublic)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("获取题目信息失败")
 	}
 
-	return problems, nil
+	// 封装题目数据
+	for _, p := range problems {
+		pd := model.ProblemData{
+			Problem: p,
+		}
+
+		pds = append(pds, pd)
+	}
+
+	return pds, nil
 }
 
-// 根据状态查询并根据标题模糊查询题目
-func SelectLikeTitleByStatus(title string, s entity.ProblemStatus) ([]entity.Problem, error) {
-	problems, err := dao.SelectProblemsLikeTitleByStatus(title, s)
+// 根据状态查询并根据标题模糊查询公开题目
+func SelectPublicLikeTitle(title string) ([]model.ProblemData, error) {
+	var pds []model.ProblemData
+
+	problems, err := dao.SelectProblemsLikeTitleByStatus(title, entity.ProblemStatusPublic)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("获取题目信息失败")
 	}
 
-	return problems, nil
+	// 封装题目数据
+	for _, p := range problems {
+		pd := model.ProblemData{
+			Problem: p,
+		}
+
+		pds = append(pds, pd)
+	}
+
+	return pds, nil
 }
 
 // 根据题目ID查询题目历史记录
@@ -83,4 +135,28 @@ func SelectHistoriesByProblemId(pid uint64) ([]entity.ProblemHistory, error) {
 	}
 
 	return phs, nil
+}
+
+// 根据题目ID查询公开题目数据
+func SelectPublicByProblemId(pid uint64) (model.ProblemData, error) {
+	p, err := dao.SelectProblemByIdAndStatus(pid, entity.ProblemStatusPublic)
+	if err != nil {
+		log.Println(err)
+		return model.ProblemData{}, errors.New("获取题目信息失败")
+	}
+
+	// 获取题目标签
+	tags, err := dao.SelectTagsByProblemId(pid)
+	if err != nil {
+		log.Println(err)
+		return model.ProblemData{}, errors.New("获取题目标签失败")
+	}
+
+	// 初始化题目信息
+	pd := model.ProblemData{
+		Problem: p,
+		Tags:    tags,
+	}
+
+	return pd, nil
 }

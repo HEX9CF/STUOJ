@@ -52,7 +52,7 @@ func SelectAllProblems() ([]entity.Problem, error) {
 }
 
 // 根据状态查询题目
-func SelectByStatus(s entity.ProblemStatus) ([]entity.Problem, error) {
+func SelectProblemsByStatus(s entity.ProblemStatus) ([]entity.Problem, error) {
 	var problems []entity.Problem
 
 	tx := db.Db.Where("status = ?", s).Find(&problems)

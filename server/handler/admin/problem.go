@@ -80,7 +80,7 @@ func AdminProblemInfo(c *gin.Context) {
 		return
 	}
 
-	problemInfo := model.ProblemInfo{
+	problemInfo := model.ProblemData{
 		Problem:   problem,
 		Tags:      tags,
 		Testcases: testcases,
@@ -196,7 +196,7 @@ func AdminProblemAdd(c *gin.Context) {
 		Hint:         req.Hint,
 		Status:       req.Status,
 	}
-	p.Id, err = problem.Insert(p)
+	p.Id, err = problem.InsertProblem(p)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -294,7 +294,7 @@ func AdminProblemModify(c *gin.Context) {
 	p.Hint = req.Hint
 	p.Status = req.Status
 
-	err = problem.UpdateById(p)
+	err = problem.UpdateProblemById(p)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -505,7 +505,7 @@ func AdminProblemAddTag(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = problem.UpdateUpdateTimeById(req.ProblemId)
+	err = problem.UpdateProblemUpdateTimeById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -596,7 +596,7 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = problem.UpdateUpdateTimeById(req.ProblemId)
+	err = problem.UpdateProblemUpdateTimeById(req.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{

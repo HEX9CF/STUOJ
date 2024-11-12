@@ -3,6 +3,8 @@ package tag
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"errors"
+	"log"
 )
 
 // 根据ID查询标签
@@ -19,7 +21,8 @@ func SelectById(id uint64) (entity.Tag, error) {
 func SelectAll() ([]entity.Tag, error) {
 	tags, err := dao.SelectAllTags()
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("获取标签信息失败")
 	}
 
 	return tags, nil

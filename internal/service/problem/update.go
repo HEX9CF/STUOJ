@@ -7,7 +7,7 @@ import (
 )
 
 // 根据ID更新题目
-func UpdateById(p entity.Problem) error {
+func UpdateProblemById(p entity.Problem) error {
 	updateTime := time.Now()
 	p.UpdateTime = updateTime
 
@@ -20,7 +20,7 @@ func UpdateById(p entity.Problem) error {
 }
 
 // 根据ID更新提交记录状态更新时间
-func UpdateUpdateTimeById(id uint64) error {
+func UpdateProblemUpdateTimeById(id uint64) error {
 	updateTime := time.Now()
 
 	p := entity.Problem{

@@ -7,7 +7,7 @@ import (
 )
 
 // 插入题目
-func Insert(p entity.Problem) (uint64, error) {
+func InsertProblem(p entity.Problem) (uint64, error) {
 	var err error
 
 	updateTime := time.Now()

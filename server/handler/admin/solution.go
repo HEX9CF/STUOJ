@@ -139,7 +139,7 @@ func AdminSolutionAdd(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = problem.UpdateUpdateTimeById(s.ProblemId)
+	err = problem.UpdateProblemUpdateTimeById(s.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
@@ -210,7 +210,7 @@ func AdminSolutionModify(c *gin.Context) {
 	}
 
 	// 更新题目更新时间
-	err = problem.UpdateUpdateTimeById(s.ProblemId)
+	err = problem.UpdateProblemUpdateTimeById(s.ProblemId)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.Response{
