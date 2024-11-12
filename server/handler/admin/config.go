@@ -18,17 +18,9 @@ func AdminConfigList(c *gin.Context) {
 	configuration.Judge, err = judge0.GetConfigInfo()
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取配置信息失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError("获取配置信息失败", nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: configuration,
-	})
+	c.JSON(http.StatusOK, model.RespOk("OK", configuration))
 }
