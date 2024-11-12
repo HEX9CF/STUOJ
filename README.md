@@ -8,9 +8,9 @@ STUOJ 是汕头大学疾风算法协会的 ACM-ICPC 在线代码评测系统，�
 
 ## 项目仓库
 
-- 后端仓库：[https://github.com/HEX9CF/STUOJ](https://github.com/HEX9CF/STUOJ)
-- 前端仓库：[https://github.com/HEX9CF/stuoj-frontend](https://github.com/HEX9CF/stuoj-frontend)
-- 数据库仓库：[https://github.com/HEX9CF/stuoj-database](https://github.com/HEX9CF/stuoj-database)
+- 后端仓库：[https://github.com/STUOJ/STUOJ](https://github.com/STUOJ/STUOJ)
+- 前端仓库：[https://github.com/STUOJ/stuoj-web](https://github.com/STUOJ/stuoj-frontend)
+- 数据库仓库：[https://github.com/STUOJ/stuoj-database](https://github.com/STUOJ/stuoj-database)
 
 ## API 文档
 
