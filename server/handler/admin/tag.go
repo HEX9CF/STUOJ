@@ -13,23 +13,12 @@ import (
 // 获取标签列表
 func AdminTagList(c *gin.Context) {
 	tags, err := tag.SelectAll()
-	if err != nil || tags == nil {
-		if err != nil {
-			log.Println(err)
-		}
-		c.JSON(http.StatusOK, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取失败",
-			Data: nil,
-		})
-		return
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 	}
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: tags,
-	})
+	// 返回数据
+	c.JSON(http.StatusOK, model.RespOk("OK", tags))
 }
 
 // 添加标签
@@ -44,11 +33,7 @@ func AdminTagAdd(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
@@ -56,23 +41,16 @@ func AdminTagAdd(c *gin.Context) {
 	t := entity.Tag{
 		Name: req.Name,
 	}
+
+	// 插入标签
 	t.Id, err = tag.Insert(t)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "添加失败，标签不能重复",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "添加成功，返回标签ID",
-		Data: t.Id,
-	})
+	c.JSON(http.StatusOK, model.RespOk("添加成功，返回标签ID", t.Id))
 }
 
 // 修改标签数据
@@ -88,46 +66,18 @@ func AdminTagModify(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
-	// 读取标签
-	t, err := tag.SelectById(req.Id)
+	err = tag.UpdateById(req.Id, req.Name)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "修改失败，标签不存在",
-			Data: nil,
-		})
-		return
-	}
-
-	// 修改标签
-	t.Name = req.Name
-
-	err = tag.UpdateById(t)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "修改失败，标签不能重复",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "修改成功",
-		Data: nil,
-	})
+	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
 }
 
 // 删除标签
@@ -135,40 +85,18 @@ func AdminTagRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
+	// 删除标签
 	tid := uint64(id)
-	_, err = tag.SelectById(tid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除失败，标签不存在",
-			Data: nil,
-		})
-		return
-	}
-
 	err = tag.DeleteById(tid)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "删除成功",
-		Data: nil,
-	})
+	// 返回结果
+	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
 }

@@ -5,6 +5,7 @@ import (
 	"STUOJ/internal/entity"
 	"errors"
 	"html"
+	"log"
 	"strings"
 	"time"
 )
@@ -49,6 +50,7 @@ func Register(u entity.User) (uint64, error) {
 
 	u.Id, err = dao.InsertUser(u)
 	if err != nil {
+		log.Println(err)
 		return 0, errors.New("插入用户失败，用户名或邮箱已存在")
 	}
 

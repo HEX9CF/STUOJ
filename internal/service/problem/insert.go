@@ -92,7 +92,7 @@ func InsertTag(pid uint64, tid uint64) error {
 	err = dao.InsertProblemTag(pt)
 	if err != nil {
 		log.Println(err)
-		return errors.New("添加失败")
+		return errors.New("添加失败，该题目已存在该标签")
 	}
 
 	return nil

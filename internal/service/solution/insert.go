@@ -14,7 +14,8 @@ func Insert(s entity.Solution) (uint64, error) {
 	// 插入题解
 	s.Id, err = dao.InsertSolution(s)
 	if err != nil {
-		return 0, err
+		log.Println(err)
+		return 0, errors.New("插入题解失败")
 	}
 
 	// 更新题目更新时间
