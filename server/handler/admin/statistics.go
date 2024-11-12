@@ -12,31 +12,22 @@ func AdminStatisticsList(c *gin.Context) {
 	var err error
 	statistics := model.Statistics{}
 
+	// 获取评测机统计信息
 	statistics.JudgeStatistics, err = judge0.GetStatistics()
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取评测机统计信息失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError("获取评测机统计信息失败", nil))
 		return
 	}
 
+	// 获取评测机系统信息
 	statistics.JudgeSystemInfo, err = judge0.GetSystemInfo()
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取评测机系统信息失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError("获取评测机系统信息失败", nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: statistics,
-	})
+	// 返回数据
+	c.JSON(http.StatusOK, model.RespOk("OK", statistics))
 }
