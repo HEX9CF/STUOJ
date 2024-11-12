@@ -8,14 +8,58 @@ import (
 	"log"
 )
 
-// 根据ID查询题目数据
-func SelectById(id uint64) (entity.Problem, error) {
+// 根据ID查询题目
+func SelectProblemById(id uint64) (entity.Problem, error) {
 	p, err := dao.SelectProblemById(id)
 	if err != nil {
-		return entity.Problem{}, err
+		return entity.Problem{}, errors.New("获取题目信息失败")
 	}
 
 	return p, nil
+}
+
+// 根据ID查询题目数据
+func SelectById(id uint64) (model.ProblemData, error) {
+	// 获取题目信息
+	p, err := dao.SelectProblemById(id)
+	if err != nil {
+		return model.ProblemData{}, errors.New("获取题目信息失败")
+	}
+
+	// 获取题目标签
+	tags, err := dao.SelectTagsByProblemId(id)
+	if err != nil {
+		return model.ProblemData{}, errors.New("获取题目标签失败")
+	}
+
+	// 获取评测点数据
+	testcases, err := dao.SelectTestcasesByProblemId(id)
+	if err != nil {
+		return model.ProblemData{}, errors.New("获取评测点数据失败")
+	}
+
+	// 获取题解数据
+	solutions, err := dao.SelectSolutionsByProblemId(id)
+	if err != nil {
+		return model.ProblemData{}, errors.New("获取题解数据失败")
+	}
+
+	// 获取题目历史记录
+	histories, err := dao.SelectProblemHistoriesByProblemId(id)
+	if err != nil {
+		return model.ProblemData{}, errors.New("获取题目历史记录失败")
+	}
+
+	// 封装题目数据
+	pd := model.ProblemData{
+		Problem:   p,
+		Tags:      tags,
+		Testcases: testcases,
+		Solutions: solutions,
+		Histories: histories,
+	}
+
+	return pd, nil
 }
 
 // 查询所有题目数据

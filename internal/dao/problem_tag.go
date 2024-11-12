@@ -47,3 +47,13 @@ func DeleteProblemTag(pt entity.ProblemTag) error {
 
 	return nil
 }
+
+// 删除题目的所有标签
+func DeleteProblemTagsByProblemId(pid uint64) error {
+	tx := db.Db.Where("problem_id = ?", pid).Delete(&entity.ProblemTag{})
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
+}

@@ -20,7 +20,7 @@ func Submit(s entity.Submission) (uint64, error) {
 	s.Length = uint64(len(s.SourceCode))
 
 	// 获取题目信息
-	p, err := problem.SelectById(s.ProblemId)
+	p, err := problem.SelectProblemById(s.ProblemId)
 	if err != nil {
 		log.Println(err)
 		return 0, errors.New("获取题目信息失败")

@@ -77,6 +77,16 @@ func UpdateSubmissionById(s entity.Submission) error {
 	return nil
 }
 
+// 根据ID更新提交记录的更新时间
+func UpdateSubmissionUpdateTimeById(id uint64) error {
+	tx := db.Db.Model(&entity.Submission{}).Where("id = ?", id).Update("update_time", time.Now())
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
+}
+
 // 根据ID删除提交记录
 func DeleteSubmissionById(id uint64) error {
 	tx := db.Db.Where("id = ?", id).Delete(&entity.Submission{})

@@ -3,6 +3,7 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
+	"time"
 )
 
 // 插入题目
@@ -102,6 +103,16 @@ func SelectProblemsLikeTitleByStatus(title string, s entity.ProblemStatus) ([]en
 // 根据ID更新题目
 func UpdateProblemById(p entity.Problem) error {
 	tx := db.Db.Model(&p).Where("id = ?", p.Id).Updates(p)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
+}
+
+// 根据ID更新题目更新时间
+func UpdateProblemUpdateTimeById(id uint64) error {
+	tx := db.Db.Model(&entity.Problem{}).Where("id = ?", id).Update("update_time", time.Now())
 	if tx.Error != nil {
 		return tx.Error
 	}

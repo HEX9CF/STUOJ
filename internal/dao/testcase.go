@@ -63,3 +63,13 @@ func DeleteTestcaseById(id uint64) error {
 
 	return nil
 }
+
+// 根据题目ID删除评测点数据
+func DeleteTestcasesByProblemId(pid uint64) error {
+	tx := db.Db.Where("problem_id = ?", pid).Delete(&entity.Testcase{})
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
+}

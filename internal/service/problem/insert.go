@@ -3,20 +3,48 @@ package problem
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"errors"
+	"log"
 	"time"
 )
 
 // 插入题目
-func InsertProblem(p entity.Problem) (uint64, error) {
+func Insert(p entity.Problem, uid uint64) (uint64, error) {
 	var err error
 
 	updateTime := time.Now()
 	p.UpdateTime = updateTime
 	p.CreateTime = updateTime
 
+	// 插入题目
 	p.Id, err = dao.InsertProblem(p)
 	if err != nil {
-		return 0, err
+		return 0, errors.New("插入题目失败")
+	}
+
+	ph := entity.ProblemHistory{
+		UserId:       uid,
+		ProblemId:    p.Id,
+		Title:        p.Title,
+		Source:       p.Source,
+		Difficulty:   p.Difficulty,
+		TimeLimit:    p.TimeLimit,
+		MemoryLimit:  p.MemoryLimit,
+		Description:  p.Description,
+		Input:        p.Input,
+		Output:       p.Output,
+		SampleInput:  p.SampleInput,
+		SampleOutput: p.SampleOutput,
+		Hint:         p.Hint,
+		Operation:    entity.OperationInsert,
+		CreateTime:   updateTime,
+	}
+
+	// 添加题目历史记录
+	ph.Id, err = dao.InsertProblemHistory(ph)
+	if err != nil {
+		log.Println(err)
+		return p.Id, errors.New("插入题目成功，但插入题目历史记录失败")
 	}
 
 	return p.Id, nil
@@ -24,14 +52,47 @@ func InsertProblem(p entity.Problem) (uint64, error) {
 
 // 给题目添加标签
 func InsertTag(pid uint64, tid uint64) error {
+	// 初始化题目标签
 	pt := entity.ProblemTag{
 		ProblemId: pid,
 		TagId:     tid,
 	}
 
-	err := dao.InsertProblemTag(pt)
+	// 读取题目
+	_, err := dao.SelectProblemById(pid)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("题目不存在")
+	}
+
+	// 读取标签
+	_, err = dao.SelectTagById(tid)
+	if err != nil {
+		log.Println(err)
+		return errors.New("标签不存在")
+	}
+
+	// 检查题目标签关系是否存在
+	count, err := dao.CountProblemTag(pt)
+	if err != nil || count > 0 {
+		if err != nil {
+			log.Println(err)
+		}
+		return errors.New("该题目已存在该标签")
+	}
+
+	// 更新题目更新时间
+	err = dao.UpdateProblemUpdateTimeById(pid)
+	if err != nil {
+		log.Println(err)
+		return errors.New("更新题目更新时间失败")
+	}
+
+	// 插入题目标签
+	err = dao.InsertProblemTag(pt)
+	if err != nil {
+		log.Println(err)
+		return errors.New("添加失败")
 	}
 
 	return nil

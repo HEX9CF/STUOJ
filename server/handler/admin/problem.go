@@ -4,9 +4,6 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
-	"STUOJ/internal/service/solution"
-	"STUOJ/internal/service/tag"
-	"STUOJ/internal/service/testcase"
 	"STUOJ/utils"
 	"STUOJ/utils/fps"
 	"fmt"
@@ -18,102 +15,37 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 获取题目信息（题目+评测点数据）
+// 获取题目信息
 func AdminProblemInfo(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
 	// 获取题目信息
 	pid := uint64(id)
-	problem, err := problem.SelectById(pid)
+	pds, err := problem.SelectById(pid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取题目信息失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	// 获取评测点数据
-	testcases, err := testcase.SelectByProblemId(pid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取评测点数据失败",
-			Data: nil,
-		})
-		return
-	}
-
-	// 获取题目标签
-	tags, err := tag.SelectByProblemId(pid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取题目标签失败",
-			Data: nil,
-		})
-		return
-	}
-
-	// 获取题解
-	solutions, err := solution.SelectSolutionsByProblemId(pid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取题解失败",
-			Data: nil,
-		})
-		return
-	}
-
-	problemInfo := model.ProblemData{
-		Problem:   problem,
-		Tags:      tags,
-		Testcases: testcases,
-		Solutions: solutions,
-	}
-
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: problemInfo,
-	})
+	c.JSON(http.StatusOK, model.RespOk("OK", pds))
 }
 
 // 获取题目列表
 func AdminProblemList(c *gin.Context) {
-	problems, err := problem.SelectAll()
-	if err != nil || problems == nil {
-		if err != nil {
-			log.Println(err)
-		}
-		c.JSON(http.StatusOK, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取失败",
-			Data: nil,
-		})
+	pds, err := problem.SelectAll()
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: problems,
-	})
+	c.JSON(http.StatusOK, model.RespOk("OK", pds))
 }
 
 // 根据状态获取题目列表
@@ -121,33 +53,20 @@ func AdminProblemListByStatus(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
 	s := entity.ProblemStatus(id)
-	problems, err := problem.SelectByStatus(s)
-	if err != nil || problems == nil {
-		if err != nil {
-			log.Println(err)
-		}
-		c.JSON(http.StatusOK, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取失败",
-			Data: nil,
-		})
+
+	pds, err := problem.SelectByStatus(s)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: problems,
-	})
+	c.JSON(http.StatusOK, model.RespOk("OK", pds))
 }
 
 // 添加题目
@@ -173,11 +92,15 @@ func AdminProblemAdd(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	// 获取用户ID
+	uid, err := utils.GetTokenUid(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
 
@@ -196,44 +119,15 @@ func AdminProblemAdd(c *gin.Context) {
 		Hint:         req.Hint,
 		Status:       req.Status,
 	}
-	p.Id, err = problem.InsertProblem(p)
+	p.Id, err = problem.Insert(p, uid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "添加失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
-	}
-
-	// 添加题目历史记录
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "修改成功，但添加题目历史记录失败",
-			Data: p.Id,
-		})
-		return
-	}
-	_, err = problem.InsertHistory(p, uid, entity.OperationAdd)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "添加成功，但添加题目历史记录失败",
-			Data: p.Id,
-		})
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "添加成功，返回题目ID",
-		Data: p.Id,
-	})
+	c.JSON(http.StatusOK, model.RespOk("添加成功，返回题目ID", p.Id))
 }
 
 // 修改题目
@@ -260,78 +154,42 @@ func AdminProblemModify(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
-	// 读取题目
-	p, err := problem.SelectById(req.Id)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "修改失败，题目不存在",
-			Data: nil,
-		})
-		return
-	}
-
-	// 修改题目
-	p.Title = req.Title
-	p.Source = req.Source
-	p.Difficulty = req.Difficulty
-	p.TimeLimit = req.TimeLimit
-	p.MemoryLimit = req.MemoryLimit
-	p.Description = req.Description
-	p.Input = req.Input
-	p.Output = req.Output
-	p.SampleInput = req.SampleInput
-	p.SampleOutput = req.SampleOutput
-	p.Hint = req.Hint
-	p.Status = req.Status
-
-	err = problem.UpdateProblemById(p)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "修改失败",
-			Data: nil,
-		})
-		return
-	}
-
-	// 添加题目历史记录
 	uid, err := utils.GetTokenUid(c)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "修改成功，但添加题目历史记录失败",
-			Data: p.Id,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
-	_, err = problem.InsertHistory(p, uid, entity.OperationUpdate)
+
+	// 初始化题目对象
+	p := entity.Problem{
+		Id:           req.Id,
+		Title:        req.Title,
+		Source:       req.Source,
+		Difficulty:   req.Difficulty,
+		TimeLimit:    req.TimeLimit,
+		MemoryLimit:  req.MemoryLimit,
+		Description:  req.Description,
+		Input:        req.Input,
+		Output:       req.Output,
+		SampleInput:  req.SampleInput,
+		SampleOutput: req.SampleOutput,
+		Hint:         req.Hint,
+		Status:       req.Status,
+	}
+
+	err = problem.UpdateById(p, uid)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "修改成功，但添加题目历史记录失败",
-			Data: p.Id,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "修改成功",
-		Data: nil,
-	})
+	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
 }
 
 // 删除题目
@@ -339,98 +197,27 @@ func AdminProblemRemove(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
-	pid := uint64(id)
-	_, err = problem.SelectById(pid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除失败，题目不存在",
-			Data: nil,
-		})
-		return
-	}
-
-	err = problem.DeleteProblemById(pid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除失败",
-			Data: nil,
-		})
-		return
-	}
-
-	// 添加题目历史记录
+	// 获取用户ID
 	uid, err := utils.GetTokenUid(c)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除成功，但添加题目历史记录失败",
-			Data: nil,
-		})
-		return
-	}
-	p := entity.Problem{
-		Id: pid,
-	}
-	_, err = problem.InsertHistory(p, uid, entity.OperationDelete)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除成功，但添加题目历史记录失败",
-			Data: nil,
-		})
-	}
-
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "删除成功",
-		Data: nil,
-	})
-}
-
-func AdminProblemHistoryList(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
 
-	// 获取题目历史记录
 	pid := uint64(id)
-	phs, err := problem.SelectHistoriesByProblemId(pid)
+	err = problem.DeleteByProblemId(pid, uid)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "获取题目历史记录失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: phs,
-	})
+	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
 }
 
 // 添加标签到题目
@@ -446,82 +233,20 @@ func AdminProblemAddTag(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
-	// 读取题目
-	_, err = problem.SelectById(req.ProblemId)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "添加失败，题目不存在",
-			Data: nil,
-		})
-		return
-	}
-
-	// 读取标签
-	_, err = tag.SelectById(req.TagId)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "添加失败，标签不存在",
-			Data: nil,
-		})
-		return
-	}
-
-	// 检查题目标签关系是否存在
-	count, err := tag.CountProblemTag(req.ProblemId, req.TagId)
-	if err != nil || count > 0 {
-		if err != nil {
-			log.Println(err)
-		}
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "添加失败，该题目已存在该标签",
-			Data: nil,
-		})
-		return
-	}
-
-	// 初始化标签
+	// 添加标签
 	err = problem.InsertTag(req.ProblemId, req.TagId)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "添加失败",
-			Data: nil,
-		})
-		return
-	}
-
-	// 更新题目更新时间
-	err = problem.UpdateProblemUpdateTimeById(req.ProblemId)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "添加成功，但更新题目更新时间失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "添加成功",
-		Data: nil,
-	})
+	c.JSON(http.StatusOK, model.RespOk("添加成功", nil))
 }
 
 // 删除题目的某个标签
@@ -537,49 +262,7 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	err := c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "参数错误",
-			Data: nil,
-		})
-		return
-	}
-
-	// 读取题目
-	_, err = problem.SelectById(req.ProblemId)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除失败，题目不存在",
-			Data: nil,
-		})
-		return
-	}
-
-	// 读取标签
-	_, err = tag.SelectById(req.TagId)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除失败，标签不存在",
-			Data: nil,
-		})
-		return
-	}
-
-	// 检查题目标签关系是否存在
-	count, err := tag.CountProblemTag(req.ProblemId, req.TagId)
-	if err != nil || count == 0 {
-		if err != nil {
-			log.Println(err)
-		}
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除失败，该题目不存在该标签",
-			Data: nil,
-		})
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
@@ -587,54 +270,36 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	err = problem.DeleteTag(req.ProblemId, req.TagId)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除失败",
-			Data: nil,
-		})
-		return
-	}
-
-	// 更新题目更新时间
-	err = problem.UpdateProblemUpdateTimeById(req.ProblemId)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.Response{
-			Code: model.ResponseCodeError,
-			Msg:  "删除成功，但更新题目更新时间失败",
-			Data: nil,
-		})
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
 	// 返回结果
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "删除成功",
-		Data: nil,
-	})
+	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
 }
 
 func AdminProblemParseFromFps(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
+		c.JSON(http.StatusBadRequest, model.RespError("文件上传失败", nil))
 		return
 	}
+
 	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey())
 	if err := c.SaveUploadedFile(file, dst); err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件上传失败", Data: err})
+		c.JSON(http.StatusBadRequest, model.RespError("文件上传失败", nil))
 		return
 	}
 	defer os.Remove(dst)
 	f, err := fps.Read(dst)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.Response{Code: 0, Msg: "文件解析失败", Data: err})
+		c.JSON(http.StatusBadRequest, model.RespError("文件解析失败", nil))
 		return
 	}
 	p := fps.Parse(f)
-	c.JSON(http.StatusOK, model.Response{Code: 1, Msg: "文件解析成功", Data: p})
+
+	c.JSON(http.StatusOK, model.RespOk("文件解析成功", p))
 }

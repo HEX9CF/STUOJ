@@ -9,7 +9,7 @@ type Operation uint8
 
 const (
 	OperationUnknown Operation = 0
-	OperationAdd     Operation = 1
+	OperationInsert  Operation = 1
 	OperationUpdate  Operation = 2
 	OperationDelete  Operation = 3
 )
@@ -18,7 +18,7 @@ func (o Operation) String() string {
 	switch o {
 	case OperationUnknown:
 		return "未知"
-	case OperationAdd:
+	case OperationInsert:
 		return "添加"
 	case OperationUpdate:
 		return "修改"
