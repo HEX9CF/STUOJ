@@ -2,39 +2,40 @@ package judge
 
 import (
 	"STUOJ/external/judge0"
+	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
-	"STUOJ/internal/service/problem"
-	"STUOJ/internal/service/record"
-	"STUOJ/internal/service/testcase"
 	"errors"
 	"log"
 	"math"
 	"strconv"
+	"time"
 )
 
 func Submit(s entity.Submission) (uint64, error) {
 	var err error
 
-	// 获取代码长度
+	updateTime := time.Now()
+	s.UpdateTime = updateTime
+	s.CreateTime = updateTime
 	s.Length = uint64(len(s.SourceCode))
 
 	// 获取题目信息
-	p, err := problem.SelectProblemById(s.ProblemId)
+	p, err := dao.SelectProblemById(s.ProblemId)
 	if err != nil {
 		log.Println(err)
 		return 0, errors.New("获取题目信息失败")
 	}
 
 	// 获取评测点
-	testcases, err := testcase.SelectByProblemId(s.ProblemId)
+	testcases, err := dao.SelectTestcasesByProblemId(s.ProblemId)
 	if err != nil {
 		log.Println(err)
 		return 0, errors.New("获取评测点数据失败")
 	}
 
 	// 插入提交
-	s.Id, err = record.InsertSubmission(s)
+	s.Id, err = dao.InsertSubmission(s)
 	if err != nil {
 		log.Println(err)
 		return 0, errors.New("插入提交信息失败")
@@ -62,8 +63,15 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 		j := <-chJudgement
 		//log.Println(j)
 
+		// 更新提交更新时间
+		err := dao.UpdateSubmissionUpdateTimeById(j.SubmissionId)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
 		// 更新评测点结果
-		err := record.UpdateJudgementById(j)
+		err = dao.UpdateJudgementById(j)
 		if err != nil {
 			log.Println(err)
 			return
@@ -81,7 +89,8 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 	}
 
 	// 更新提交信息
-	err := record.UpdateSubmissionById(s)
+	s.UpdateTime = time.Now()
+	err := dao.UpdateSubmissionById(s)
 	if err != nil {
 		log.Println(err)
 		return
@@ -99,8 +108,15 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 		Status:       entity.SubmitStatusPend,
 	}
 
+	// 更新提交更新时间
+	err = dao.UpdateSubmissionUpdateTimeById(j.SubmissionId)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
 	// 插入评测点结果
-	j.Id, err = record.InsertJudgement(j)
+	j.Id, err = dao.InsertJudgement(j)
 	if err != nil {
 		log.Println(err)
 		ch <- j
