@@ -8,9 +8,5 @@ import (
 )
 
 func Test(c *gin.Context) {
-	c.JSON(http.StatusOK, model.Response{
-		Code: model.ResponseCodeOk,
-		Msg:  "OK",
-		Data: "Hello, World!",
-	})
+	c.JSON(http.StatusOK, model.RespOk("OK", "Hello, World!"))
 }
