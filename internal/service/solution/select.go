@@ -3,13 +3,14 @@ package solution
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"errors"
 )
 
 // 根据ID查询题解
 func SelectById(id uint64) (entity.Solution, error) {
 	s, err := dao.SelectSolutionById(id)
 	if err != nil {
-		return entity.Solution{}, err
+		return entity.Solution{}, errors.New("获取题解失败")
 	}
 
 	return s, nil

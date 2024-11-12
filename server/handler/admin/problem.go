@@ -279,6 +279,7 @@ func AdminProblemRemoveTag(c *gin.Context) {
 }
 
 func AdminProblemParseFromFps(c *gin.Context) {
+	// 获取文件
 	file, err := c.FormFile("file")
 	if err != nil {
 		log.Println(err)
@@ -286,6 +287,7 @@ func AdminProblemParseFromFps(c *gin.Context) {
 		return
 	}
 
+	// 保存文件
 	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey())
 	if err := c.SaveUploadedFile(file, dst); err != nil {
 		log.Println(err)
@@ -293,6 +295,8 @@ func AdminProblemParseFromFps(c *gin.Context) {
 		return
 	}
 	defer os.Remove(dst)
+
+	// 解析文件
 	f, err := fps.Read(dst)
 	if err != nil {
 		log.Println(err)

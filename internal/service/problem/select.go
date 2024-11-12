@@ -44,6 +44,11 @@ func SelectById(id uint64) (model.ProblemData, error) {
 		return model.ProblemData{}, errors.New("获取题解数据失败")
 	}
 
+	// 不返回源代码
+	for i := range solutions {
+		solutions[i].SourceCode = ""
+	}
+
 	// 获取题目历史记录
 	histories, err := dao.SelectProblemHistoriesByProblemId(id)
 	if err != nil {
@@ -169,16 +174,6 @@ func SelectPublicLikeTitle(title string) ([]model.ProblemData, error) {
 	}
 
 	return pds, nil
-}
-
-// 根据题目ID查询题目历史记录
-func SelectHistoriesByProblemId(pid uint64) ([]entity.ProblemHistory, error) {
-	phs, err := dao.SelectProblemHistoriesByProblemId(pid)
-	if err != nil {
-		return nil, err
-	}
-
-	return phs, nil
 }
 
 // 根据题目ID查询公开题目数据
