@@ -10,23 +10,21 @@ import (
 
 // 根据ID查询用户
 func SelectById(id uint64) (entity.User, error) {
-	var user entity.User
-
-	user, err := dao.SelectUserById(id)
+	u, err := dao.SelectUserById(id)
 	if err != nil {
-		return entity.User{}, err
+		log.Println(err)
+		return entity.User{}, errors.New("用户不存在")
 	}
 
-	return user, nil
+	return u, nil
 }
 
 // 查询所有用户
 func SelectAll() ([]entity.User, error) {
-	var users []entity.User
-
 	users, err := dao.SelectAllUsers()
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("查询用户失败")
 	}
 
 	return users, nil
@@ -34,26 +32,12 @@ func SelectAll() ([]entity.User, error) {
 
 // 根据角色ID查询用户
 func SelectByRole(r entity.UserRole) ([]entity.User, error) {
-	var users []entity.User
-
 	users, err := dao.SelectUsersByRole(r)
 	if err != nil {
-		return nil, err
+		return nil, errors.New("查询用户失败")
 	}
 
 	return users, nil
-}
-
-// 查询用户头像
-func SelectAvatarById(id uint64) (string, error) {
-	var user entity.User
-
-	user, err := dao.SelectUserById(id)
-	if err != nil {
-		return "", err
-	}
-
-	return user.Avatar, nil
 }
 
 // 根据邮箱验证密码

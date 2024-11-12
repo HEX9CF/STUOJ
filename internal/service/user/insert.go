@@ -15,7 +15,7 @@ func InsertUser(u entity.User) (uint64, error) {
 	u.Username = html.EscapeString(strings.TrimSpace(u.Username))
 	err := u.HashPassword()
 	if err != nil {
-		return 0, err
+		return 0, errors.New("密码加密失败")
 	}
 
 	updateTime := time.Now()
@@ -24,7 +24,7 @@ func InsertUser(u entity.User) (uint64, error) {
 
 	u.Id, err = dao.InsertUser(u)
 	if err != nil {
-		return 0, err
+		return 0, errors.New("插入用户失败，用户名或邮箱已存在")
 	}
 
 	return u.Id, nil

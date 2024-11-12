@@ -109,17 +109,17 @@ func UpdatePasswordById(uid uint64, pw string) error {
 // 根据ID更新用户角色
 func UpdateRoleById(u entity.User) error {
 	// 读取用户
-	user, err := SelectById(u.Id)
+	u0, err := SelectById(u.Id)
 	if err != nil {
-		return err
+		return errors.New("用户不存在")
 	}
 
 	updateTime := time.Now()
-	user.Role = u.Role
-	user.UpdateTime = updateTime
+	u0.UpdateTime = updateTime
+	u0.Role = u.Role
 
 	// 更新用户
-	err = dao.UpdateUserById(user)
+	err = dao.UpdateUserById(u0)
 	if err != nil {
 		return err
 	}
