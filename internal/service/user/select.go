@@ -3,6 +3,9 @@ package user
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/utils"
+	"errors"
+	"log"
 )
 
 // 根据ID查询用户
@@ -54,39 +57,29 @@ func SelectAvatarById(id uint64) (string, error) {
 }
 
 // 根据邮箱验证密码
-func VerifyByEmail(u entity.User) (uint64, error) {
+func VerifyByEmail(u entity.User) (string, error) {
 	password := u.Password
 
 	// 查询用户
 	u, err := dao.SelectUserByEmail(u.Email)
 	if err != nil {
-		return 0, err
+		return "", errors.New("用户不存在")
 	}
 
 	// 验证密码
 	err = u.VerifyByPassword(password)
 	if err != nil {
-		return 0, err
+		return "", errors.New("用户名或密码错误")
 	}
 
-	return u.Id, nil
-}
-
-// 根据ID验证密码
-func VerifyById(u entity.User) (uint64, error) {
-	password := u.Password
-
-	// 查询用户
-	u, err := dao.SelectUserById(u.Id)
-	if err != nil {
-		return 0, err
+	// 生成token
+	token, err := utils.GenerateToken(u.Id)
+	if err != nil || token == "" {
+		if err != nil {
+			log.Println(err)
+		}
+		return "", errors.New("生成token失败")
 	}
 
-	// 验证密码
-	err = u.VerifyByPassword(password)
-	if err != nil {
-		return 0, err
-	}
-
-	return u.Id, nil
+	return token, nil
 }

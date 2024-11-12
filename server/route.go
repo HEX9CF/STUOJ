@@ -55,8 +55,8 @@ func InitUserRoute() {
 		//userPublicRoute.GET("/", user.UserList)
 		userPublicRoute.GET("/avatar/:id", user.UserAvatar)
 		userPublicRoute.GET("/:id", user.UserInfo)
-		userPublicRoute.POST("/login", user.UserLogin)
-		userPublicRoute.POST("/register", user.UserRegister)
+		userPublicRoute.POST("/login", handler.UserLogin)
+		userPublicRoute.POST("/register", handler.UserRegister)
 		userPublicRoute.GET("/avatar", user.ThisUserAvatar)
 	}
 	userProtectedRoute := ginServer.Group("/user")
