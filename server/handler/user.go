@@ -5,6 +5,7 @@ import (
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"STUOJ/utils"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -184,4 +185,40 @@ func UserChangePassword(c *gin.Context) {
 
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+}
+
+// 修改用户头像
+func ModifyUserAvatar(c *gin.Context) {
+	// 获取文件
+	file, err := c.FormFile("file")
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("文件上传失败", nil))
+		return
+	}
+
+	// 保存文件
+	dst := fmt.Sprintf("tmp/%s", utils.GetRandKey())
+	if err := c.SaveUploadedFile(file, dst); err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("文件上传失败", nil))
+		return
+	}
+
+	// 获取用户ID
+	uid, err := utils.GetTokenUid(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespOk("获取用户ID失败", nil))
+	}
+
+	// 更新头像
+	err = user.UpdateAvatarById(uid, dst)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
+		return
+	}
+
+	// 返回结果
+	c.JSON(http.StatusOK, model.RespOk("更新成功", nil))
 }

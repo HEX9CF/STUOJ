@@ -5,7 +5,6 @@ import (
 	"STUOJ/internal/model"
 	"STUOJ/server/handler"
 	"STUOJ/server/handler/admin"
-	"STUOJ/server/handler/user"
 	"STUOJ/server/middlewares"
 	"net/http"
 
@@ -52,12 +51,9 @@ func InitTestRoute() {
 func InitUserRoute() {
 	userPublicRoute := ginServer.Group("/user")
 	{
-		//userPublicRoute.GET("/", user.UserList)
-		userPublicRoute.GET("/avatar/:id", user.UserAvatar)
 		userPublicRoute.GET("/:id", handler.UserInfo)
 		userPublicRoute.POST("/login", handler.UserLogin)
 		userPublicRoute.POST("/register", handler.UserRegister)
-		userPublicRoute.GET("/avatar", user.ThisUserAvatar)
 	}
 	userProtectedRoute := ginServer.Group("/user")
 	{
@@ -67,7 +63,7 @@ func InitUserRoute() {
 		userProtectedRoute.GET("/current", handler.UserCurrentId)
 		userProtectedRoute.PUT("/modify", handler.UserModify)
 		userProtectedRoute.PUT("/password", handler.UserChangePassword)
-		userProtectedRoute.POST("/avatar", user.UpdateUserAvatar)
+		userProtectedRoute.POST("/avatar", handler.ModifyUserAvatar)
 	}
 }
 

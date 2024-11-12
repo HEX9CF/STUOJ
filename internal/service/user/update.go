@@ -1,11 +1,14 @@
 package user
 
 import (
+	"STUOJ/external/yuki"
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"errors"
 	"html"
 	"log"
+	"os"
 	"strings"
 	"time"
 )
@@ -125,21 +128,38 @@ func UpdateRoleById(u entity.User) error {
 }
 
 // 更新用户头像
-func UpdateAvatarById(u entity.User) error {
+func UpdateAvatarById(uid uint64, dst string) error {
 	// 读取用户
-	user, err := SelectById(u.Id)
+	u, err := SelectById(uid)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("用户不存在")
+	}
+
+	// 上传头像
+	image, err := yuki.UploadImage(dst, model.RoleAvatar)
+	_ = os.Remove(dst)
+	if err != nil {
+		log.Println(err)
+		return errors.New("上传失败")
+	}
+
+	// 删除旧头像
+	err = yuki.DeleteOldAvatar(u.Avatar)
+	if err != nil {
+		log.Println(err)
+		return errors.New("删除旧头像失败")
 	}
 
 	updateTime := time.Now()
-	user.Avatar = u.Avatar
-	user.UpdateTime = updateTime
+	u.Avatar = image.Url
+	u.UpdateTime = updateTime
 
 	// 更新用户
-	err = dao.UpdateUserById(user)
+	err = dao.UpdateUserById(u)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("更新用户头像失败")
 	}
 
 	return nil
