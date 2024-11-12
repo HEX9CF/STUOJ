@@ -18,7 +18,6 @@ var (
 
 // 生成token
 func GenerateToken(id uint64) (string, error) {
-
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["uid"] = id

@@ -107,3 +107,81 @@ func UserCurrentId(c *gin.Context) {
 
 	c.JSON(http.StatusOK, model.RespOk("OK", id))
 }
+
+// 修改用户信息
+type ReqUserModify struct {
+	Username  string `json:"username" binding:"required"`
+	Email     string `json:"email" binding:"required"`
+	Signature string `json:"signature" binding:"required"`
+}
+
+func UserModify(c *gin.Context) {
+	var req ReqUserModify
+
+	// 参数绑定
+	err := c.ShouldBindBodyWithJSON(&req)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	// 获取用户id
+	uid, err := utils.GetTokenUid(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusUnauthorized, model.RespError("获取用户ID失败", nil))
+		return
+	}
+
+	// 修改用户
+	u := entity.User{
+		Id:        uid,
+		Username:  req.Username,
+		Email:     req.Email,
+		Signature: req.Signature,
+	}
+	err = user.UpdateByIdExceptPassword(u)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	// 返回结果
+	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+}
+
+// 修改用户密码
+type ReqUserChangePassword struct {
+	Password string `json:"password" binding:"required"`
+}
+
+func UserChangePassword(c *gin.Context) {
+	var req ReqUserChangePassword
+
+	// 参数绑定
+	err := c.ShouldBindBodyWithJSON(&req)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	// 获取用户id
+	uid, err := utils.GetTokenUid(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusUnauthorized, model.RespError("用户ID获取失败", nil))
+		return
+	}
+
+	// 修改密码
+	err = user.UpdatePasswordById(uid, req.Password)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	// 返回结果
+	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+}

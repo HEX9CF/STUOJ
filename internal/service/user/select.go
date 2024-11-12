@@ -63,21 +63,21 @@ func VerifyByEmail(u entity.User) (string, error) {
 	// 查询用户
 	u, err := dao.SelectUserByEmail(u.Email)
 	if err != nil {
+		log.Println(err)
 		return "", errors.New("用户不存在")
 	}
 
 	// 验证密码
 	err = u.VerifyByPassword(password)
 	if err != nil {
+		log.Println(err)
 		return "", errors.New("用户名或密码错误")
 	}
 
 	// 生成token
 	token, err := utils.GenerateToken(u.Id)
-	if err != nil || token == "" {
-		if err != nil {
-			log.Println(err)
-		}
+	if err != nil {
+		log.Println(err)
 		return "", errors.New("生成token失败")
 	}
 

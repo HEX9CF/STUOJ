@@ -3,7 +3,9 @@ package user
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"errors"
 	"html"
+	"log"
 	"strings"
 	"time"
 )
@@ -49,7 +51,8 @@ func UpdateByIdExceptPassword(u entity.User) error {
 	// 读取用户
 	user, err := SelectById(u.Id)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("用户不存在")
 	}
 
 	updateTime := time.Now()
@@ -63,34 +66,38 @@ func UpdateByIdExceptPassword(u entity.User) error {
 	// 更新用户
 	err = dao.UpdateUserById(user)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("更新用户失败，用户名或邮箱已存在")
 	}
 
 	return nil
 }
 
 // 根据ID更新用户密码
-func UpdatePasswordById(u entity.User) error {
-	// 预处理
-	err := u.HashPassword()
-	if err != nil {
-		return err
-	}
-
+func UpdatePasswordById(uid uint64, pw string) error {
 	// 读取用户
-	user, err := SelectById(u.Id)
+	u, err := dao.SelectUserById(uid)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("用户不存在")
 	}
 
 	updateTime := time.Now()
-	user.Password = u.Password
-	user.UpdateTime = updateTime
+	u.UpdateTime = updateTime
+
+	// 预处理
+	u.Password = pw
+	err = u.HashPassword()
+	if err != nil {
+		log.Println(err)
+		return errors.New("密码加密失败")
+	}
 
 	// 更新用户
-	err = dao.UpdateUserById(user)
+	err = dao.UpdateUserById(u)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("更新用户失败")
 	}
 
 	return nil
