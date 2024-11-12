@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func InitConfig() {
+func initConfig() {
 	err := conf.InitConfig()
 	if err != nil {
 		log.Println("Init config failed!")

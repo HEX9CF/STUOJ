@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func InitServer() {
+func initServer() {
 	err := server.InitServer()
 	if err != nil {
 		log.Println("Init handler failed!")

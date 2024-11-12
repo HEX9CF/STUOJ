@@ -8,16 +8,6 @@ import (
 	"log"
 )
 
-// 根据ID查询题目
-func SelectProblemById(id uint64) (entity.Problem, error) {
-	p, err := dao.SelectProblemById(id)
-	if err != nil {
-		return entity.Problem{}, errors.New("获取题目信息失败")
-	}
-
-	return p, nil
-}
-
 // 根据ID查询题目数据
 func SelectById(id uint64) (model.ProblemData, error) {
 	// 获取题目信息

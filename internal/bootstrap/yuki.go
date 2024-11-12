@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func InitYuki() {
+func initYuki() {
 	err := yuki.InitYukiImage()
 	if err != nil {
 		log.Println("yuki-image init error:", err)

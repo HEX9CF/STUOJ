@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func InitDatabase() {
+func initDatabase() {
 	err := db.InitDatabase()
 	if err != nil {
 		log.Println("Init database failed!")

@@ -1,12 +1,12 @@
 package bootstrap
 
 func Init() {
-	InitConfig()
-	InitDatabase()
+	initConfig()
+	initDatabase()
 
 	// 异步初始化
-	go InitJudge0()
-	go InitYuki()
+	go initJudge0()
+	go initYuki()
 
-	InitServer()
+	initServer()
 }

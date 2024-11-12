@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func InitJudge0() {
+func initJudge0() {
 	var err error
 	err = judge0.InitJudge()
 	if err != nil {
