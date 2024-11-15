@@ -12,16 +12,19 @@ func initJudge0() {
 	err = judge0.InitJudge()
 	if err != nil {
 		log.Println("Init judge0 failed!")
+		return
 	}
 
 	err = InitJudgePrintInfo()
 	if err != nil {
 		log.Println("Init judge0 failed!")
+		return
 	}
 
 	err = InitJudgeLanguages()
 	if err != nil {
 		log.Println("Init judge0 failed!")
+		return
 	}
 
 }
