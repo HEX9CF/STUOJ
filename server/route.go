@@ -16,7 +16,7 @@ func InitRoute() error {
 
 	// index
 	ginServer.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, model.RespOk("OK", "STUOJ后端启动成功！"))
+		c.JSON(http.StatusOK, model.RespOk("STUOJ后端启动成功！", nil))
 	})
 
 	// 404
