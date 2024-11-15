@@ -17,6 +17,7 @@ var (
 func InitJudge() error {
 	config = conf.Conf.Judge
 	preUrl = config.Host + ":" + config.Port
+	log.Println("Connecting to judge server: " + preUrl)
 	response, err := About()
 	if err != nil || response.StatusCode != http.StatusOK {
 		log.Println("Judge server is not available!")

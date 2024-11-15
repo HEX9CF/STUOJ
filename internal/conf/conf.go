@@ -6,7 +6,7 @@ import (
 
 type Config struct {
 	Datebase  DatabaseConf `yaml:"database" json:"database"`
-	Judge     JudgeConf    `yaml:"judge0" json:"judge0"`
+	Judge     JudgeConf    `yaml:"judge" json:"judge"`
 	YukiImage YukiConf     `yaml:"yuki-image" json:"yuki_image"`
 	Server    ServerConf   `yaml:"server" json:"server"`
 	Token     TokenConf    `yaml:"token" json:"token"`
