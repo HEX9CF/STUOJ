@@ -2,9 +2,9 @@ package entity
 
 // 评测点结果
 type Judgement struct {
-	Id            uint64       `gorm:"primaryKey;autoIncrement;comment:评测点ID" json:"id,omitempty"`
+	Id            uint64       `gorm:"primaryKey;autoIncrement;comment:评测点结果ID" json:"id,omitempty"`
 	SubmissionId  uint64       `gorm:"not null;default:0;comment:提交记录ID" json:"submission_id,omitempty"`
-	TestcaseId    uint64       `gorm:"not null;default:0;comment:评测点ID" json:"testcase_id,omitempty"`
+	TestcaseId    uint64       `gorm:"not null;default:0;comment:评测点数据ID" json:"testcase_id,omitempty"`
 	Time          float64      `gorm:"not null;default:0;comment:运行耗时（s）" json:"time,omitempty"`
 	Memory        uint64       `gorm:"not null;default:0;comment:内存（kb）" json:"memory,omitempty"`
 	Stdout        string       `gorm:"type:longtext;not null;comment:标准输出" json:"stdout,omitempty"`
