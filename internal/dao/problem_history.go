@@ -3,6 +3,8 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
+	"time"
 )
 
 // 插入题目历史记录
@@ -25,4 +27,16 @@ func SelectProblemHistoriesByProblemId(pid uint64) ([]entity.ProblemHistory, err
 	}
 
 	return phs, nil
+}
+
+// 根据创建时间统计用户数量
+func CountProblemsHistoriesBetweenCreateTimeByOperation(startTime time.Time, endTime time.Time, operation entity.Operation) ([]model.CountByDate, error) {
+	var countByDate []model.CountByDate
+
+	tx := db.Db.Model(&entity.Problem{}).Where("create_time between ? and ? AND operation=?", startTime, endTime, operation).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&countByDate)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return countByDate, nil
 }
