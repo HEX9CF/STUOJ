@@ -49,7 +49,7 @@ func AdminUserListByRole(c *gin.Context) {
 		return
 	}
 
-	rid := entity.UserRole(id)
+	rid := entity.Role(id)
 	users, err := user.SelectByRole(rid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
@@ -158,8 +158,8 @@ func AdminUserRemove(c *gin.Context) {
 
 // 设置用户角色
 type ReqUserModifyRole struct {
-	Id   uint64          `json:"id" binding:"required"`
-	Role entity.UserRole `json:"role" binding:"required"`
+	Id   uint64      `json:"id" binding:"required"`
+	Role entity.Role `json:"role" binding:"required"`
 }
 
 func AdminUserModifyRole(c *gin.Context) {

@@ -31,7 +31,7 @@ func SelectAll() ([]entity.User, error) {
 }
 
 // 根据角色ID查询用户
-func SelectByRole(r entity.UserRole) ([]entity.User, error) {
+func SelectByRole(r entity.Role) ([]entity.User, error) {
 	users, err := dao.SelectUsersByRole(r)
 	if err != nil {
 		return nil, errors.New("查询用户失败")

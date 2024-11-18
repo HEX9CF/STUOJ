@@ -11,6 +11,8 @@ import (
 // 统计用户
 func GetStatistics(startTime time.Time, endTime time.Time) (model.UserStatistics, error) {
 	var err error
+	var cbds []model.CountByDate
+	var cbrs []model.CountByRole
 	var stats model.UserStatistics
 
 	// 检查时间范围
@@ -25,13 +27,21 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.UserStatistics
 		return model.UserStatistics{}, errors.New("统计用户数量失败")
 	}
 
+	// 统计用户角色
+	cbrs, err = dao.CountUsersGroupByRole()
+	if err != nil {
+		log.Println(err)
+		return model.UserStatistics{}, errors.New("统计用户角色失败")
+	}
+	stats.UserCountByRole.FromCountByRole(cbrs)
+
 	// 统计用户注册数量
-	cbds, err := dao.CountUsersBetweenCreateTime(startTime, endTime)
+	cbds, err = dao.CountUsersBetweenCreateTime(startTime, endTime)
 	if err != nil {
 		log.Println(err)
 		return model.UserStatistics{}, errors.New("统计用户注册数量失败")
 	}
-	stats.RegisterCountByDate.FromStruct(cbds)
+	stats.RegisterCountByDate.FromCountByDate(cbds)
 
 	return stats, nil
 }
