@@ -157,6 +157,7 @@ func InitAdminRoute() {
 		}
 		{
 			adminPrivateRoute.POST("/statistics/user", admin.AdminStatisticsUser)
+			adminPrivateRoute.POST("/statistics/record", admin.AdminStatisticsRecord)
 			adminPrivateRoute.GET("/statistics/judge", admin.AdminStatisticsJudge)
 		}
 	}
