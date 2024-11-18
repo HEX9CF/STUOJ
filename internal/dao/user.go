@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"time"
 )
 
 // 插入用户
@@ -84,10 +85,10 @@ func DeleteUserById(id uint64) error {
 }
 
 // 根据创建时间统计用户数量
-func CountUsersGroupByCreateTime() ([]model.CountByDate, error) {
+func CountUsersBetweenCreateTime(startTime time.Time, endTime time.Time) ([]model.CountByDate, error) {
 	var countByDate []model.CountByDate
 
-	tx := db.Db.Model(&entity.User{}).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&countByDate)
+	tx := db.Db.Model(&entity.User{}).Where("create_time between ? and ?", startTime, endTime).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&countByDate)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

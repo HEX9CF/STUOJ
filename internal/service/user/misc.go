@@ -5,13 +5,15 @@ import (
 	"STUOJ/internal/model"
 	"errors"
 	"log"
+	"time"
 )
 
 // 统计用户
-func GetStatistics() (model.UserStatistics, error) {
+func GetStatistics(startTime time.Time, endTime time.Time) (model.UserStatistics, error) {
 	var stats model.UserStatistics
 
-	countByCreateTime, err := dao.CountUsersGroupByCreateTime()
+	// 统计用户注册数量
+	countByCreateTime, err := dao.CountUsersBetweenCreateTime(startTime, endTime)
 	if err != nil {
 		log.Println(err)
 		return model.UserStatistics{}, errors.New("统计用户注册数量失败")

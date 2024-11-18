@@ -156,7 +156,7 @@ func InitAdminRoute() {
 			adminPrivateRoute.DELETE("/record/:id", admin.AdminRecordRemove)
 		}
 		{
-			adminPrivateRoute.GET("/statistics/user", admin.AdminStatisticsUser)
+			adminPrivateRoute.POST("/statistics/user", admin.AdminStatisticsUser)
 			adminPrivateRoute.GET("/statistics/judge", admin.AdminStatisticsJudge)
 		}
 	}
