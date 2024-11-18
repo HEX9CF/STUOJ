@@ -24,10 +24,10 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.ProblemStatist
 		return model.ProblemStatistics{}, errors.New("统计题目数量失败")
 	}
 
-	stats.AddCount = make(map[string]uint64)
+	stats.AddCountByDate = make(model.MapCountByDate)
 	for _, v := range countByCreateTime {
-		date := v.Date.Format("2006-01-02")
-		stats.AddCount[date] = v.Count
+		date := v.Date.Format(model.LayoutCountByDate)
+		stats.AddCountByDate[date] = v.Count
 	}
 
 	return stats, nil

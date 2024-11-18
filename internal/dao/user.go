@@ -84,6 +84,18 @@ func DeleteUserById(id uint64) error {
 	return nil
 }
 
+// 统计用户数量
+func CountUsers() (int64, error) {
+	var count int64
+
+	tx := db.Db.Model(&entity.User{}).Count(&count)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return count, nil
+}
+
 // 根据创建时间统计用户数量
 func CountUsersBetweenCreateTime(startTime time.Time, endTime time.Time) ([]model.CountByDate, error) {
 	var countByDate []model.CountByDate

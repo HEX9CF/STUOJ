@@ -24,10 +24,10 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.RecordStatisti
 		return model.RecordStatistics{}, errors.New("统计提交记录失败")
 	}
 
-	stats.SubmitCount = make(map[string]uint64)
+	stats.SubmitCountByDate = make(model.MapCountByDate)
 	for _, v := range countByCreateTime {
-		date := v.Date.Format("2006-01-02")
-		stats.SubmitCount[date] = v.Count
+		date := v.Date.Format(model.LayoutCountByDate)
+		stats.SubmitCountByDate[date] = v.Count
 	}
 
 	return stats, nil
