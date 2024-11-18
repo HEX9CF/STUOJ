@@ -3,6 +3,7 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 )
 
 // 插入用户
@@ -80,4 +81,16 @@ func DeleteUserById(id uint64) error {
 	}
 
 	return nil
+}
+
+// 根据创建时间统计用户数量
+func CountUsersGroupByCrateTime() ([]model.CountByDate, error) {
+	var countByDate []model.CountByDate
+
+	tx := db.Db.Model(&entity.User{}).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&countByDate)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return countByDate, nil
 }
