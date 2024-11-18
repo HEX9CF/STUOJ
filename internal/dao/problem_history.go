@@ -21,7 +21,7 @@ func InsertProblemHistory(ph entity.ProblemHistory) (uint64, error) {
 func SelectProblemHistoriesByProblemId(pid uint64) ([]entity.ProblemHistory, error) {
 	var phs []entity.ProblemHistory
 
-	tx := db.Db.Table("tbl_problem_history").Where("problem_id = ?", pid).Find(&phs)
+	tx := db.Db.Model(&entity.ProblemHistory{}).Where("problem_id = ?", pid).Find(&phs)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -30,10 +30,10 @@ func SelectProblemHistoriesByProblemId(pid uint64) ([]entity.ProblemHistory, err
 }
 
 // 根据创建时间统计用户数量
-func CountProblemsHistoriesBetweenCreateTimeByOperation(startTime time.Time, endTime time.Time, operation entity.Operation) ([]model.CountByDate, error) {
+func CountProblemHistoriesBetweenCreateTimeByOperation(startTime time.Time, endTime time.Time, operation entity.Operation) ([]model.CountByDate, error) {
 	var countByDate []model.CountByDate
 
-	tx := db.Db.Model(&entity.Problem{}).Where("create_time between ? and ? AND operation=?", startTime, endTime, operation).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&countByDate)
+	tx := db.Db.Model(&entity.ProblemHistory{}).Where("operation = ? AND create_time between ? and ?", startTime, endTime, operation).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&countByDate)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
