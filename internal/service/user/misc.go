@@ -26,17 +26,12 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.UserStatistics
 	}
 
 	// 统计用户注册数量
-	countByCreateTime, err := dao.CountUsersBetweenCreateTime(startTime, endTime)
+	cbds, err := dao.CountUsersBetweenCreateTime(startTime, endTime)
 	if err != nil {
 		log.Println(err)
 		return model.UserStatistics{}, errors.New("统计用户注册数量失败")
 	}
-
-	stats.RegisterCountByDate = make(model.MapCountByDate)
-	for _, v := range countByCreateTime {
-		date := v.Date.Format(model.LayoutCountByDate)
-		stats.RegisterCountByDate[date] = v.Count
-	}
+	stats.RegisterCountByDate.FromStruct(cbds)
 
 	return stats, nil
 }

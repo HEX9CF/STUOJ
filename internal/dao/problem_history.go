@@ -33,7 +33,7 @@ func SelectProblemHistoriesByProblemId(pid uint64) ([]entity.ProblemHistory, err
 func CountProblemHistoriesBetweenCreateTimeByOperation(startTime time.Time, endTime time.Time, operation entity.Operation) ([]model.CountByDate, error) {
 	var countByDate []model.CountByDate
 
-	tx := db.Db.Model(&entity.ProblemHistory{}).Where("operation = ? AND create_time between ? and ?", startTime, endTime, operation).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&countByDate)
+	tx := db.Db.Model(&entity.ProblemHistory{}).Where("create_time between ? and ? AND operation = ?", startTime, endTime, operation).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&countByDate)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

@@ -2,6 +2,7 @@ package problem
 
 import (
 	"STUOJ/internal/dao"
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"errors"
 	"log"
@@ -17,18 +18,29 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.ProblemStatist
 		return model.ProblemStatistics{}, errors.New("开始时间不能晚于结束时间")
 	}
 
-	// 统计用户注册数量
-	countByCreateTime, err := dao.CountProblemsBetweenCreateTime(startTime, endTime)
+	// 统计添加题目数量
+	cbds, err := dao.CountProblemHistoriesBetweenCreateTimeByOperation(startTime, endTime, entity.OperationInsert)
 	if err != nil {
 		log.Println(err)
-		return model.ProblemStatistics{}, errors.New("统计题目数量失败")
+		return model.ProblemStatistics{}, errors.New("统计添加题目数量失败")
 	}
+	stats.InsertCountByDate.FromStruct(cbds)
 
-	stats.AddCountByDate = make(model.MapCountByDate)
-	for _, v := range countByCreateTime {
-		date := v.Date.Format(model.LayoutCountByDate)
-		stats.AddCountByDate[date] = v.Count
+	// 统计修改题目数量
+	cbds, err = dao.CountProblemHistoriesBetweenCreateTimeByOperation(startTime, endTime, entity.OperationUpdate)
+	if err != nil {
+		log.Println(err)
+		return model.ProblemStatistics{}, errors.New("统计修改题目数量失败")
 	}
+	stats.UpdateCountByDate.FromStruct(cbds)
+
+	// 统计删除题目数量
+	cbds, err = dao.CountProblemHistoriesBetweenCreateTimeByOperation(startTime, endTime, entity.OperationDelete)
+	if err != nil {
+		log.Println(err)
+		return model.ProblemStatistics{}, errors.New("统计删除题目数量失败")
+	}
+	stats.DeleteCountByDate.FromStruct(cbds)
 
 	return stats, nil
 }
