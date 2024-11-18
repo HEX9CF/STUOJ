@@ -26,3 +26,8 @@ type UserStatistics struct {
 type RecordStatistics struct {
 	SubmitCount MapCountByDate `json:"submit_count"`
 }
+
+// 题目统计信息
+type ProblemStatistics struct {
+	AddCount MapCountByDate `json:"add_count"`
+}
