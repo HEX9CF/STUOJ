@@ -70,3 +70,15 @@ func DeleteSolutionById(id uint64) error {
 
 	return nil
 }
+
+// 统计题解数量
+func CountSolutions() (int64, error) {
+	var count int64
+
+	tx := db.Db.Model(&entity.Solution{}).Count(&count)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return count, nil
+}

@@ -6,24 +6,24 @@ import (
 )
 
 // 角色：0 封禁，1 普通用户，2 管理员，3 超级管理员
-type UserRole uint8
+type Role uint8
 
 const (
-	UserRoleBanned UserRole = 0
-	UserRoleUser   UserRole = 1
-	UserRoleAdmin  UserRole = 2
-	UserRoleRoot   UserRole = 3
+	RoleBanned Role = 0
+	RoleUser   Role = 1
+	RoleAdmin  Role = 2
+	RoleRoot   Role = 3
 )
 
-func (r UserRole) String() string {
+func (r Role) String() string {
 	switch r {
-	case UserRoleBanned:
-		return "被封禁"
-	case UserRoleUser:
+	case RoleBanned:
+		return "被封禁用户"
+	case RoleUser:
 		return "普通用户"
-	case UserRoleAdmin:
+	case RoleAdmin:
 		return "管理员"
-	case UserRoleRoot:
+	case RoleRoot:
 		return "超级管理员"
 	default:
 		return "未知角色"
@@ -35,7 +35,7 @@ type User struct {
 	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id,omitempty"`
 	Username   string    `gorm:"type:varchar(255);not null;unique;comment:用户名" json:"username,omitempty"`
 	Password   string    `gorm:"type:varchar(255);not null;default:'123456';comment:密码" json:"password,omitempty"`
-	Role       UserRole  `gorm:"not null;default:1;comment:角色" json:"role,omitempty"`
+	Role       Role      `gorm:"not null;default:1;comment:角色" json:"role,omitempty"`
 	Email      string    `gorm:"type:varchar(255);not null;unique;comment:邮箱" json:"email,omitempty"`
 	Avatar     string    `gorm:"type:text;not null;comment:头像URL" json:"avatar,omitempty"`
 	Signature  string    `gorm:"type:text;not null;comment:个性签名" json:"signature,omitempty"`

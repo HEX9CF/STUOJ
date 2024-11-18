@@ -46,3 +46,15 @@ func UpdateJudgementById(j entity.Judgement) error {
 
 	return nil
 }
+
+// 统计评测结果数量
+func CountJudgements() (int64, error) {
+	var count int64
+
+	tx := db.Db.Model(&entity.Judgement{}).Count(&count)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return count, nil
+}
