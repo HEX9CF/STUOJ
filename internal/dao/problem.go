@@ -131,6 +131,18 @@ func DeleteProblemById(id uint64) error {
 	return nil
 }
 
+// 统计题目数量
+func CountProblems() (int64, error) {
+	var count int64
+
+	tx := db.Db.Model(&entity.Problem{}).Count(&count)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return count, nil
+}
+
 // 根据创建时间统计用户数量
 func CountProblemsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]model.CountByDate, error) {
 	var countByDate []model.CountByDate

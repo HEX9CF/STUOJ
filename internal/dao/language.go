@@ -48,3 +48,15 @@ func DeleteAllLanguages() error {
 
 	return nil
 }
+
+// 统计语言数量
+func CountLanguages() (int64, error) {
+	var count int64
+
+	tx := db.Db.Model(&entity.Language{}).Count(&count)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return count, nil
+}

@@ -56,3 +56,15 @@ func DeleteTagById(id uint64) error {
 
 	return nil
 }
+
+// 统计标签数量
+func CountTags() (int64, error) {
+	var count int64
+
+	tx := db.Db.Model(&entity.Tag{}).Count(&count)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return count, nil
+}
