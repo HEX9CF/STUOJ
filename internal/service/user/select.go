@@ -3,6 +3,7 @@ package user
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"STUOJ/utils"
 	"errors"
 	"log"
@@ -66,4 +67,15 @@ func VerifyByEmail(u entity.User) (string, error) {
 	}
 
 	return token, nil
+}
+
+// 统计用户
+func GetStatistics() ([]model.CountByDate, error) {
+	stats, err := dao.CountUsersGroupByCrateTime()
+	if err != nil {
+		log.Println(err)
+		return nil, errors.New("统计用户失败")
+	}
+
+	return stats, nil
 }
