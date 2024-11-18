@@ -21,3 +21,8 @@ type Judge0Statistics struct {
 type UserStatistics struct {
 	RegisterCount MapCountByDate `json:"register_count"`
 }
+
+// 提交记录统计信息
+type RecordStatistics struct {
+	SubmitCount MapCountByDate `json:"submit_count"`
+}

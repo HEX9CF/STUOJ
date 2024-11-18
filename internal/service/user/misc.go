@@ -12,6 +12,11 @@ import (
 func GetStatistics(startTime time.Time, endTime time.Time) (model.UserStatistics, error) {
 	var stats model.UserStatistics
 
+	// 检查时间范围
+	if startTime.After(endTime) {
+		return model.UserStatistics{}, errors.New("开始时间不能晚于结束时间")
+	}
+
 	// 统计用户注册数量
 	countByCreateTime, err := dao.CountUsersBetweenCreateTime(startTime, endTime)
 	if err != nil {
