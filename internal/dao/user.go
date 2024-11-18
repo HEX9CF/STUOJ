@@ -84,7 +84,7 @@ func DeleteUserById(id uint64) error {
 }
 
 // 根据创建时间统计用户数量
-func CountUsersGroupByCrateTime() ([]model.CountByDate, error) {
+func CountUsersGroupByCreateTime() ([]model.CountByDate, error) {
 	var countByDate []model.CountByDate
 
 	tx := db.Db.Model(&entity.User{}).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&countByDate)

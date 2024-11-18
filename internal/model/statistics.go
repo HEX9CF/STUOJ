@@ -8,3 +8,7 @@ type CountByDate struct {
 }
 
 type MapCountByDate map[string]uint64
+
+type UserStatistics struct {
+	RegisterCount MapCountByDate `json:"register_count"`
+}
