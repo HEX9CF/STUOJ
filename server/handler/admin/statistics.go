@@ -3,6 +3,7 @@ package admin
 import (
 	"STUOJ/external/judge0"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/user"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -30,4 +31,14 @@ func AdminStatisticsList(c *gin.Context) {
 
 	// 返回数据
 	c.JSON(http.StatusOK, model.RespOk("OK", statistics))
+}
+
+func AdminStatisticsUser(c *gin.Context) {
+	stats, err := user.GetStatistics()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError("获取用户统计信息失败", nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", stats))
 }

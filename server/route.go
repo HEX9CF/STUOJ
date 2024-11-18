@@ -157,6 +157,7 @@ func InitAdminRoute() {
 		}
 		{
 			adminPrivateRoute.GET("/statistics", admin.AdminStatisticsList)
+			adminPrivateRoute.GET("/statistics/user", admin.AdminStatisticsUser)
 		}
 	}
 
