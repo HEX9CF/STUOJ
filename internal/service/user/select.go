@@ -70,11 +70,17 @@ func VerifyByEmail(u entity.User) (string, error) {
 }
 
 // 统计用户
-func GetStatistics() ([]model.CountByDate, error) {
-	stats, err := dao.CountUsersGroupByCrateTime()
+func GetStatistics() (model.MapCountByDate, error) {
+	cbd, err := dao.CountUsersGroupByCrateTime()
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("统计用户失败")
+	}
+
+	stats := make(model.MapCountByDate)
+	for _, v := range cbd {
+		date := v.Date.Format("2006-01-02")
+		stats[date] = v.Count
 	}
 
 	return stats, nil
