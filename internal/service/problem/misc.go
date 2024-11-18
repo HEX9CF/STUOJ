@@ -11,6 +11,8 @@ import (
 
 // 提交记录统计
 func GetStatistics(startTime time.Time, endTime time.Time) (model.ProblemStatistics, error) {
+	var err error
+	var cbds []model.CountByDate
 	var stats model.ProblemStatistics
 
 	// 检查时间范围
@@ -18,8 +20,36 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.ProblemStatist
 		return model.ProblemStatistics{}, errors.New("开始时间不能晚于结束时间")
 	}
 
+	// 统计题目数量
+	stats.ProblemCount, err = dao.CountProblems()
+	if err != nil {
+		log.Println(err)
+		return model.ProblemStatistics{}, errors.New("统计题目数量失败")
+	}
+
+	// 统计标签数量
+	stats.TagCount, err = dao.CountTags()
+	if err != nil {
+		log.Println(err)
+		return model.ProblemStatistics{}, errors.New("统计标签数量失败")
+	}
+
+	// 统计评测点数量
+	stats.TestcaseCount, err = dao.CountTestcases()
+	if err != nil {
+		log.Println(err)
+		return model.ProblemStatistics{}, errors.New("统计评测点数量失败")
+	}
+
+	// 统计题解数量
+	stats.SolutionCount, err = dao.CountSolutions()
+	if err != nil {
+		log.Println(err)
+		return model.ProblemStatistics{}, errors.New("统计题解数量失败")
+	}
+
 	// 统计添加题目数量
-	cbds, err := dao.CountProblemHistoriesBetweenCreateTimeByOperation(startTime, endTime, entity.OperationInsert)
+	cbds, err = dao.CountProblemHistoriesBetweenCreateTimeByOperation(startTime, endTime, entity.OperationInsert)
 	if err != nil {
 		log.Println(err)
 		return model.ProblemStatistics{}, errors.New("统计添加题目数量失败")
