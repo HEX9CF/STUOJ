@@ -3,6 +3,7 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"time"
 )
 
@@ -95,4 +96,16 @@ func DeleteSubmissionById(id uint64) error {
 	}
 
 	return nil
+}
+
+// 根据创建时间统计用户数量
+func CountSubmissionsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]model.CountByDate, error) {
+	var countByDate []model.CountByDate
+
+	tx := db.Db.Model(&entity.Submission{}).Where("create_time between ? and ?", startTime, endTime).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&countByDate)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return countByDate, nil
 }
