@@ -30,6 +30,7 @@ func InitRoute() error {
 	InitProblemRoute()
 	InitJudgeRoute()
 	InitRecordRoute()
+	InitBlogRoute()
 	InitAdminRoute()
 
 	// 启动服务
@@ -71,9 +72,9 @@ func InitProblemRoute() {
 	problemPublicRoute := ginServer.Group("/problem")
 	{
 		problemPublicRoute.GET("/", handler.ProblemPublicList)
-		problemPublicRoute.GET("/difficulty/:id", handler.ProblemPublicListByDifficulty)
-		problemPublicRoute.GET("/tag/:id", handler.ProblemPublicListByTagId)
-		problemPublicRoute.POST("/title", handler.ProblemPublicListByTitle)
+		problemPublicRoute.GET("/difficulty/:id", handler.ProblemPublicListOfDifficulty)
+		problemPublicRoute.GET("/tag/:id", handler.ProblemPublicListOfTagId)
+		problemPublicRoute.POST("/title", handler.ProblemPublicListOfTitle)
 		problemPublicRoute.GET("/:id", handler.ProblemPublicInfo)
 
 		problemPublicRoute.GET("/tag", handler.TagList)
@@ -105,6 +106,25 @@ func InitRecordRoute() {
 	}
 }
 
+func InitBlogRoute() {
+	blogPublicRoute := ginServer.Group("/blog")
+	{
+		blogPublicRoute.GET("/", handler.BlogPublicList)
+		blogPublicRoute.GET("/:id", handler.BlogPublicInfo)
+		blogPublicRoute.GET("/user/:id", handler.BlogPublicListOfUser)
+		blogPublicRoute.GET("/problem/:id", handler.BlogPublicListOfProblem)
+	}
+	//blogPrivateRoute := ginServer.Group("/blog")
+	//{
+	//	// 使用中间件
+	//	blogPrivateRoute.Use(middlewares.TokenAuthUser())
+	//
+	//	blogPrivateRoute.POST("/", handler.BlogAdd)
+	//	blogPrivateRoute.PUT("/", handler.BlogModify)
+	//	blogPrivateRoute.DELETE("/:id", handler.BlogRemove)
+	//}
+}
+
 func InitAdminRoute() {
 	adminPrivateRoute := ginServer.Group("/admin")
 	{
@@ -114,14 +134,14 @@ func InitAdminRoute() {
 		{
 			adminPrivateRoute.GET("/user", admin.AdminUserList)
 			adminPrivateRoute.GET("/user/:id", admin.AdminUserInfo)
-			adminPrivateRoute.GET("/user/role/:id", admin.AdminUserListByRole)
+			adminPrivateRoute.GET("/user/role/:id", admin.AdminUserListOfRole)
 			adminPrivateRoute.POST("/user", admin.AdminUserAdd)
 			adminPrivateRoute.PUT("/user", admin.AdminUserModify)
 			adminPrivateRoute.DELETE("/user/:id", admin.AdminUserRemove)
 		}
 		{
 			adminPrivateRoute.GET("/problem", admin.AdminProblemList)
-			adminPrivateRoute.GET("/problem/status/:id", admin.AdminProblemListByStatus)
+			adminPrivateRoute.GET("/problem/status/:id", admin.AdminProblemListOfStatus)
 			adminPrivateRoute.GET("/problem/:id", admin.AdminProblemInfo)
 			adminPrivateRoute.POST("/problem", admin.AdminProblemAdd)
 			adminPrivateRoute.PUT("/problem", admin.AdminProblemModify)

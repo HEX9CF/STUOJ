@@ -1,19 +1,70 @@
 package handler
 
 import (
-	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
-	"STUOJ/internal/service/problem"
-	"STUOJ/internal/service/tag"
+	"STUOJ/internal/service/blog"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
-
-	"github.com/gin-gonic/gin"
 )
 
-// 获取公开题目信息
-func ProblemPublicInfo(c *gin.Context) {
+// 获取公开博客信息
+func BlogPublicInfo(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	bid := uint64(id)
+	b, err := blog.SelectPublicById(bid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", b))
+}
+
+// 获取公开博客列表
+func BlogPublicList(c *gin.Context) {
+	blogs, err := blog.SelectPublic()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", blogs))
+}
+
+type ReqBlogPublicListByTitle struct {
+	Title string `json:"title"`
+}
+
+// 根据用户ID获取公开博客列表
+func BlogPublicListOfUser(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	uid := uint64(id)
+	pds, err := blog.SelectPublicByUserId(uid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", pds))
+}
+
+// 根据题目ID获取公开博客列表
+func BlogPublicListOfProblem(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -22,48 +73,7 @@ func ProblemPublicInfo(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	pd, err := problem.SelectPublicByProblemId(pid)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", pd))
-}
-
-// 获取公开题目列表
-func ProblemPublicList(c *gin.Context) {
-	pds, err := problem.SelectPublic()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
-}
-
-// 获取标签列表
-func TagList(c *gin.Context) {
-	tags, err := tag.SelectAll()
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", tags))
-}
-
-// 根据标签获取公开题目列表
-func ProblemPublicListOfTagId(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	tid := uint64(id)
-	pds, err := problem.SelectPublicByTagId(tid)
+	pds, err := blog.SelectPublicByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
@@ -71,35 +81,11 @@ func ProblemPublicListOfTagId(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("OK", pds))
-}
-
-// 根据难度获取公开题目列表
-func ProblemPublicListOfDifficulty(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	d := entity.Difficulty(id)
-	pds, err := problem.SelectPublicByDifficulty(d)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
-}
-
-type ReqProblemPublicListByTitle struct {
-	Title string `json:"title"`
 }
 
 // 根据标题获取公开题目列表
-func ProblemPublicListOfTitle(c *gin.Context) {
-	var req ReqProblemPublicListByTitle
+func BlogPublicListOfTitle(c *gin.Context) {
+	var req ReqBlogPublicListByTitle
 	err := c.BindJSON(&req)
 	if err != nil {
 		log.Println(err)
@@ -107,12 +93,12 @@ func ProblemPublicListOfTitle(c *gin.Context) {
 		return
 	}
 
-	pds, err := problem.SelectPublicLikeTitle(req.Title)
+	blogs, err := blog.SelectPublicLikeTitle(req.Title)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
+	c.JSON(http.StatusOK, model.RespOk("OK", blogs))
 }

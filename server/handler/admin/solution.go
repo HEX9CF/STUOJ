@@ -91,7 +91,7 @@ func AdminSolutionModify(c *gin.Context) {
 		ProblemId:  req.ProblemId,
 		SourceCode: req.SourceCode,
 	}
-	err = solution.UpdateSolutionById(s)
+	err = solution.UpdateById(s)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return
@@ -112,7 +112,7 @@ func AdminSolutionRemove(c *gin.Context) {
 
 	// 删除题解
 	sid := uint64(id)
-	err = solution.DeleteSolutionById(sid)
+	err = solution.DeleteById(sid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return

@@ -41,7 +41,7 @@ func AdminUserList(c *gin.Context) {
 }
 
 // 根据角色获取用户列表
-func AdminUserListByRole(c *gin.Context) {
+func AdminUserListOfRole(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
