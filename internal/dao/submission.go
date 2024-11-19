@@ -110,6 +110,18 @@ func CountSubmissions() (int64, error) {
 	return count, nil
 }
 
+// 根据角色统计用户数量
+func CountSubmissionsGroupByStatus() ([]model.CountByJudgeStatus, error) {
+	var counts []model.CountByJudgeStatus
+
+	tx := db.Db.Model(&entity.Submission{}).Select("status, count(*) as count").Group("status").Scan(&counts)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return counts, nil
+}
+
 // 根据创建时间统计用户数量
 func CountSubmissionsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]model.CountByDate, error) {
 	var countByDate []model.CountByDate

@@ -12,6 +12,7 @@ import (
 func GetStatistics(startTime time.Time, endTime time.Time) (model.RecordStatistics, error) {
 	var err error
 	var cbds []model.CountByDate
+	var cbjss []model.CountByJudgeStatus
 	var stats model.RecordStatistics
 
 	// 检查时间范围
@@ -33,7 +34,15 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.RecordStatisti
 		return model.RecordStatistics{}, errors.New("统计评测点结果数量失败")
 	}
 
-	// 统计用户注册数量
+	// 按评测状态统计提交记录数量
+	cbjss, err = dao.CountSubmissionsGroupByStatus()
+	if err != nil {
+		log.Println(err)
+		return model.RecordStatistics{}, errors.New("统计提交记录失败")
+	}
+	stats.SubmissionCountByStatus.FromCountByJudgeStatus(cbjss)
+
+	// 按日期统计提交记录数量
 	cbds, err = dao.CountSubmissionsBetweenCreateTime(startTime, endTime)
 	if err != nil {
 		log.Println(err)

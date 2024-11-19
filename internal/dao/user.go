@@ -96,7 +96,7 @@ func CountUsers() (int64, error) {
 	return count, nil
 }
 
-// 统计用户数量
+// 根据角色统计用户数量
 func CountUsersGroupByRole() ([]model.CountByRole, error) {
 	var counts []model.CountByRole
 
