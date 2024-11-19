@@ -54,3 +54,9 @@ type CountByTag struct {
 	TagId uint64 `json:"tag_id"`
 	Count int64  `json:"count"`
 }
+
+// 按语言统计
+type CountByLanguage struct {
+	LanguageId uint64 `json:"language_id"`
+	Count      int64  `json:"count"`
+}

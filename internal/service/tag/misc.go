@@ -26,10 +26,16 @@ func GetStatistics() (model.TagStatistics, error) {
 		log.Println(err)
 		return model.TagStatistics{}, errors.New("统计题目数量失败")
 	}
-	stats.ProblemCountByTag = make(model.MapCount)
+	stats.ProblemCountByTag = mapCountFromCountByTag(cbts)
+
+	return stats, nil
+}
+
+func mapCountFromCountByTag(cbts []model.CountByTag) model.MapCount {
+	m := make(model.MapCount)
 	for _, v := range cbts {
 		var tag entity.Tag
-		tag, err = dao.SelectTagById(v.TagId)
+		tag, err := dao.SelectTagById(v.TagId)
 		if err != nil {
 			log.Println(err)
 			tag = entity.Tag{
@@ -37,8 +43,8 @@ func GetStatistics() (model.TagStatistics, error) {
 				Name: "未知标签",
 			}
 		}
-		stats.ProblemCountByTag[tag.Name] = v.Count
+		m[tag.Name] = v.Count
 	}
 
-	return stats, nil
+	return m
 }
