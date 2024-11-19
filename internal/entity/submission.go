@@ -17,7 +17,7 @@ type Submission struct {
 	Time       float64     `gorm:"not null;default:0;comment:运行耗时（s）" json:"time,omitempty"`
 	SourceCode string      `gorm:"type:longtext;not null;comment:源代码" json:"source_code,omitempty"`
 	CreateTime time.Time   `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time,omitempty"`
-	UpdateTime time.Time   `gorm:"not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time,omitempty"`
+	UpdateTime time.Time   `gorm:"not null;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;comment:更新时间" json:"update_time,omitempty"`
 }
 
 func (Submission) TableName() string {

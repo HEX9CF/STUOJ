@@ -36,7 +36,7 @@ type Blog struct {
 	Content    string     `gorm:"type:longtext;not null;comment:'内容'" json:"content,omitempty"`
 	Status     BlogStatus `gorm:"not null;default:1;comment:'状态：0 被屏蔽，1 公开，2 草稿'" json:"status,omitempty"`
 	CreateTime time.Time  `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:'创建时间'" json:"create_time,omitempty"`
-	UpdateTime time.Time  `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:'更新时间'" json:"update_time,omitempty"`
+	UpdateTime time.Time  `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;comment:'更新时间'" json:"update_time,omitempty"`
 }
 
 func (Blog) TableName() string {
