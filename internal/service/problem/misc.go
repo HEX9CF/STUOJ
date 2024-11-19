@@ -27,13 +27,6 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.ProblemStatist
 		return model.ProblemStatistics{}, errors.New("统计题目数量失败")
 	}
 
-	// 统计标签数量
-	stats.TagCount, err = dao.CountTags()
-	if err != nil {
-		log.Println(err)
-		return model.ProblemStatistics{}, errors.New("统计标签数量失败")
-	}
-
 	// 统计评测点数量
 	stats.TestcaseCount, err = dao.CountTestcases()
 	if err != nil {

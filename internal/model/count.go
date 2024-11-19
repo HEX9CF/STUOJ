@@ -48,3 +48,9 @@ func (m *MapCount) FromCountByJudgeStatus(cbjss []CountByJudgeStatus) {
 		(*m)[v.Status.String()] = v.Count
 	}
 }
+
+// 按标签统计
+type CountByTag struct {
+	TagId uint64 `json:"tag_id"`
+	Count int64  `json:"count"`
+}
