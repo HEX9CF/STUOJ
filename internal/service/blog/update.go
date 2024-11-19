@@ -14,7 +14,7 @@ func UpdateById(b entity.Blog) error {
 	b0, err := dao.SelectBlogById(b.Id)
 	if err != nil {
 		log.Println(err)
-		return errors.New("获取博客失败")
+		return errors.New("博客不存在")
 	}
 
 	updateTime := time.Now()
@@ -28,7 +28,8 @@ func UpdateById(b entity.Blog) error {
 	// 更新博客
 	err = dao.UpdateBlogById(b0)
 	if err != nil {
-		return err
+		log.Println(err)
+		return errors.New("更新博客失败")
 	}
 
 	return nil
@@ -45,7 +46,7 @@ func SubmitByIdCheckUserId(id uint64, uid uint64) error {
 
 	// 检查权限
 	if b0.UserId != uid {
-		return errors.New("没有权限")
+		return errors.New("没有权限，只能提交自己的博客")
 	}
 
 	// 检查博客状态
@@ -78,7 +79,7 @@ func EditByIdCheckUserId(b entity.Blog) error {
 
 	// 检查权限
 	if b0.UserId != b.UserId {
-		return errors.New("没有权限")
+		return errors.New("没有权限，只能编辑自己的博客")
 	}
 
 	updateTime := time.Now()

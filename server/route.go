@@ -31,6 +31,7 @@ func InitRoute() error {
 	InitJudgeRoute()
 	InitRecordRoute()
 	InitBlogRoute()
+	InitCommentRoute()
 	InitAdminRoute()
 
 	// 启动服务
@@ -127,6 +128,21 @@ func InitBlogRoute() {
 	}
 }
 
+func InitCommentRoute() {
+	commentPublicRoute := ginServer.Group("/comment")
+	{
+		commentPublicRoute.GET("/user/:id", handler.CommentPublicListOfUser)
+	}
+	commentPrivateRoute := ginServer.Group("/comment")
+	{
+		// 使用中间件
+		commentPrivateRoute.Use(middlewares.TokenAuthUser())
+
+		commentPrivateRoute.POST("/", handler.CommentAdd)
+		commentPrivateRoute.DELETE("/:id", handler.CommentRemove)
+	}
+}
+
 func InitAdminRoute() {
 	adminPrivateRoute := ginServer.Group("/admin")
 	{
@@ -183,6 +199,11 @@ func InitAdminRoute() {
 			adminPrivateRoute.POST("/blog", admin.AdminBlogAdd)
 			adminPrivateRoute.PUT("/blog", admin.AdminBlogModify)
 			adminPrivateRoute.DELETE("/blog/:id", admin.AdminBlogRemove)
+		}
+		{
+			adminPrivateRoute.POST("/comment", admin.AdminCommentAdd)
+			adminPrivateRoute.PUT("/comment", admin.AdminCommentModify)
+			adminPrivateRoute.DELETE("/comment/:id", admin.AdminCommentRemove)
 		}
 		{
 			adminPrivateRoute.GET("/statistics/tag", admin.AdminStatisticsTag)

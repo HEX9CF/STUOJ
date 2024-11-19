@@ -51,14 +51,14 @@ func BlogPublicListOfUser(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	pds, err := blog.SelectPublicByUserId(uid)
+	bds, err := blog.SelectPublicByUserId(uid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
+	c.JSON(http.StatusOK, model.RespOk("OK", bds))
 }
 
 // 根据题目ID获取公开博客列表
@@ -71,14 +71,14 @@ func BlogPublicListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	pds, err := blog.SelectPublicByProblemId(pid)
+	bds, err := blog.SelectPublicByProblemId(pid)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
+	c.JSON(http.StatusOK, model.RespOk("OK", bds))
 }
 
 // 根据标题获取公开题目列表

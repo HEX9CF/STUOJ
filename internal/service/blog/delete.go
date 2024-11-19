@@ -36,7 +36,7 @@ func DeleteByIdCheckUserId(id uint64, uid uint64) error {
 
 	// 检查权限
 	if b0.UserId != uid {
-		return errors.New("没有权限")
+		return errors.New("没有权限，只能删除自己的博客")
 	}
 
 	// 删除博客

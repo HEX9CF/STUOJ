@@ -12,11 +12,21 @@ import (
 func SelectById(id uint64) (model.BlogData, error) {
 	b, err := dao.SelectBlogById(id)
 	if err != nil {
+		log.Println(err)
 		return model.BlogData{}, errors.New("获取博客失败")
 	}
 
+	// 查询博客评论
+	comments, err := dao.SelectCommentsByBlogId(id)
+	if err != nil {
+		log.Println(err)
+		return model.BlogData{}, errors.New("获取博客评论失败")
+	}
+
+	// 封装博客数据
 	bd := model.BlogData{
-		Blog: b,
+		Blog:     b,
+		Comments: comments,
 	}
 
 	return bd, nil
@@ -26,11 +36,20 @@ func SelectById(id uint64) (model.BlogData, error) {
 func SelectPublicById(id uint64) (model.BlogData, error) {
 	b, err := dao.SelectBlogByIdAndStatus(id, entity.BlogStatusPublic)
 	if err != nil {
+		log.Println(err)
 		return model.BlogData{}, errors.New("获取博客失败")
 	}
 
+	// 查询博客评论
+	comments, err := dao.SelectCommentsByBlogIdAndStatus(id, entity.CommentStatusPublic)
+	if err != nil {
+		log.Println(err)
+		return model.BlogData{}, errors.New("获取博客评论失败")
+	}
+
 	bd := model.BlogData{
-		Blog: b,
+		Blog:     b,
+		Comments: comments,
 	}
 
 	return bd, nil
@@ -40,7 +59,8 @@ func SelectPublicById(id uint64) (model.BlogData, error) {
 func SelectAll() ([]model.BlogData, error) {
 	blogs, err := dao.SelectAllBlogs()
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("获取博客失败")
 	}
 
 	bds := wrapBlogDatas(blogs)
@@ -52,7 +72,8 @@ func SelectAll() ([]model.BlogData, error) {
 func SelectPublic() ([]model.BlogData, error) {
 	blogs, err := dao.SelectBlogsByStatus(entity.BlogStatusPublic)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("获取博客失败")
 	}
 
 	bds := wrapBlogDatas(blogs)
@@ -64,7 +85,8 @@ func SelectPublic() ([]model.BlogData, error) {
 func SelectPublicByUserId(uid uint64) ([]model.BlogData, error) {
 	blogs, err := dao.SelectBlogsByUserIdAndStatus(uid, entity.BlogStatusPublic)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("获取博客失败")
 	}
 
 	bds := wrapBlogDatas(blogs)
@@ -76,7 +98,8 @@ func SelectPublicByUserId(uid uint64) ([]model.BlogData, error) {
 func SelectPublicByProblemId(pid uint64) ([]model.BlogData, error) {
 	blogs, err := dao.SelectBlogsByProblemIdAndStatus(pid, entity.BlogStatusPublic)
 	if err != nil {
-		return nil, err
+		log.Println(err)
+		return nil, errors.New("获取博客失败")
 	}
 
 	bds := wrapBlogDatas(blogs)
@@ -86,8 +109,6 @@ func SelectPublicByProblemId(pid uint64) ([]model.BlogData, error) {
 
 // 根据状态查询并根据标题模糊查询公开博客
 func SelectPublicLikeTitle(title string) ([]model.BlogData, error) {
-	var blogs []entity.Blog
-
 	blogs, err := dao.SelectBlogsLikeTitleByStatus(title, entity.BlogStatusPublic)
 	if err != nil {
 		log.Println(err)
