@@ -34,7 +34,6 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.UserStatistics
 		return model.UserStatistics{}, errors.New("统计用户角色失败")
 	}
 	stats.UserCountByRole.FromCountByRole(cbrs)
-
 	// 统计用户注册数量
 	cbds, err = dao.CountUsersBetweenCreateTime(startTime, endTime)
 	if err != nil {
@@ -42,6 +41,7 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.UserStatistics
 		return model.UserStatistics{}, errors.New("统计用户注册数量失败")
 	}
 	stats.RegisterCountByDate.FromCountByDate(cbds)
+	stats.FillZero(startTime, endTime)
 
 	return stats, nil
 }

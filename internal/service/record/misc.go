@@ -66,6 +66,7 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.RecordStatisti
 		return model.RecordStatistics{}, errors.New("统计提交记录失败")
 	}
 	stats.SubmissionCountByDate.FromCountByDate(cbds)
+	stats.FillZero(startTime, endTime)
 
 	return stats, nil
 }

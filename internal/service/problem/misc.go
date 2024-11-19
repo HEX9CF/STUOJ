@@ -64,6 +64,7 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.ProblemStatist
 		return model.ProblemStatistics{}, errors.New("统计删除题目数量失败")
 	}
 	stats.DeleteCountByDate.FromCountByDate(cbds)
+	stats.FillZero(startTime, endTime)
 
 	return stats, nil
 }
