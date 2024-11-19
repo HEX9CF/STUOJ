@@ -2,6 +2,7 @@ package record
 
 import (
 	"STUOJ/internal/dao"
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"errors"
 	"log"
@@ -9,8 +10,6 @@ import (
 
 // 查询所有提交记录（不返回源代码）
 func SelectAll() ([]model.Record, error) {
-	var records []model.Record
-
 	// 获取提交信息
 	submissions, err := dao.SelectAllSubmissions()
 	if err != nil {
@@ -18,18 +17,7 @@ func SelectAll() ([]model.Record, error) {
 		return nil, errors.New("获取提交信息失败")
 	}
 
-	// 不返回源代码
-	for k := range submissions {
-		submissions[k].SourceCode = ""
-	}
-
-	// 封装提交记录
-	for _, s := range submissions {
-		r := model.Record{
-			Submission: s,
-		}
-		records = append(records, r)
-	}
+	records := wrapRecords(submissions)
 
 	return records, nil
 }
@@ -61,8 +49,6 @@ func SelectBySubmissionId(sid uint64) (model.Record, error) {
 
 // 根据题目ID查询提交记录（不返回源代码）
 func SelectByProblemId(problemId uint64) ([]model.Record, error) {
-	var records []model.Record
-
 	// 获取提交信息
 	submissions, err := dao.SelectSubmissionsByProblemId(problemId)
 	if err != nil {
@@ -70,26 +56,13 @@ func SelectByProblemId(problemId uint64) ([]model.Record, error) {
 		return nil, errors.New("获取提交信息失败")
 	}
 
-	// 不返回源代码
-	for k := range submissions {
-		submissions[k].SourceCode = ""
-	}
-
-	// 封装提交记录
-	for _, s := range submissions {
-		r := model.Record{
-			Submission: s,
-		}
-		records = append(records, r)
-	}
+	records := wrapRecords(submissions)
 
 	return records, nil
 }
 
 // 根据用户ID查询提交记录（不返回源代码）
 func SelectByUserId(userId uint64) ([]model.Record, error) {
-	var records []model.Record
-
 	// 获取提交信息
 	submissions, err := dao.SelectSubmissionsByUserId(userId)
 	if err != nil {
@@ -97,12 +70,24 @@ func SelectByUserId(userId uint64) ([]model.Record, error) {
 		return nil, errors.New("获取提交信息失败")
 	}
 
-	// 不返回源代码
-	for k := range submissions {
-		submissions[k].SourceCode = ""
-	}
+	records := wrapRecords(submissions)
 
-	// 封装提交记录
+	return records, nil
+}
+
+// 隐藏源代码
+func hideSubmissionSourceCode(submissions []entity.Submission) {
+	for i := range submissions {
+		submissions[i].SourceCode = ""
+	}
+}
+
+// 封装提交记录
+func wrapRecords(submissions []entity.Submission) []model.Record {
+	var records []model.Record
+
+	hideSubmissionSourceCode(submissions)
+
 	for _, s := range submissions {
 		r := model.Record{
 			Submission: s,
@@ -110,5 +95,5 @@ func SelectByUserId(userId uint64) ([]model.Record, error) {
 		records = append(records, r)
 	}
 
-	return records, nil
+	return records
 }

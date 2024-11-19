@@ -40,7 +40,7 @@ type User struct {
 	Avatar     string    `gorm:"type:text;not null;comment:头像URL" json:"avatar,omitempty"`
 	Signature  string    `gorm:"type:text;not null;comment:个性签名" json:"signature,omitempty"`
 	CreateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time,omitempty"`
-	UpdateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP;comment:更新时间" json:"update_time,omitempty"`
+	UpdateTime time.Time `gorm:"not null;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;comment:更新时间" json:"update_time,omitempty"`
 }
 
 func (User) TableName() string {

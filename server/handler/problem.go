@@ -33,7 +33,7 @@ func ProblemPublicInfo(c *gin.Context) {
 
 // 获取公开题目列表
 func ProblemPublicList(c *gin.Context) {
-	pds, err := problem.SelectByStatus(entity.ProblemStatusPublic)
+	pds, err := problem.SelectPublic()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -54,7 +54,7 @@ func TagList(c *gin.Context) {
 }
 
 // 根据标签获取公开题目列表
-func ProblemPublicListByTagId(c *gin.Context) {
+func ProblemPublicListOfTagId(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -74,7 +74,7 @@ func ProblemPublicListByTagId(c *gin.Context) {
 }
 
 // 根据难度获取公开题目列表
-func ProblemPublicListByDifficulty(c *gin.Context) {
+func ProblemPublicListOfDifficulty(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -98,7 +98,7 @@ type ReqProblemPublicListByTitle struct {
 }
 
 // 根据标题获取公开题目列表
-func ProblemPublicListByTitle(c *gin.Context) {
+func ProblemPublicListOfTitle(c *gin.Context) {
 	var req ReqProblemPublicListByTitle
 	err := c.BindJSON(&req)
 	if err != nil {

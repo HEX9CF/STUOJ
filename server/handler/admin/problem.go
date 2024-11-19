@@ -49,7 +49,7 @@ func AdminProblemList(c *gin.Context) {
 }
 
 // 根据状态获取题目列表
-func AdminProblemListByStatus(c *gin.Context) {
+func AdminProblemListOfStatus(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)

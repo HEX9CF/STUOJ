@@ -30,6 +30,8 @@ func InitRoute() error {
 	InitProblemRoute()
 	InitJudgeRoute()
 	InitRecordRoute()
+	InitBlogRoute()
+	InitCommentRoute()
 	InitAdminRoute()
 
 	// 启动服务
@@ -71,9 +73,9 @@ func InitProblemRoute() {
 	problemPublicRoute := ginServer.Group("/problem")
 	{
 		problemPublicRoute.GET("/", handler.ProblemPublicList)
-		problemPublicRoute.GET("/difficulty/:id", handler.ProblemPublicListByDifficulty)
-		problemPublicRoute.GET("/tag/:id", handler.ProblemPublicListByTagId)
-		problemPublicRoute.POST("/title", handler.ProblemPublicListByTitle)
+		problemPublicRoute.GET("/difficulty/:id", handler.ProblemPublicListOfDifficulty)
+		problemPublicRoute.GET("/tag/:id", handler.ProblemPublicListOfTagId)
+		problemPublicRoute.POST("/title", handler.ProblemPublicListOfTitle)
 		problemPublicRoute.GET("/:id", handler.ProblemPublicInfo)
 
 		problemPublicRoute.GET("/tag", handler.TagList)
@@ -105,6 +107,42 @@ func InitRecordRoute() {
 	}
 }
 
+func InitBlogRoute() {
+	blogPublicRoute := ginServer.Group("/blog")
+	{
+		blogPublicRoute.GET("/", handler.BlogPublicList)
+		blogPublicRoute.GET("/:id", handler.BlogPublicInfo)
+		blogPublicRoute.GET("/user/:id", handler.BlogPublicListOfUser)
+		blogPublicRoute.GET("/problem/:id", handler.BlogPublicListOfProblem)
+		blogPublicRoute.POST("/title", handler.BlogPublicListOfTitle)
+	}
+	blogPrivateRoute := ginServer.Group("/blog")
+	{
+		// 使用中间件
+		blogPrivateRoute.Use(middlewares.TokenAuthUser())
+
+		blogPrivateRoute.POST("/", handler.BlogSave)
+		blogPrivateRoute.PUT("/", handler.BlogEdit)
+		blogPrivateRoute.PUT("/:id", handler.BlogSubmit)
+		blogPrivateRoute.DELETE("/:id", handler.BlogRemove)
+	}
+}
+
+func InitCommentRoute() {
+	commentPublicRoute := ginServer.Group("/comment")
+	{
+		commentPublicRoute.GET("/user/:id", handler.CommentPublicListOfUser)
+	}
+	commentPrivateRoute := ginServer.Group("/comment")
+	{
+		// 使用中间件
+		commentPrivateRoute.Use(middlewares.TokenAuthUser())
+
+		commentPrivateRoute.POST("/", handler.CommentAdd)
+		commentPrivateRoute.DELETE("/:id", handler.CommentRemove)
+	}
+}
+
 func InitAdminRoute() {
 	adminPrivateRoute := ginServer.Group("/admin")
 	{
@@ -114,14 +152,14 @@ func InitAdminRoute() {
 		{
 			adminPrivateRoute.GET("/user", admin.AdminUserList)
 			adminPrivateRoute.GET("/user/:id", admin.AdminUserInfo)
-			adminPrivateRoute.GET("/user/role/:id", admin.AdminUserListByRole)
+			adminPrivateRoute.GET("/user/role/:id", admin.AdminUserListOfRole)
 			adminPrivateRoute.POST("/user", admin.AdminUserAdd)
 			adminPrivateRoute.PUT("/user", admin.AdminUserModify)
 			adminPrivateRoute.DELETE("/user/:id", admin.AdminUserRemove)
 		}
 		{
 			adminPrivateRoute.GET("/problem", admin.AdminProblemList)
-			adminPrivateRoute.GET("/problem/status/:id", admin.AdminProblemListByStatus)
+			adminPrivateRoute.GET("/problem/status/:id", admin.AdminProblemListOfStatus)
 			adminPrivateRoute.GET("/problem/:id", admin.AdminProblemInfo)
 			adminPrivateRoute.POST("/problem", admin.AdminProblemAdd)
 			adminPrivateRoute.PUT("/problem", admin.AdminProblemModify)
@@ -154,6 +192,18 @@ func InitAdminRoute() {
 			adminPrivateRoute.GET("/record", admin.AdminRecordList)
 			adminPrivateRoute.GET("/record/:id", admin.AdminRecordInfo)
 			adminPrivateRoute.DELETE("/record/:id", admin.AdminRecordRemove)
+		}
+		{
+			adminPrivateRoute.GET("/blog", admin.AdminBlogList)
+			adminPrivateRoute.GET("/blog/:id", admin.AdminBlogInfo)
+			adminPrivateRoute.POST("/blog", admin.AdminBlogAdd)
+			adminPrivateRoute.PUT("/blog", admin.AdminBlogModify)
+			adminPrivateRoute.DELETE("/blog/:id", admin.AdminBlogRemove)
+		}
+		{
+			adminPrivateRoute.POST("/comment", admin.AdminCommentAdd)
+			adminPrivateRoute.PUT("/comment", admin.AdminCommentModify)
+			adminPrivateRoute.DELETE("/comment/:id", admin.AdminCommentRemove)
 		}
 		{
 			adminPrivateRoute.GET("/statistics/tag", admin.AdminStatisticsTag)
