@@ -113,6 +113,7 @@ func InitBlogRoute() {
 		blogPublicRoute.GET("/:id", handler.BlogPublicInfo)
 		blogPublicRoute.GET("/user/:id", handler.BlogPublicListOfUser)
 		blogPublicRoute.GET("/problem/:id", handler.BlogPublicListOfProblem)
+		blogPublicRoute.POST("/title", handler.BlogPublicListOfTitle)
 	}
 	//blogPrivateRoute := ginServer.Group("/blog")
 	//{

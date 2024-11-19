@@ -39,10 +39,6 @@ func BlogPublicList(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", blogs))
 }
 
-type ReqBlogPublicListByTitle struct {
-	Title string `json:"title"`
-}
-
 // 根据用户ID获取公开博客列表
 func BlogPublicListOfUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
@@ -84,6 +80,10 @@ func BlogPublicListOfProblem(c *gin.Context) {
 }
 
 // 根据标题获取公开题目列表
+type ReqBlogPublicListByTitle struct {
+	Title string `json:"title"`
+}
+
 func BlogPublicListOfTitle(c *gin.Context) {
 	var req ReqBlogPublicListByTitle
 	err := c.BindJSON(&req)
