@@ -42,6 +42,14 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.RecordStatisti
 	}
 	stats.SubmissionCountByStatus.FromCountByJudgeStatus(cbjss)
 
+	// 按评测状态统计评测结果数量
+	cbjss, err = dao.CountJudgementsGroupByStatus()
+	if err != nil {
+		log.Println(err)
+		return model.RecordStatistics{}, errors.New("统计评测结果失败")
+	}
+	stats.JudgementCountByStatus.FromCountByJudgeStatus(cbjss)
+
 	// 按日期统计提交记录数量
 	cbds, err = dao.CountSubmissionsBetweenCreateTime(startTime, endTime)
 	if err != nil {

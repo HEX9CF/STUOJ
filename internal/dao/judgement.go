@@ -3,6 +3,7 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 )
 
 // 插入评测结果
@@ -57,4 +58,16 @@ func CountJudgements() (int64, error) {
 	}
 
 	return count, nil
+}
+
+// 按评测状态统计评测结果数量
+func CountJudgementsGroupByStatus() ([]model.CountByJudgeStatus, error) {
+	var counts []model.CountByJudgeStatus
+
+	tx := db.Db.Model(&entity.Judgement{}).Select("status, count(*) as count").Group("status").Scan(&counts)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return counts, nil
 }

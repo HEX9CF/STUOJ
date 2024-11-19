@@ -110,7 +110,7 @@ func CountSubmissions() (int64, error) {
 	return count, nil
 }
 
-// 根据角色统计用户数量
+// 按评测状态统计提交信息数量
 func CountSubmissionsGroupByStatus() ([]model.CountByJudgeStatus, error) {
 	var counts []model.CountByJudgeStatus
 
