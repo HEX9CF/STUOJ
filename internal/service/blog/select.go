@@ -3,80 +3,89 @@ package blog
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"errors"
 	"log"
 )
 
 // 根据ID查询博客
-func SelectById(id uint64) (entity.Blog, error) {
+func SelectById(id uint64) (model.BlogData, error) {
 	b, err := dao.SelectBlogById(id)
 	if err != nil {
-		return entity.Blog{}, errors.New("获取博客失败")
+		return model.BlogData{}, errors.New("获取博客失败")
 	}
 
-	return b, nil
+	bd := model.BlogData{
+		Blog: b,
+	}
+
+	return bd, nil
 }
 
 // 根据ID查询公开博客
-func SelectPublicById(id uint64) (entity.Blog, error) {
+func SelectPublicById(id uint64) (model.BlogData, error) {
 	b, err := dao.SelectBlogByIdAndStatus(id, entity.BlogStatusPublic)
 	if err != nil {
-		return entity.Blog{}, errors.New("获取博客失败")
+		return model.BlogData{}, errors.New("获取博客失败")
 	}
 
-	return b, nil
+	bd := model.BlogData{
+		Blog: b,
+	}
+
+	return bd, nil
 }
 
 // 查询所有博客
-func SelectAll() ([]entity.Blog, error) {
+func SelectAll() ([]model.BlogData, error) {
 	blogs, err := dao.SelectAllBlogs()
 	if err != nil {
 		return nil, err
 	}
 
-	hideBlogContent(blogs)
+	bds := wrapBlogDatas(blogs)
 
-	return blogs, nil
+	return bds, nil
 }
 
 // 查询公开博客
-func SelectPublic() ([]entity.Blog, error) {
+func SelectPublic() ([]model.BlogData, error) {
 	blogs, err := dao.SelectBlogsByStatus(entity.BlogStatusPublic)
 	if err != nil {
 		return nil, err
 	}
 
-	hideBlogContent(blogs)
+	bds := wrapBlogDatas(blogs)
 
-	return blogs, nil
+	return bds, nil
 }
 
 // 根据用户ID查询博客
-func SelectPublicByUserId(uid uint64) ([]entity.Blog, error) {
+func SelectPublicByUserId(uid uint64) ([]model.BlogData, error) {
 	blogs, err := dao.SelectBlogsByUserIdAndStatus(uid, entity.BlogStatusPublic)
 	if err != nil {
 		return nil, err
 	}
 
-	hideBlogContent(blogs)
+	bds := wrapBlogDatas(blogs)
 
-	return blogs, nil
+	return bds, nil
 }
 
 // 根据题目ID查询博客
-func SelectPublicByProblemId(pid uint64) ([]entity.Blog, error) {
+func SelectPublicByProblemId(pid uint64) ([]model.BlogData, error) {
 	blogs, err := dao.SelectBlogsByProblemIdAndStatus(pid, entity.BlogStatusPublic)
 	if err != nil {
 		return nil, err
 	}
 
-	hideBlogContent(blogs)
+	bds := wrapBlogDatas(blogs)
 
-	return blogs, nil
+	return bds, nil
 }
 
 // 根据状态查询并根据标题模糊查询公开博客
-func SelectPublicLikeTitle(title string) ([]entity.Blog, error) {
+func SelectPublicLikeTitle(title string) ([]model.BlogData, error) {
 	var blogs []entity.Blog
 
 	blogs, err := dao.SelectBlogsLikeTitleByStatus(title, entity.BlogStatusPublic)
@@ -85,9 +94,9 @@ func SelectPublicLikeTitle(title string) ([]entity.Blog, error) {
 		return nil, errors.New("获取博客失败")
 	}
 
-	hideBlogContent(blogs)
+	bds := wrapBlogDatas(blogs)
 
-	return blogs, nil
+	return bds, nil
 }
 
 // 不返回正文
@@ -95,4 +104,21 @@ func hideBlogContent(blogs []entity.Blog) {
 	for i := range blogs {
 		blogs[i].Content = ""
 	}
+}
+
+// 封装博客数据
+func wrapBlogDatas(blogs []entity.Blog) []model.BlogData {
+	var bds []model.BlogData
+
+	hideBlogContent(blogs)
+
+	for _, b := range blogs {
+		bd := model.BlogData{
+			Blog: b,
+		}
+
+		bds = append(bds, bd)
+	}
+
+	return bds
 }
