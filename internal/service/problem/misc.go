@@ -42,7 +42,7 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.ProblemStatist
 	}
 
 	// 统计添加题目数量
-	cbds, err = dao.CountProblemHistoriesBetweenCreateTimeByOperation(startTime, endTime, entity.OperationInsert)
+	cbds, err = dao.CountHistoriesBetweenCreateTimeByOperation(startTime, endTime, entity.OperationInsert)
 	if err != nil {
 		log.Println(err)
 		return model.ProblemStatistics{}, errors.New("统计添加题目数量失败")
@@ -50,7 +50,7 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.ProblemStatist
 	stats.InsertCountByDate.FromCountByDate(cbds)
 
 	// 统计修改题目数量
-	cbds, err = dao.CountProblemHistoriesBetweenCreateTimeByOperation(startTime, endTime, entity.OperationUpdate)
+	cbds, err = dao.CountHistoriesBetweenCreateTimeByOperation(startTime, endTime, entity.OperationUpdate)
 	if err != nil {
 		log.Println(err)
 		return model.ProblemStatistics{}, errors.New("统计修改题目数量失败")
@@ -58,7 +58,7 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.ProblemStatist
 	stats.UpdateCountByDate.FromCountByDate(cbds)
 
 	// 统计删除题目数量
-	cbds, err = dao.CountProblemHistoriesBetweenCreateTimeByOperation(startTime, endTime, entity.OperationDelete)
+	cbds, err = dao.CountHistoriesBetweenCreateTimeByOperation(startTime, endTime, entity.OperationDelete)
 	if err != nil {
 		log.Println(err)
 		return model.ProblemStatistics{}, errors.New("统计删除题目数量失败")

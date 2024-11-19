@@ -30,7 +30,7 @@ func (o Operation) String() string {
 }
 
 // 题目历史记录
-type ProblemHistory struct {
+type History struct {
 	Id           uint64     `gorm:"primaryKey;autoIncrement;comment:记录ID" json:"id,omitempty"`
 	UserId       uint64     `gorm:"not null;default:0;comment:用户ID" json:"user_id,omitempty"`
 	ProblemId    uint64     `gorm:"not null;default:0;comment:题目ID" json:"problem_id,omitempty"`
@@ -49,6 +49,6 @@ type ProblemHistory struct {
 	CreateTime   time.Time  `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time,omitempty"`
 }
 
-func (ProblemHistory) TableName() string {
-	return "tbl_problem_history"
+func (History) TableName() string {
+	return "tbl_history"
 }

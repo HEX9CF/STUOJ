@@ -22,7 +22,7 @@ func Insert(p entity.Problem, uid uint64) (uint64, error) {
 		return 0, errors.New("插入题目失败")
 	}
 
-	ph := entity.ProblemHistory{
+	ph := entity.History{
 		UserId:       uid,
 		ProblemId:    p.Id,
 		Title:        p.Title,
@@ -41,7 +41,7 @@ func Insert(p entity.Problem, uid uint64) (uint64, error) {
 	}
 
 	// 添加题目历史记录
-	ph.Id, err = dao.InsertProblemHistory(ph)
+	ph.Id, err = dao.InsertHistory(ph)
 	if err != nil {
 		log.Println(err)
 		return p.Id, errors.New("插入题目成功，但插入题目历史记录失败")
@@ -103,7 +103,7 @@ func InsertHistory(p entity.Problem, uid uint64, op entity.Operation) (uint64, e
 	var err error
 
 	updateTime := time.Now()
-	ph := entity.ProblemHistory{
+	ph := entity.History{
 		UserId:       uid,
 		ProblemId:    p.Id,
 		Title:        p.Title,
@@ -121,7 +121,7 @@ func InsertHistory(p entity.Problem, uid uint64, op entity.Operation) (uint64, e
 		CreateTime:   updateTime,
 	}
 
-	ph.Id, err = dao.InsertProblemHistory(ph)
+	ph.Id, err = dao.InsertHistory(ph)
 	if err != nil {
 		return 0, err
 	}

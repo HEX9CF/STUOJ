@@ -20,7 +20,7 @@ func UpdateById(p entity.Problem, uid uint64) error {
 	updateTime := time.Now()
 
 	// 添加题目历史记录
-	ph := entity.ProblemHistory{
+	ph := entity.History{
 		UserId:       uid,
 		ProblemId:    p0.Id,
 		Title:        p0.Title,
@@ -37,7 +37,7 @@ func UpdateById(p entity.Problem, uid uint64) error {
 		Operation:    entity.OperationUpdate,
 		CreateTime:   updateTime,
 	}
-	ph.Id, err = dao.InsertProblemHistory(ph)
+	ph.Id, err = dao.InsertHistory(ph)
 	if err != nil {
 		log.Println(err)
 		return errors.New("更新题目成功，但插入题目历史记录失败")

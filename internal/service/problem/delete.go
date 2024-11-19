@@ -33,13 +33,13 @@ func DeleteByProblemId(pid uint64, uid uint64) error {
 
 	// 添加题目历史记录
 	updateTime := time.Now()
-	ph := entity.ProblemHistory{
+	ph := entity.History{
 		UserId:     uid,
 		ProblemId:  pid,
 		Operation:  entity.OperationDelete,
 		CreateTime: updateTime,
 	}
-	_, err = dao.InsertProblemHistory(ph)
+	_, err = dao.InsertHistory(ph)
 	if err != nil {
 		log.Println(err)
 		return errors.New("插入题目历史记录失败")

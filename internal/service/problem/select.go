@@ -40,7 +40,7 @@ func SelectById(id uint64) (model.ProblemData, error) {
 	}
 
 	// 获取题目历史记录
-	histories, err := dao.SelectProblemHistoriesByProblemId(id)
+	histories, err := dao.SelectHistoriesByProblemId(id)
 	if err != nil {
 		return model.ProblemData{}, errors.New("获取题目历史记录失败")
 	}
