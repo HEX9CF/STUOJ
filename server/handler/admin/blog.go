@@ -71,7 +71,7 @@ func AdminBlogAdd(c *gin.Context) {
 		Status:    req.Status,
 	}
 
-	// 插入题解
+	// 插入博客
 	b.Id, err = blog.Insert(b)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))

@@ -27,7 +27,7 @@ func Insert(b entity.Blog) (uint64, error) {
 }
 
 // 保存草稿
-func SaveDraft(b entity.Blog, uid uint64) (uint64, error) {
+func SaveDraft(b entity.Blog) (uint64, error) {
 	var err error
 
 	updateTime := time.Now()
@@ -40,7 +40,7 @@ func SaveDraft(b entity.Blog, uid uint64) (uint64, error) {
 	b.Id, err = dao.InsertBlog(b)
 	if err != nil {
 		log.Println(err)
-		return 0, errors.New("插入博客失败")
+		return 0, errors.New("保存博客失败")
 	}
 
 	return b.Id, nil

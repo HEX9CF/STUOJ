@@ -24,3 +24,27 @@ func DeleteById(id uint64) error {
 
 	return nil
 }
+
+// 根据ID删除博客（检查用户ID）
+func DeleteByIdCheckUserId(id uint64, uid uint64) error {
+	// 查询博客
+	b0, err := dao.SelectBlogById(id)
+	if err != nil {
+		log.Println(err)
+		return errors.New("博客不存在")
+	}
+
+	// 检查权限
+	if b0.UserId != uid {
+		return errors.New("没有权限")
+	}
+
+	// 删除博客
+	err = dao.DeleteBlogById(id)
+	if err != nil {
+		log.Println(err)
+		return errors.New("删除博客失败")
+	}
+
+	return nil
+}

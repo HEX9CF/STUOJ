@@ -115,15 +115,16 @@ func InitBlogRoute() {
 		blogPublicRoute.GET("/problem/:id", handler.BlogPublicListOfProblem)
 		blogPublicRoute.POST("/title", handler.BlogPublicListOfTitle)
 	}
-	//blogPrivateRoute := ginServer.Group("/blog")
-	//{
-	//	// 使用中间件
-	//	blogPrivateRoute.Use(middlewares.TokenAuthUser())
-	//
-	//	blogPrivateRoute.POST("/", handler.BlogAdd)
-	//	blogPrivateRoute.PUT("/", handler.BlogModify)
-	//	blogPrivateRoute.DELETE("/:id", handler.BlogRemove)
-	//}
+	blogPrivateRoute := ginServer.Group("/blog")
+	{
+		// 使用中间件
+		blogPrivateRoute.Use(middlewares.TokenAuthUser())
+
+		blogPrivateRoute.POST("/", handler.BlogSave)
+		blogPrivateRoute.PUT("/", handler.BlogEdit)
+		blogPrivateRoute.PUT("/:id", handler.BlogSubmit)
+		blogPrivateRoute.DELETE("/:id", handler.BlogRemove)
+	}
 }
 
 func InitAdminRoute() {

@@ -35,16 +35,22 @@ func UpdateById(b entity.Blog) error {
 }
 
 // 用户发布博客（变为待审核状态）
-func Publish(id uint64, uid uint64) error {
+func SubmitByIdCheckUserId(id uint64, uid uint64) error {
 	// 查询博客
 	b0, err := dao.SelectBlogById(id)
 	if err != nil {
 		log.Println(err)
-		return errors.New("获取博客失败")
+		return errors.New("博客不存在")
 	}
 
+	// 检查权限
 	if b0.UserId != uid {
 		return errors.New("没有权限")
+	}
+
+	// 检查博客状态
+	if b0.Status != entity.BlogStatusDraft {
+		return errors.New("博客不是草稿状态")
 	}
 
 	updateTime := time.Now()
@@ -62,15 +68,16 @@ func Publish(id uint64, uid uint64) error {
 }
 
 // 用户编辑博客（变回草稿状态）
-func Edit(b entity.Blog, uid uint64) error {
+func EditByIdCheckUserId(b entity.Blog) error {
 	// 查询博客
 	b0, err := dao.SelectBlogById(b.Id)
 	if err != nil {
 		log.Println(err)
-		return errors.New("获取博客失败")
+		return errors.New("博客不存在")
 	}
 
-	if b0.UserId != uid {
+	// 检查权限
+	if b0.UserId != b.UserId {
 		return errors.New("没有权限")
 	}
 
@@ -78,7 +85,7 @@ func Edit(b entity.Blog, uid uint64) error {
 	b0.Title = b.Title
 	b0.Content = b.Content
 	b0.UpdateTime = updateTime
-	b0.Status = entity.BLogStatusReview
+	b0.Status = entity.BlogStatusDraft
 
 	// 更新博客
 	err = dao.UpdateBlogById(b0)
@@ -91,12 +98,12 @@ func Edit(b entity.Blog, uid uint64) error {
 }
 
 // 博客通过审核
-func Approve(id uint64) error {
+func ApproveById(id uint64) error {
 	// 查询博客
 	b0, err := dao.SelectBlogById(id)
 	if err != nil {
 		log.Println(err)
-		return errors.New("获取博客失败")
+		return errors.New("博客不存在")
 	}
 
 	updateTime := time.Now()
@@ -114,12 +121,12 @@ func Approve(id uint64) error {
 }
 
 // 封禁博客
-func Ban(id uint64) error {
+func BanById(id uint64) error {
 	// 查询博客
 	b0, err := dao.SelectBlogById(id)
 	if err != nil {
 		log.Println(err)
-		return errors.New("获取博客失败")
+		return errors.New("博客不存在")
 	}
 
 	updateTime := time.Now()
