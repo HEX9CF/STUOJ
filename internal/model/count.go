@@ -35,3 +35,28 @@ func (m *MapCount) FromCountByRole(cbrs []CountByRole) {
 		(*m)[v.Role.String()] = v.Count
 	}
 }
+
+// 按评测状态统计
+type CountByJudgeStatus struct {
+	Status entity.JudgeStatus `json:"status"`
+	Count  int64              `json:"count"`
+}
+
+func (m *MapCount) FromCountByJudgeStatus(cbjss []CountByJudgeStatus) {
+	*m = make(MapCount)
+	for _, v := range cbjss {
+		(*m)[v.Status.String()] = v.Count
+	}
+}
+
+// 按标签统计
+type CountByTag struct {
+	TagId uint64 `json:"tag_id"`
+	Count int64  `json:"count"`
+}
+
+// 按语言统计
+type CountByLanguage struct {
+	LanguageId uint64 `json:"language_id"`
+	Count      int64  `json:"count"`
+}

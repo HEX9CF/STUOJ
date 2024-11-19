@@ -16,18 +16,26 @@ type UserStatistics struct {
 
 // 提交记录统计信息
 type RecordStatistics struct {
-	SubmissionCount   int64    `json:"submission_count,omitempty"`
-	JudgementCount    int64    `json:"judgement_count,omitempty"`
-	SubmitCountByDate MapCount `json:"submit_count_by_date,omitempty"`
+	SubmissionCount           int64    `json:"submission_count,omitempty"`
+	JudgementCount            int64    `json:"judgement_count,omitempty"`
+	SubmissionCountByLanguage MapCount `json:"submission_count_by_language,omitempty"`
+	SubmissionCountByStatus   MapCount `json:"submission_count_by_status,omitempty"`
+	JudgementCountByStatus    MapCount `json:"judgement_count_by_status,omitempty"`
+	SubmissionCountByDate     MapCount `json:"submission_count_by_date,omitempty"`
 }
 
 // 题目统计信息
 type ProblemStatistics struct {
 	ProblemCount      int64    `json:"problem_count,omitempty"`
-	TagCount          int64    `json:"tag_count,omitempty"`
 	TestcaseCount     int64    `json:"testcase_count,omitempty"`
 	SolutionCount     int64    `json:"solution_count,omitempty"`
 	InsertCountByDate MapCount `json:"insert_count_by_date,omitempty"`
 	UpdateCountByDate MapCount `json:"update_count_by_date,omitempty"`
 	DeleteCountByDate MapCount `json:"delete_count_by_date,omitempty"`
+}
+
+// 标签统计信息
+type TagStatistics struct {
+	TagCount          int64    `json:"tag_count,omitempty"`
+	ProblemCountByTag MapCount `json:"problem_count_by_tag,omitempty"`
 }

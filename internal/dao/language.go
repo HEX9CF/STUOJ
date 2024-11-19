@@ -27,6 +27,17 @@ func SelectAllLanguages() ([]entity.Language, error) {
 	return languages, nil
 }
 
+// 根据ID查询标签
+func SelectLanguageById(id uint64) (entity.Language, error) {
+	var l entity.Language
+	tx := db.Db.Where("id = ?", id).First(&l)
+	if tx.Error != nil {
+		return entity.Language{}, tx.Error
+	}
+
+	return l, nil
+}
+
 // 根据名字模糊查询语言
 func SelectLanguageLikeName(name string) (entity.Language, error) {
 	var l entity.Language

@@ -3,6 +3,7 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 )
 
 // 给题目添加标签
@@ -56,4 +57,16 @@ func DeleteProblemTagsByProblemId(pid uint64) error {
 	}
 
 	return nil
+}
+
+// 按评测状态统计提交信息数量
+func CountProblemsGroupByTag() ([]model.CountByTag, error) {
+	var counts []model.CountByTag
+
+	tx := db.Db.Model(&entity.ProblemTag{}).Select("tag_id, count(*) as count").Group("tag_id").Scan(&counts)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return counts, nil
 }

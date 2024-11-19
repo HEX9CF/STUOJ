@@ -110,6 +110,30 @@ func CountSubmissions() (int64, error) {
 	return count, nil
 }
 
+// 按评测状态统计提交信息数量
+func CountSubmissionsGroupByStatus() ([]model.CountByJudgeStatus, error) {
+	var counts []model.CountByJudgeStatus
+
+	tx := db.Db.Model(&entity.Submission{}).Select("status, count(*) as count").Group("status").Scan(&counts)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return counts, nil
+}
+
+// 按语言ID统计提交信息数量
+func CountSubmissionsGroupByLanguageId() ([]model.CountByLanguage, error) {
+	var counts []model.CountByLanguage
+
+	tx := db.Db.Model(&entity.Submission{}).Select("language_id, count(*) as count").Group("language_id").Scan(&counts)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return counts, nil
+}
+
 // 根据创建时间统计用户数量
 func CountSubmissionsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]model.CountByDate, error) {
 	var countByDate []model.CountByDate

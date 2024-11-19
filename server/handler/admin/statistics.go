@@ -5,6 +5,7 @@ import (
 	"STUOJ/internal/service/judge"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/record"
+	"STUOJ/internal/service/tag"
 	"STUOJ/internal/service/user"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -129,6 +130,17 @@ func AdminStatisticsProblem(c *gin.Context) {
 
 	// 获取题目统计信息
 	stats, err := problem.GetStatistics(startTime, endTime)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", stats))
+}
+
+func AdminStatisticsTag(c *gin.Context) {
+	// 获取题目统计信息
+	stats, err := tag.GetStatistics()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
