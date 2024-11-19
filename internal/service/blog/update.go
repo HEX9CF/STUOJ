@@ -9,7 +9,7 @@ import (
 )
 
 // 根据ID更新博客
-func UpdateBlogById(b entity.Blog) error {
+func UpdateById(b entity.Blog) error {
 	// 查询博客
 	b0, err := dao.SelectBlogById(b.Id)
 	if err != nil {

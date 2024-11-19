@@ -176,6 +176,13 @@ func InitAdminRoute() {
 			adminPrivateRoute.DELETE("/record/:id", admin.AdminRecordRemove)
 		}
 		{
+			adminPrivateRoute.GET("/blog", admin.AdminBlogList)
+			adminPrivateRoute.GET("/blog/:id", admin.AdminBlogInfo)
+			adminPrivateRoute.POST("/blog", admin.AdminBlogAdd)
+			adminPrivateRoute.PUT("/blog", admin.AdminBlogModify)
+			adminPrivateRoute.DELETE("/blog/:id", admin.AdminBlogRemove)
+		}
+		{
 			adminPrivateRoute.GET("/statistics/tag", admin.AdminStatisticsTag)
 			adminPrivateRoute.GET("/statistics/judge", admin.AdminStatisticsJudge)
 			adminPrivateRoute.POST("/statistics/user", admin.AdminStatisticsUser)
