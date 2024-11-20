@@ -196,6 +196,7 @@ func InitAdminRoute() {
 		}
 		{
 			adminPrivateRoute.GET("/blog", admin.AdminBlogList)
+			adminPrivateRoute.GET("/blog/status/:id", admin.AdminBlogListOfStatus)
 			adminPrivateRoute.GET("/blog/:id", admin.AdminBlogInfo)
 			adminPrivateRoute.POST("/blog", admin.AdminBlogAdd)
 			adminPrivateRoute.PUT("/blog", admin.AdminBlogModify)
