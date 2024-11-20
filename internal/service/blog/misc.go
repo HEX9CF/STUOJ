@@ -23,14 +23,14 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.BlogStatistics
 	stats.BlogCount, err = dao.CountBlogs()
 	if err != nil {
 		log.Println(err)
-		return model.BlogStatistics{}, errors.New("统计题目数量失败")
+		return model.BlogStatistics{}, errors.New("统计博客数量失败")
 	}
 
-	// 统计添加题目数量
+	// 统计博客数量
 	cbds, err = dao.CountBlogsBetweenCreateTime(startTime, endTime)
 	if err != nil {
 		log.Println(err)
-		return model.BlogStatistics{}, errors.New("统计添加题目数量失败")
+		return model.BlogStatistics{}, errors.New("统计博客数量失败")
 	}
 	stats.BlogCountByDate.FromCountByDate(cbds)
 	stats.BlogCountByDate.FillZero(startTime, endTime)

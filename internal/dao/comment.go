@@ -3,6 +3,8 @@ package dao
 import (
 	"STUOJ/internal/db"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
+	"time"
 )
 
 // 查询所有博客
@@ -129,4 +131,16 @@ func CountComments() (int64, error) {
 	}
 
 	return count, nil
+}
+
+// 根据创建时间统计博客数量
+func CountCommentsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]model.CountByDate, error) {
+	var counts []model.CountByDate
+
+	tx := db.Db.Model(&entity.Comment{}).Where("create_time between ? and ?", startTime, endTime).Select("date(create_time) as date, count(*) as count").Group("date").Scan(&counts)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return counts, nil
 }
