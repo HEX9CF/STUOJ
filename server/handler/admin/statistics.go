@@ -3,11 +3,13 @@ package admin
 import (
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/blog"
+	"STUOJ/internal/service/comment"
 	"STUOJ/internal/service/judge"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/record"
 	"STUOJ/internal/service/tag"
 	"STUOJ/internal/service/user"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -41,15 +43,9 @@ func AdminStatisticsUser(c *gin.Context) {
 	}
 
 	// 解析时间
-	layout := "2006-01-02 15:04:05"
-	startTime, err := time.Parse(layout, req.StartTime)
+	startTime, endTime, err := parseTime(req.StartTime, req.EndTime)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("开始时间格式错误", nil))
-		return
-	}
-	endTime, err := time.Parse(layout, req.EndTime)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("结束时间格式错误", nil))
+		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
 	}
 
@@ -79,15 +75,9 @@ func AdminStatisticsRecord(c *gin.Context) {
 	}
 
 	// 解析时间
-	layout := "2006-01-02 15:04:05"
-	startTime, err := time.Parse(layout, req.StartTime)
+	startTime, endTime, err := parseTime(req.StartTime, req.EndTime)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("开始时间格式错误", nil))
-		return
-	}
-	endTime, err := time.Parse(layout, req.EndTime)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("结束时间格式错误", nil))
+		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
 	}
 
@@ -117,15 +107,9 @@ func AdminStatisticsProblem(c *gin.Context) {
 	}
 
 	// 解析时间
-	layout := "2006-01-02 15:04:05"
-	startTime, err := time.Parse(layout, req.StartTime)
+	startTime, endTime, err := parseTime(req.StartTime, req.EndTime)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("开始时间格式错误", nil))
-		return
-	}
-	endTime, err := time.Parse(layout, req.EndTime)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("结束时间格式错误", nil))
+		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
 	}
 
@@ -166,19 +150,13 @@ func AdminStatisticsBlog(c *gin.Context) {
 	}
 
 	// 解析时间
-	layout := "2006-01-02 15:04:05"
-	startTime, err := time.Parse(layout, req.StartTime)
+	startTime, endTime, err := parseTime(req.StartTime, req.EndTime)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("开始时间格式错误", nil))
-		return
-	}
-	endTime, err := time.Parse(layout, req.EndTime)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("结束时间格式错误", nil))
+		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
 		return
 	}
 
-	// 获取题目统计信息
+	// 获取博客统计信息
 	stats, err := blog.GetStatistics(startTime, endTime)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
@@ -186,4 +164,53 @@ func AdminStatisticsBlog(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("OK", stats))
+}
+
+// 获取评论统计信息
+type ReqCommentStatistics struct {
+	StartTime string `json:"start_time"`
+	EndTime   string `json:"end_time"`
+}
+
+func AdminStatisticsComment(c *gin.Context) {
+	var req ReqBlogStatistics
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	// 解析时间
+	startTime, endTime, err := parseTime(req.StartTime, req.EndTime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
+		return
+	}
+
+	// 获取评论统计信息
+	stats, err := comment.GetStatistics(startTime, endTime)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", stats))
+}
+
+// 解析时间
+func parseTime(s string, e string) (time.Time, time.Time, error) {
+	layout := "2006-01-02 15:04:05"
+	startTime, err := time.Parse(layout, s)
+	if err != nil {
+		log.Println(err)
+		return time.Time{}, time.Time{}, errors.New("开始时间格式错误")
+	}
+	endTime, err := time.Parse(layout, e)
+	if err != nil {
+		log.Println(err)
+		return time.Time{}, time.Time{}, errors.New("结束时间格式错误")
+	}
+
+	return startTime, endTime, nil
 }
