@@ -38,6 +38,18 @@ func (s *RecordStatistics) FillZero(startDate time.Time, endDate time.Time) {
 	s.SubmissionCountByDate.FillZero(startDate, endDate)
 }
 
+// 博客统计信息
+type BlogStatistics struct {
+	BlogCount       int64    `json:"blog_count,omitempty"`
+	BlogCountByDate MapCount `json:"blog_count_by_date,omitempty"`
+}
+
+// 评论统计信息
+type CommentStatistics struct {
+	CommentCount       int64    `json:"comment_count,omitempty"`
+	CommentCountByDate MapCount `json:"comment_count_by_date,omitempty"`
+}
+
 // 题目统计信息
 type ProblemStatistics struct {
 	ProblemCount      int64    `json:"problem_count,omitempty"`
