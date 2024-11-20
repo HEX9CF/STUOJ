@@ -61,6 +61,27 @@ func BlogPublicListOfUser(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", bds))
 }
 
+// 当前用户博客草稿箱
+func BlogDraftListOfUser(c *gin.Context) {
+	// 获取用户ID
+	uid, err := utils.GetTokenUid(c)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
+		return
+	}
+
+	// 查询博客草稿箱
+	bds, err := blog.SelectDraftByUserId(uid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", bds))
+}
+
 // 根据题目ID获取公开博客列表
 func BlogPublicListOfProblem(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))

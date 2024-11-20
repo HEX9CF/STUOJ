@@ -113,6 +113,7 @@ func InitBlogRoute() {
 		blogPublicRoute.GET("/", handler.BlogPublicList)
 		blogPublicRoute.GET("/:id", handler.BlogPublicInfo)
 		blogPublicRoute.GET("/user/:id", handler.BlogPublicListOfUser)
+		blogPublicRoute.GET("/draft", handler.BlogDraftListOfUser)
 		blogPublicRoute.GET("/problem/:id", handler.BlogPublicListOfProblem)
 		blogPublicRoute.POST("/title", handler.BlogPublicListOfTitle)
 	}
@@ -195,6 +196,7 @@ func InitAdminRoute() {
 		}
 		{
 			adminPrivateRoute.GET("/blog", admin.AdminBlogList)
+			adminPrivateRoute.GET("/blog/status/:id", admin.AdminBlogListOfStatus)
 			adminPrivateRoute.GET("/blog/:id", admin.AdminBlogInfo)
 			adminPrivateRoute.POST("/blog", admin.AdminBlogAdd)
 			adminPrivateRoute.PUT("/blog", admin.AdminBlogModify)

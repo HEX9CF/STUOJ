@@ -43,6 +43,27 @@ func AdminBlogInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", s))
 }
 
+// 根据状态获取博客列表
+func AdminBlogListOfStatus(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	s := entity.BlogStatus(id)
+
+	bds, err := blog.SelectByStatus(s)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", bds))
+}
+
 // 添加博客
 type ReqBlogAdd struct {
 	UserId    uint64            `json:"user_id,omitempty" binding:"required"`
