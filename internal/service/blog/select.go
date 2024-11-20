@@ -68,6 +68,19 @@ func SelectAll() ([]model.BlogData, error) {
 	return bds, nil
 }
 
+// 根据状态查询博客
+func SelectByStatus(s entity.BlogStatus) ([]model.BlogData, error) {
+	blogs, err := dao.SelectBlogsByStatus(s)
+	if err != nil {
+		log.Println(err)
+		return nil, errors.New("获取博客失败")
+	}
+
+	bds := wrapBlogDatas(blogs)
+
+	return bds, nil
+}
+
 // 查询公开博客
 func SelectPublic() ([]model.BlogData, error) {
 	blogs, err := dao.SelectBlogsByStatus(entity.BlogStatusPublic)
