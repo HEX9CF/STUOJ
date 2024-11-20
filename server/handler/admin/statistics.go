@@ -2,6 +2,7 @@ package admin
 
 import (
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/blog"
 	"STUOJ/internal/service/judge"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/record"
@@ -141,6 +142,44 @@ func AdminStatisticsProblem(c *gin.Context) {
 func AdminStatisticsTag(c *gin.Context) {
 	// 获取题目统计信息
 	stats, err := tag.GetStatistics()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", stats))
+}
+
+// 获取博客统计信息
+type ReqBlogStatistics struct {
+	StartTime string `json:"start_time"`
+	EndTime   string `json:"end_time"`
+}
+
+func AdminStatisticsBlog(c *gin.Context) {
+	var req ReqBlogStatistics
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	// 解析时间
+	layout := "2006-01-02 15:04:05"
+	startTime, err := time.Parse(layout, req.StartTime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("开始时间格式错误", nil))
+		return
+	}
+	endTime, err := time.Parse(layout, req.EndTime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("结束时间格式错误", nil))
+		return
+	}
+
+	// 获取题目统计信息
+	stats, err := blog.GetStatistics(startTime, endTime)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

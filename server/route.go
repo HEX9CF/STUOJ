@@ -211,6 +211,7 @@ func InitAdminRoute() {
 			adminPrivateRoute.POST("/statistics/user", admin.AdminStatisticsUser)
 			adminPrivateRoute.POST("/statistics/problem", admin.AdminStatisticsProblem)
 			adminPrivateRoute.POST("/statistics/record", admin.AdminStatisticsRecord)
+			adminPrivateRoute.POST("/statistics/blog", admin.AdminStatisticsBlog)
 		}
 	}
 
