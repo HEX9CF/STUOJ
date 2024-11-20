@@ -94,7 +94,7 @@ func SelectPublicByUserId(uid uint64) ([]model.BlogData, error) {
 	return bds, nil
 }
 
-// 根据用户ID查询草稿箱
+// 根据用户ID查询博客草稿箱
 func SelectDraftByUserId(uid uint64) ([]model.BlogData, error) {
 	blogs, err := dao.SelectBlogsByUserIdAndStatus(uid, entity.BlogStatusDraft)
 	if err != nil {
