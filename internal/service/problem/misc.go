@@ -39,7 +39,7 @@ func GetStatistics() (model.ProblemStatistics, error) {
 }
 
 // 统计添加题目数量
-func GetStatisticsOfInsert(p model.Period) (model.MapCount, error) {
+func GetStatisticsOfInsertByPeriod(p model.Period) (model.MapCount, error) {
 	var err error
 	var cbds []model.CountByDate
 
@@ -64,7 +64,7 @@ func GetStatisticsOfInsert(p model.Period) (model.MapCount, error) {
 }
 
 // 统计更新题目数量
-func GetStatisticsOfUpdate(p model.Period) (model.MapCount, error) {
+func GetStatisticsOfUpdateByPeriod(p model.Period) (model.MapCount, error) {
 	var err error
 	var cbds []model.CountByDate
 
@@ -89,7 +89,7 @@ func GetStatisticsOfUpdate(p model.Period) (model.MapCount, error) {
 }
 
 // 统计删除题目数量
-func GetStatisticsOfDelete(p model.Period) (model.MapCount, error) {
+func GetStatisticsOfDeleteByPeriod(p model.Period) (model.MapCount, error) {
 	var err error
 	var cbds []model.CountByDate
 

@@ -12,8 +12,6 @@ import (
 // 提交记录统计
 func GetStatistics(p model.Period) (model.RecordStatistics, error) {
 	var err error
-	var cbds []model.CountByDate
-	var cbjss []model.CountByJudgeStatus
 	var stats model.RecordStatistics
 
 	// 检查时间范围
@@ -35,40 +33,81 @@ func GetStatistics(p model.Period) (model.RecordStatistics, error) {
 		return model.RecordStatistics{}, errors.New("统计评测点结果数量失败")
 	}
 
+	return stats, nil
+}
+
+// 按语言统计提交记录数量
+func GetStatisticsOfSubmissionLanguage() (model.MapCount, error) {
+	var err error
+
 	// 按语言统计提交记录数量
 	cbls, err := dao.CountSubmissionsGroupByLanguageId()
 	if err != nil {
 		log.Println(err)
-		return model.RecordStatistics{}, errors.New("统计提交记录失败")
+		return model.MapCount{}, errors.New("统计提交记录失败")
 	}
-	stats.SubmissionCountByLanguage = mapCountFromCountByLanguage(cbls)
+
+	mc := mapCountFromCountByLanguage(cbls)
+
+	return mc, nil
+}
+
+// 按评测状态统计提交记录数量
+func GetStatisticsOfSubmissionStatus() (model.MapCount, error) {
+	var err error
 
 	// 按评测状态统计提交记录数量
-	cbjss, err = dao.CountSubmissionsGroupByStatus()
+	cbjss, err := dao.CountSubmissionsGroupByStatus()
 	if err != nil {
 		log.Println(err)
-		return model.RecordStatistics{}, errors.New("统计提交记录失败")
+		return model.MapCount{}, errors.New("统计提交记录失败")
 	}
-	stats.SubmissionCountByStatus.FromCountByJudgeStatus(cbjss)
+
+	mc := make(model.MapCount)
+	mc.FromCountByJudgeStatus(cbjss)
+
+	return mc, nil
+}
+
+// 按评测状态统计评测结果数量
+func GetStatisticsOfJudgementStatus() (model.MapCount, error) {
+	var err error
 
 	// 按评测状态统计评测结果数量
-	cbjss, err = dao.CountJudgementsGroupByStatus()
+	cbjss, err := dao.CountJudgementsGroupByStatus()
 	if err != nil {
 		log.Println(err)
-		return model.RecordStatistics{}, errors.New("统计评测结果失败")
+		return model.MapCount{}, errors.New("统计评测结果失败")
 	}
-	stats.JudgementCountByStatus.FromCountByJudgeStatus(cbjss)
+
+	mc := make(model.MapCount)
+	mc.FromCountByJudgeStatus(cbjss)
+
+	return mc, nil
+}
+
+// 提交记录统计
+func GetStatisticsOfSubmitByPeriod(p model.Period) (model.MapCount, error) {
+	var err error
+
+	// 检查时间范围
+	err = p.Check()
+	if err != nil {
+		return model.MapCount{}, err
+	}
 
 	// 按日期统计提交记录数量
-	cbds, err = dao.CountSubmissionsBetweenCreateTime(p.StartTime, p.EndTime)
+	cbds, err := dao.CountSubmissionsBetweenCreateTime(p.StartTime, p.EndTime)
 	if err != nil {
 		log.Println(err)
-		return model.RecordStatistics{}, errors.New("统计提交记录失败")
+		return model.MapCount{}, errors.New("统计提交记录失败")
 	}
-	stats.SubmissionCountByDate.FromCountByDate(cbds)
-	utils.MapCountFillZero(&stats.SubmissionCountByDate, p.StartTime, p.EndTime)
 
-	return stats, nil
+	mc := make(model.MapCount)
+	mc.FromCountByDate(cbds)
+	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
+
+	return mc, nil
 }
 
 func mapCountFromCountByLanguage(cbts []model.CountByLanguage) model.MapCount {

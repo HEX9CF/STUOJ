@@ -28,14 +28,8 @@ func AdminStatisticsUser(c *gin.Context) {
 
 // 获取用户角色统计信息
 func AdminStatisticsUserOfRole(c *gin.Context) {
-	p, err := utils.GetPeriod(c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
-		return
-	}
-
 	// 获取用户统计信息
-	stats, err := user.GetStatisticsOfRole(p)
+	stats, err := user.GetStatisticsOfRole()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -53,7 +47,7 @@ func AdminStatisticsUserOfRegister(c *gin.Context) {
 	}
 
 	// 获取用户统计信息
-	stats, err := user.GetStatisticsOfRegister(p)
+	stats, err := user.GetStatisticsOfRegisterByPeriod(p)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -83,7 +77,7 @@ func AdminStatisticsProblemOfInsert(c *gin.Context) {
 	}
 
 	// 获取题目统计信息
-	stats, err := problem.GetStatisticsOfInsert(p)
+	stats, err := problem.GetStatisticsOfInsertByPeriod(p)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -101,7 +95,7 @@ func AdminStatisticsProblemOfUpdate(c *gin.Context) {
 	}
 
 	// 获取题目统计信息
-	stats, err := problem.GetStatisticsOfUpdate(p)
+	stats, err := problem.GetStatisticsOfUpdateByPeriod(p)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -119,7 +113,7 @@ func AdminStatisticsProblemOfDelete(c *gin.Context) {
 	}
 
 	// 获取题目统计信息
-	stats, err := problem.GetStatisticsOfDelete(p)
+	stats, err := problem.GetStatisticsOfDeleteByPeriod(p)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -151,6 +145,7 @@ func AdminStatisticsJudge(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", statistics))
 }
 
+// 获取提交记录提交信息
 func AdminStatisticsRecord(c *gin.Context) {
 	p, err := utils.GetPeriod(c)
 	if err != nil {
@@ -160,6 +155,60 @@ func AdminStatisticsRecord(c *gin.Context) {
 
 	// 获取提交记录统计信息
 	stats, err := record.GetStatistics(p)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", stats))
+}
+
+// 获取提交语言统计信息
+func AdminStatisticsRecordOfLanguage(c *gin.Context) {
+	// 获取提交记录统计信息
+	stats, err := record.GetStatisticsOfSubmissionLanguage()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", stats))
+}
+
+// 获取提交状态统计信息
+func AdminStatisticsSubmissionOfStatus(c *gin.Context) {
+	// 获取提交记录统计信息
+	stats, err := record.GetStatisticsOfSubmissionStatus()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", stats))
+}
+
+// 获取评测状态统计信息
+func AdminStatisticsJudgementOfStatus(c *gin.Context) {
+	// 获取提交记录统计信息
+	stats, err := record.GetStatisticsOfJudgementStatus()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", stats))
+}
+
+// 获取提交记录提交信息
+func AdminStatisticsRecordOfSubmit(c *gin.Context) {
+	p, err := utils.GetPeriod(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
+		return
+	}
+
+	// 获取提交记录统计信息
+	stats, err := record.GetStatisticsOfSubmitByPeriod(p)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

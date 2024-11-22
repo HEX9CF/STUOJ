@@ -24,14 +24,8 @@ func GetStatistics() (model.UserStatistics, error) {
 }
 
 // 统计用户
-func GetStatisticsOfRole(p model.Period) (model.MapCount, error) {
+func GetStatisticsOfRole() (model.MapCount, error) {
 	var err error
-
-	// 检查时间范围
-	err = p.Check()
-	if err != nil {
-		return model.MapCount{}, err
-	}
 
 	// 统计用户角色
 	cbrs, err := dao.CountUsersGroupByRole()
@@ -47,7 +41,7 @@ func GetStatisticsOfRole(p model.Period) (model.MapCount, error) {
 }
 
 // 统计用户
-func GetStatisticsOfRegister(p model.Period) (model.MapCount, error) {
+func GetStatisticsOfRegisterByPeriod(p model.Period) (model.MapCount, error) {
 	var err error
 
 	// 检查时间范围

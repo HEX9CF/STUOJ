@@ -14,12 +14,8 @@ type UserStatistics struct {
 
 // 提交记录统计信息
 type RecordStatistics struct {
-	SubmissionCount           int64    `json:"submission_count,omitempty"`
-	JudgementCount            int64    `json:"judgement_count,omitempty"`
-	SubmissionCountByLanguage MapCount `json:"submission_count_by_language,omitempty"`
-	SubmissionCountByStatus   MapCount `json:"submission_count_by_status,omitempty"`
-	JudgementCountByStatus    MapCount `json:"judgement_count_by_status,omitempty"`
-	SubmissionCountByDate     MapCount `json:"submission_count_by_date,omitempty"`
+	SubmissionCount int64 `json:"submission_count,omitempty"`
+	JudgementCount  int64 `json:"judgement_count,omitempty"`
 }
 
 // 博客统计信息
