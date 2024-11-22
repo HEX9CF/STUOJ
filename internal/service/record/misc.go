@@ -4,20 +4,20 @@ import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"STUOJ/utils"
 	"errors"
 	"log"
-	"time"
 )
 
 // 提交记录统计
-func GetStatistics(startTime time.Time, endTime time.Time) (model.RecordStatistics, error) {
+func GetStatistics(p model.Period) (model.RecordStatistics, error) {
 	var err error
 	var cbds []model.CountByDate
 	var cbjss []model.CountByJudgeStatus
 	var stats model.RecordStatistics
 
 	// 检查时间范围
-	if startTime.After(endTime) {
+	if p.StartTime.After(p.EndTime) {
 		return model.RecordStatistics{}, errors.New("开始时间不能晚于结束时间")
 	}
 
@@ -60,13 +60,13 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.RecordStatisti
 	stats.JudgementCountByStatus.FromCountByJudgeStatus(cbjss)
 
 	// 按日期统计提交记录数量
-	cbds, err = dao.CountSubmissionsBetweenCreateTime(startTime, endTime)
+	cbds, err = dao.CountSubmissionsBetweenCreateTime(p.StartTime, p.EndTime)
 	if err != nil {
 		log.Println(err)
 		return model.RecordStatistics{}, errors.New("统计提交记录失败")
 	}
 	stats.SubmissionCountByDate.FromCountByDate(cbds)
-	stats.FillZero(startTime, endTime)
+	utils.MapCountFillZero(&stats.SubmissionCountByDate, p.StartTime, p.EndTime)
 
 	return stats, nil
 }

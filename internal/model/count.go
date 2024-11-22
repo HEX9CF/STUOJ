@@ -2,7 +2,6 @@ package model
 
 import (
 	"STUOJ/internal/entity"
-	"STUOJ/utils"
 	"time"
 )
 
@@ -47,16 +46,6 @@ func (m *MapCount) FromCountByJudgeStatus(cbjss []CountByJudgeStatus) {
 	*m = make(MapCount)
 	for _, v := range cbjss {
 		(*m)[v.Status.String()] = v.Count
-	}
-}
-
-func (m *MapCount) FillZero(startDate time.Time, endDate time.Time) {
-	dateList := utils.GenerateDateList(startDate, endDate)
-	// 填充没有结果的日期
-	for _, date := range dateList {
-		if _, ok := (*m)[date]; !ok {
-			(*m)[date] = 0
-		}
 	}
 }
 

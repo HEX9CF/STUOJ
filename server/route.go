@@ -210,11 +210,11 @@ func InitAdminRoute() {
 		{
 			adminPrivateRoute.GET("/statistics/tag", admin.AdminStatisticsTag)
 			adminPrivateRoute.GET("/statistics/judge", admin.AdminStatisticsJudge)
-			adminPrivateRoute.POST("/statistics/user", admin.AdminStatisticsUser)
-			adminPrivateRoute.POST("/statistics/problem", admin.AdminStatisticsProblem)
-			adminPrivateRoute.POST("/statistics/record", admin.AdminStatisticsRecord)
-			adminPrivateRoute.POST("/statistics/blog", admin.AdminStatisticsBlog)
-			adminPrivateRoute.POST("/statistics/comment", admin.AdminStatisticsComment)
+			adminPrivateRoute.GET("/statistics/user", admin.AdminStatisticsUser)
+			adminPrivateRoute.GET("/statistics/problem", admin.AdminStatisticsProblem)
+			adminPrivateRoute.GET("/statistics/record", admin.AdminStatisticsRecord)
+			adminPrivateRoute.GET("/statistics/blog", admin.AdminStatisticsBlog)
+			adminPrivateRoute.GET("/statistics/comment", admin.AdminStatisticsComment)
 		}
 	}
 

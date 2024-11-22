@@ -3,20 +3,21 @@ package blog
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
+	"STUOJ/utils"
 	"errors"
 	"log"
-	"time"
 )
 
 // 提交记录统计
-func GetStatistics(startTime time.Time, endTime time.Time) (model.BlogStatistics, error) {
+func GetStatistics(p model.Period) (model.BlogStatistics, error) {
 	var err error
 	var cbds []model.CountByDate
 	var stats model.BlogStatistics
 
 	// 检查时间范围
-	if startTime.After(endTime) {
-		return model.BlogStatistics{}, errors.New("开始时间不能晚于结束时间")
+	err = p.Check()
+	if err != nil {
+		return model.BlogStatistics{}, err
 	}
 
 	// 统计博客数量
@@ -27,13 +28,13 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.BlogStatistics
 	}
 
 	// 统计博客数量
-	cbds, err = dao.CountBlogsBetweenCreateTime(startTime, endTime)
+	cbds, err = dao.CountBlogsBetweenCreateTime(p.StartTime, p.EndTime)
 	if err != nil {
 		log.Println(err)
 		return model.BlogStatistics{}, errors.New("统计博客数量失败")
 	}
 	stats.BlogCountByDate.FromCountByDate(cbds)
-	stats.BlogCountByDate.FillZero(startTime, endTime)
+	utils.MapCountFillZero(&stats.BlogCountByDate, p.StartTime, p.EndTime)
 
 	return stats, nil
 }
