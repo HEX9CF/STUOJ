@@ -9,9 +9,7 @@ type Judge0Statistics struct {
 
 // 用户统计信息
 type UserStatistics struct {
-	UserCount           int64    `json:"user_count,omitempty"`
-	UserCountByRole     MapCount `json:"user_count_by_role,omitempty"`
-	RegisterCountByDate MapCount `json:"register_count_by_date,omitempty"`
+	UserCount int64 `json:"user_count,omitempty"`
 }
 
 // 提交记录统计信息

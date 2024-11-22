@@ -211,6 +211,8 @@ func InitAdminRoute() {
 			adminPrivateRoute.GET("/statistics/tag", admin.AdminStatisticsTag)
 			adminPrivateRoute.GET("/statistics/judge", admin.AdminStatisticsJudge)
 			adminPrivateRoute.GET("/statistics/user", admin.AdminStatisticsUser)
+			adminPrivateRoute.GET("/statistics/user/role", admin.AdminStatisticsUserOfRole)
+			adminPrivateRoute.GET("/statistics/user/register", admin.AdminStatisticsUserOfRegister)
 			adminPrivateRoute.GET("/statistics/problem", admin.AdminStatisticsProblem)
 			adminPrivateRoute.GET("/statistics/record", admin.AdminStatisticsRecord)
 			adminPrivateRoute.GET("/statistics/blog", admin.AdminStatisticsBlog)
