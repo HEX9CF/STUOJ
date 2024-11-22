@@ -1,4 +1,4 @@
-package route
+package routes
 
 import (
 	handler_admin "STUOJ/server/handler-admin"
