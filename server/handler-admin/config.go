@@ -1,4 +1,4 @@
-package admin
+package handler_admin
 
 import (
 	"STUOJ/external/judge0"

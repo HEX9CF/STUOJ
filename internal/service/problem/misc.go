@@ -7,19 +7,12 @@ import (
 	"STUOJ/utils"
 	"errors"
 	"log"
-	"time"
 )
 
-// 提交记录统计
-func GetStatistics(p model.Period) (model.ProblemStatistics, error) {
+// 统计题目
+func GetStatistics() (model.ProblemStatistics, error) {
 	var err error
-	var cbds []model.CountByDate
 	var stats model.ProblemStatistics
-
-	// 检查时间范围
-	if p.StartTime.After(p.EndTime) {
-		return model.ProblemStatistics{}, errors.New("开始时间不能晚于结束时间")
-	}
 
 	// 统计题目数量
 	stats.ProblemCount, err = dao.CountProblems()
@@ -42,36 +35,80 @@ func GetStatistics(p model.Period) (model.ProblemStatistics, error) {
 		return model.ProblemStatistics{}, errors.New("统计题解数量失败")
 	}
 
+	return stats, nil
+}
+
+// 统计添加题目数量
+func GetStatisticsOfInsert(p model.Period) (model.MapCount, error) {
+	var err error
+	var cbds []model.CountByDate
+
+	// 检查时间范围
+	err = p.Check()
+	if err != nil {
+		return model.MapCount{}, err
+	}
+
 	// 统计添加题目数量
 	cbds, err = dao.CountHistoriesBetweenCreateTimeByOperation(p.StartTime, p.EndTime, entity.OperationInsert)
 	if err != nil {
 		log.Println(err)
-		return model.ProblemStatistics{}, errors.New("统计添加题目数量失败")
+		return model.MapCount{}, errors.New("统计添加题目数量失败")
 	}
-	stats.InsertCountByDate.FromCountByDate(cbds)
 
-	// 统计修改题目数量
+	mc := make(model.MapCount)
+	mc.FromCountByDate(cbds)
+	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
+
+	return mc, nil
+}
+
+// 统计更新题目数量
+func GetStatisticsOfUpdate(p model.Period) (model.MapCount, error) {
+	var err error
+	var cbds []model.CountByDate
+
+	// 检查时间范围
+	err = p.Check()
+	if err != nil {
+		return model.MapCount{}, err
+	}
+
+	// 统计更新题目数量
 	cbds, err = dao.CountHistoriesBetweenCreateTimeByOperation(p.StartTime, p.EndTime, entity.OperationUpdate)
 	if err != nil {
 		log.Println(err)
-		return model.ProblemStatistics{}, errors.New("统计修改题目数量失败")
+		return model.MapCount{}, errors.New("统计更新题目数量失败")
 	}
-	stats.UpdateCountByDate.FromCountByDate(cbds)
+
+	mc := make(model.MapCount)
+	mc.FromCountByDate(cbds)
+	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
+
+	return mc, nil
+}
+
+// 统计删除题目数量
+func GetStatisticsOfDelete(p model.Period) (model.MapCount, error) {
+	var err error
+	var cbds []model.CountByDate
+
+	// 检查时间范围
+	err = p.Check()
+	if err != nil {
+		return model.MapCount{}, err
+	}
 
 	// 统计删除题目数量
 	cbds, err = dao.CountHistoriesBetweenCreateTimeByOperation(p.StartTime, p.EndTime, entity.OperationDelete)
 	if err != nil {
 		log.Println(err)
-		return model.ProblemStatistics{}, errors.New("统计删除题目数量失败")
+		return model.MapCount{}, errors.New("统计删除题目数量失败")
 	}
-	stats.DeleteCountByDate.FromCountByDate(cbds)
-	fillZero(&stats, p.StartTime, p.EndTime)
 
-	return stats, nil
-}
+	mc := make(model.MapCount)
+	mc.FromCountByDate(cbds)
+	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
 
-func fillZero(p *model.ProblemStatistics, startDate time.Time, endDate time.Time) {
-	utils.MapCountFillZero(&p.InsertCountByDate, startDate, endDate)
-	utils.MapCountFillZero(&p.UpdateCountByDate, startDate, endDate)
-	utils.MapCountFillZero(&p.DeleteCountByDate, startDate, endDate)
+	return mc, nil
 }

@@ -36,12 +36,9 @@ type CommentStatistics struct {
 
 // 题目统计信息
 type ProblemStatistics struct {
-	ProblemCount      int64    `json:"problem_count,omitempty"`
-	TestcaseCount     int64    `json:"testcase_count,omitempty"`
-	SolutionCount     int64    `json:"solution_count,omitempty"`
-	InsertCountByDate MapCount `json:"insert_count_by_date,omitempty"`
-	UpdateCountByDate MapCount `json:"update_count_by_date,omitempty"`
-	DeleteCountByDate MapCount `json:"delete_count_by_date,omitempty"`
+	ProblemCount  int64 `json:"problem_count,omitempty"`
+	TestcaseCount int64 `json:"testcase_count,omitempty"`
+	SolutionCount int64 `json:"solution_count,omitempty"`
 }
 
 // 标签统计信息
