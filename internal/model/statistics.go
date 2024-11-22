@@ -21,12 +21,12 @@ type RecordStatistics struct {
 // 博客统计信息
 type BlogStatistics struct {
 	BlogCount       int64    `json:"blog_count,omitempty"`
+	CommentCount    int64    `json:"comment_count,omitempty"`
 	BlogCountByDate MapCount `json:"blog_count_by_date,omitempty"`
 }
 
 // 评论统计信息
 type CommentStatistics struct {
-	CommentCount       int64    `json:"comment_count,omitempty"`
 	CommentCountByDate MapCount `json:"comment_count_by_date,omitempty"`
 }
 

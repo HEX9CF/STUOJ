@@ -89,8 +89,8 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.GET("/statistics/judgement/status", handler_admin.AdminStatisticsJudgementOfStatus)
 
 			adminPrivateRoute.GET("/statistics/blog", handler_admin.AdminStatisticsBlog)
-
-			adminPrivateRoute.GET("/statistics/comment", handler_admin.AdminStatisticsComment)
+			adminPrivateRoute.GET("/statistics/blog/submit", handler_admin.AdminStatisticsBlogOfSubmit)
+			adminPrivateRoute.GET("/statistics/comment/submit", handler_admin.AdminStatisticsCommentOfSubmit)
 		}
 	}
 

@@ -217,15 +217,10 @@ func AdminStatisticsRecordOfSubmit(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", stats))
 }
 
+// 获取博客统计信息
 func AdminStatisticsBlog(c *gin.Context) {
-	p, err := utils.GetPeriod(c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
-		return
-	}
-
 	// 获取博客统计信息
-	stats, err := blog.GetStatistics(p)
+	stats, err := blog.GetStatistics()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -234,7 +229,26 @@ func AdminStatisticsBlog(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", stats))
 }
 
-func AdminStatisticsComment(c *gin.Context) {
+// 获取博客提交统计信息
+func AdminStatisticsBlogOfSubmit(c *gin.Context) {
+	p, err := utils.GetPeriod(c)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
+		return
+	}
+
+	// 获取博客统计信息
+	stats, err := blog.GetStatisticsOfSubmitByPeriod(p)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", stats))
+}
+
+// 获取评论提交统计信息
+func AdminStatisticsCommentOfSubmit(c *gin.Context) {
 	p, err := utils.GetPeriod(c)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
@@ -242,7 +256,7 @@ func AdminStatisticsComment(c *gin.Context) {
 	}
 
 	// 获取评论统计信息
-	stats, err := comment.GetStatistics(p)
+	stats, err := comment.GetStatisticsOfSubmitByPeriod(p)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

@@ -8,32 +8,26 @@ import (
 	"log"
 )
 
-// 提交记录统计
-func GetStatistics(p model.Period) (model.CommentStatistics, error) {
+// 统计添加博客数量
+func GetStatisticsOfSubmitByPeriod(p model.Period) (model.MapCount, error) {
 	var err error
-	var cbds []model.CountByDate
-	var stats model.CommentStatistics
 
 	// 检查时间范围
-	if p.StartTime.After(p.EndTime) {
-		return model.CommentStatistics{}, errors.New("开始时间不能晚于结束时间")
+	err = p.Check()
+	if err != nil {
+		return model.MapCount{}, err
 	}
 
-	// 统计评论数量
-	stats.CommentCount, err = dao.CountBlogs()
+	// 统计博客数量
+	cbds, err := dao.CountBlogsBetweenCreateTime(p.StartTime, p.EndTime)
 	if err != nil {
 		log.Println(err)
-		return model.CommentStatistics{}, errors.New("统计评论数量失败")
+		return model.MapCount{}, errors.New("统计博客数量失败")
 	}
 
-	// 统计评论数量
-	cbds, err = dao.CountCommentsBetweenCreateTime(p.StartTime, p.EndTime)
-	if err != nil {
-		log.Println(err)
-		return model.CommentStatistics{}, errors.New("统计评论数量失败")
-	}
-	stats.CommentCountByDate.FromCountByDate(cbds)
-	utils.MapCountFillZero(&stats.CommentCountByDate, p.StartTime, p.EndTime)
+	mc := make(model.MapCount)
+	mc.FromCountByDate(cbds)
+	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
 
-	return stats, nil
+	return mc, nil
 }
