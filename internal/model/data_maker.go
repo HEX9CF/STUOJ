@@ -1,4 +1,4 @@
-package utils
+package model
 
 import "fmt"
 
@@ -36,43 +36,43 @@ func GetValueType(s string) ValueType {
 	}
 }
 
-type CommonTestcaseInput struct {
-	Rows []CommonTestcaseRow
+type DataMakerInput struct {
+	Rows []DataMakerRow
 }
 
-type CommonTestcaseRow struct {
-	Values []CommonTestcaseValue
+type DataMakerRow struct {
+	Values []DataMakerValue
 }
 
-type CommonTestcaseValue struct {
+type DataMakerValue struct {
 	Type  ValueType
 	Value float64
 }
 
-func (c *CommonTestcaseInput) AppendRow(row CommonTestcaseRow) {
+func (c *DataMakerInput) AppendRow(row DataMakerRow) {
 	c.Rows = append(c.Rows, row)
 }
-func (c *CommonTestcaseInput) Size() uint64 {
+func (c *DataMakerInput) Size() uint64 {
 	return uint64(len(c.Rows))
 }
 
-func (c *CommonTestcaseInput) GetRow(index uint64) CommonTestcaseRow {
+func (c *DataMakerInput) GetRow(index uint64) DataMakerRow {
 	return c.Rows[index]
 }
 
-func (c *CommonTestcaseRow) AppendValue(value CommonTestcaseValue) {
+func (c *DataMakerRow) AppendValue(value DataMakerValue) {
 	c.Values = append(c.Values, value)
 }
 
-func (c *CommonTestcaseRow) Size() uint64 {
+func (c *DataMakerRow) Size() uint64 {
 	return uint64(len(c.Values))
 }
 
-func (c *CommonTestcaseRow) GetValue(index uint64) CommonTestcaseValue {
+func (c *DataMakerRow) GetValue(index uint64) DataMakerValue {
 	return c.Values[index]
 }
 
-func (c *CommonTestcaseInput) String() string {
+func (c *DataMakerInput) String() string {
 	var s string
 	for _, row := range c.Rows {
 		for _, value := range row.Values {

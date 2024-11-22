@@ -3,21 +3,15 @@ package blog
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
+	"STUOJ/utils"
 	"errors"
 	"log"
-	"time"
 )
 
-// 提交记录统计
-func GetStatistics(startTime time.Time, endTime time.Time) (model.BlogStatistics, error) {
+// 统计博客数量
+func GetStatistics() (model.BlogStatistics, error) {
 	var err error
-	var cbds []model.CountByDate
 	var stats model.BlogStatistics
-
-	// 检查时间范围
-	if startTime.After(endTime) {
-		return model.BlogStatistics{}, errors.New("开始时间不能晚于结束时间")
-	}
 
 	// 统计博客数量
 	stats.BlogCount, err = dao.CountBlogs()
@@ -26,14 +20,36 @@ func GetStatistics(startTime time.Time, endTime time.Time) (model.BlogStatistics
 		return model.BlogStatistics{}, errors.New("统计博客数量失败")
 	}
 
-	// 统计博客数量
-	cbds, err = dao.CountBlogsBetweenCreateTime(startTime, endTime)
+	// 统计评论数量
+	stats.CommentCount, err = dao.CountBlogs()
 	if err != nil {
 		log.Println(err)
-		return model.BlogStatistics{}, errors.New("统计博客数量失败")
+		return model.BlogStatistics{}, errors.New("统计评论数量失败")
 	}
-	stats.BlogCountByDate.FromCountByDate(cbds)
-	stats.BlogCountByDate.FillZero(startTime, endTime)
 
 	return stats, nil
+}
+
+// 统计发表博客数量
+func GetStatisticsOfSubmitByPeriod(p model.Period) (model.MapCount, error) {
+	var err error
+
+	// 检查时间范围
+	err = p.Check()
+	if err != nil {
+		return model.MapCount{}, err
+	}
+
+	// 统计评论数量
+	cbds, err := dao.CountCommentsBetweenCreateTime(p.StartTime, p.EndTime)
+	if err != nil {
+		log.Println(err)
+		return model.MapCount{}, errors.New("统计评论数量失败")
+	}
+
+	mc := make(model.MapCount)
+	mc.FromCountByDate(cbds)
+	utils.MapCountFillZero(&mc, p.StartTime, p.EndTime)
+
+	return mc, nil
 }

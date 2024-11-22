@@ -37,12 +37,3 @@ func IsFileExists(filePath string) (bool, error) {
 	}
 	return true, nil // 文件存在，返回true和nil的error
 }
-
-func GenerateDateList(startDate time.Time, endDate time.Time) []string {
-	var dateList []string
-	for startDate.Before(endDate.AddDate(0, 0, 1)) {
-		dateList = append(dateList, startDate.Format("2006-01-02"))
-		startDate = startDate.AddDate(0, 0, 1)
-	}
-	return dateList
-}
