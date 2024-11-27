@@ -100,6 +100,9 @@ STUOJ 是汕头大学疾风算法协会的 ACM-ICPC 在线代码评测系统，�
 #### 提交记录
 ![image](https://github.com/user-attachments/assets/4538e435-d39c-4851-90a3-57317acd2be7)
 
+#### 博客
+![image](https://github.com/user-attachments/assets/a48cf23f-ba6b-42fa-99be-3d32abde7a9f)
+
 ### 活动图
 
 #### 提交代码
