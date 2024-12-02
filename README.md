@@ -26,9 +26,7 @@ STUOJ 是汕头大学疾风算法协会的 ACM-ICPC 在线代码评测系统，�
 
 ## 系统功能
 
-![](https://github.com/user-attachments/assets/29b370aa-5a02-4e4d-ab37-3949c5dce19e)
-
-### 功能简述
+![STUOJ](https://github.com/user-attachments/assets/68c7f6d9-7b07-4c26-a416-ff163f751f48)
 
 ### 用户相关
 
@@ -122,10 +120,10 @@ STUOJ 是汕头大学疾风算法协会的 ACM-ICPC 在线代码评测系统，�
 | 添加标签                | POST   | /admin/tag                    | 管理员   | 管理员可以添加标签。                                     |
 | 修改标签                | PUT    | /admin/tag                    | 管理员   | 管理员可以修改标签。                                     |
 | 删除标签                | DELETE | /admin/tag/:id                | 管理员   | 管理员可以删除标签。                                     |
-| 获取解答详情              | GET    | /admin/solution/:id           | 管理员   | 管理员可以获取解答的详细信息。                               |
-| 添加解答                | POST   | /admin/solution               | 管理员   | 管理员可以添加解答。                                     |
-| 修改解答                | PUT    | /admin/solution               | 管理员   | 管理员可以修改解答。                                     |
-| 删除解答                | DELETE | /admin/solution/:id           | 管理员   | 管理员可以删除解答。                                     |
+| 获取题解              | GET    | /admin/solution/:id           | 管理员   | 管理员可以获取解答的详细信息。                               |
+| 添加题解                | POST   | /admin/solution               | 管理员   | 管理员可以添加解答。                                     |
+| 修改题解                | PUT    | /admin/solution               | 管理员   | 管理员可以修改解答。                                     |
+| 删除题解                | DELETE | /admin/solution/:id           | 管理员   | 管理员可以删除解答。                                     |
 | 获取提交记录列表            | GET    | /admin/record                 | 管理员   | 管理员可以获取提交记录列表。                                 |
 | 获取提交记录详情            | GET    | /admin/record/:id             | 管理员   | 管理员可以获取提交记录的详细信息。                             |
 | 删除提交记录              | DELETE | /admin/record/:id             | 管理员   | 管理员可以删除提交记录。                                   |
