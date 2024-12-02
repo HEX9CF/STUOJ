@@ -47,7 +47,6 @@ func SelectSolutionsByProblemId(pid uint64) ([]entity.Solution, error) {
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-
 	return solutions, nil
 }
 

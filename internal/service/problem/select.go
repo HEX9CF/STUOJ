@@ -34,11 +34,6 @@ func SelectById(id uint64) (model.ProblemData, error) {
 		return model.ProblemData{}, errors.New("获取题解数据失败")
 	}
 
-	// 不返回源代码
-	for i := range solutions {
-		solutions[i].SourceCode = ""
-	}
-
 	// 封装题目数据
 	pd := model.ProblemData{
 		Problem:   p,

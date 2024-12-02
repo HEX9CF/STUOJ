@@ -23,8 +23,6 @@ func SelectAll() ([]entity.Solution, error) {
 		return nil, err
 	}
 
-	hideSourceCode(solutions)
-
 	return solutions, nil
 }
 
@@ -34,8 +32,6 @@ func SelectByProblemId(pid uint64) ([]entity.Solution, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	hideSourceCode(solutions)
 
 	return solutions, nil
 }
