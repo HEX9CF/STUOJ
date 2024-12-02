@@ -1,8 +1,9 @@
 package entity
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 // 角色：0 封禁，1 普通用户，2 管理员，3 超级管理员
@@ -35,7 +36,7 @@ type User struct {
 	Id         uint64    `gorm:"primaryKey;autoIncrement;comment:用户ID" json:"id,omitempty"`
 	Username   string    `gorm:"type:varchar(255);not null;unique;comment:用户名" json:"username,omitempty"`
 	Password   string    `gorm:"type:varchar(255);not null;default:'123456';comment:密码" json:"password,omitempty"`
-	Role       Role      `gorm:"not null;default:1;comment:角色" json:"role,omitempty"`
+	Role       Role      `gorm:"not null;default:1;comment:角色" json:"role"`
 	Email      string    `gorm:"type:varchar(255);not null;unique;comment:邮箱" json:"email,omitempty"`
 	Avatar     string    `gorm:"type:text;not null;comment:头像URL" json:"avatar,omitempty"`
 	Signature  string    `gorm:"type:text;not null;comment:个性签名" json:"signature,omitempty"`
