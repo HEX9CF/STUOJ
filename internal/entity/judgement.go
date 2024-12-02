@@ -69,7 +69,7 @@ type Judgement struct {
 	Stderr        string      `gorm:"type:longtext;not null;comment:标准错误输出" json:"stderr,omitempty"`
 	CompileOutput string      `gorm:"type:longtext;not null;comment:编译输出" json:"compile_output,omitempty"`
 	Message       string      `gorm:"type:longtext;not null;comment:信息" json:"message,omitempty"`
-	Status        JudgeStatus `gorm:"not null;default:0;comment:状态" json:"status,omitempty"`
+	Status        JudgeStatus `gorm:"not null;default:0;comment:状态" json:"status"`
 }
 
 func (Judgement) TableName() string {

@@ -77,7 +77,7 @@ type Problem struct {
 	SampleInput  string        `gorm:"type:longtext;not null;comment:输入样例" json:"sample_input,omitempty"`
 	SampleOutput string        `gorm:"type:longtext;not null;comment:输出样例" json:"sample_output,omitempty"`
 	Hint         string        `gorm:"type:longtext;not null;comment:提示" json:"hint,omitempty"`
-	Status       ProblemStatus `gorm:"not null;default:1;comment:状态" json:"status,omitempty"`
+	Status       ProblemStatus `gorm:"not null;default:1;comment:状态" json:"status"`
 	ProblemTag   []*Tag        `gorm:"many2many:tbl_problem_tag;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;association_jointable_foreignkey:tag_id;jointable_foreignkey:problem_id" json:"problem_tag,omitempty"`
 	CreateTime   time.Time     `gorm:"not null;default:CURRENT_TIMESTAMP;comment:创建时间" json:"create_time,omitempty"`
 	UpdateTime   time.Time     `gorm:"not null;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;comment:更新时间" json:"update_time,omitempty"`

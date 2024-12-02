@@ -9,7 +9,7 @@ type Submission struct {
 	Id         uint64      `gorm:"primaryKey;autoIncrement;comment:提交记录ID" json:"id,omitempty"`
 	UserId     uint64      `gorm:"not null;default:0;comment:用户ID" json:"user_id,omitempty"`
 	ProblemId  uint64      `gorm:"not null;default:0;comment:题目ID" json:"problem_id,omitempty"`
-	Status     JudgeStatus `gorm:"not null;default:0;comment:状态" json:"status,omitempty"`
+	Status     JudgeStatus `gorm:"not null;default:0;comment:状态" json:"status"`
 	Score      uint64      `gorm:"not null;default:0;comment:分数" json:"score,omitempty"`
 	LanguageId uint64      `gorm:"not null;default:0;comment:语言ID" json:"language_id,omitempty"`
 	Length     uint64      `gorm:"not null;default:0;comment:源代码长度" json:"length,omitempty"`

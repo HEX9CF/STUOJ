@@ -34,7 +34,7 @@ type Blog struct {
 	ProblemId  uint64     `gorm:"not null;default:0;comment:'关联题目ID：0 不关联'" json:"problem_id,omitempty"`
 	Title      string     `gorm:"type:text;not null;comment:'标题'" json:"title,omitempty"`
 	Content    string     `gorm:"type:longtext;not null;comment:'内容'" json:"content,omitempty"`
-	Status     BlogStatus `gorm:"not null;default:1;comment:'状态：0 被屏蔽，1 公开，2 草稿'" json:"status,omitempty"`
+	Status     BlogStatus `gorm:"not null;default:1;comment:'状态：0 被屏蔽，1 公开，2 草稿'" json:"status"`
 	CreateTime time.Time  `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP;comment:'创建时间'" json:"create_time,omitempty"`
 	UpdateTime time.Time  `gorm:"type:timestamp;not null;default:CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP;comment:'更新时间'" json:"update_time,omitempty"`
 }
