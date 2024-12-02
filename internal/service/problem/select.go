@@ -39,19 +39,12 @@ func SelectById(id uint64) (model.ProblemData, error) {
 		solutions[i].SourceCode = ""
 	}
 
-	// 获取题目历史记录
-	histories, err := dao.SelectHistoriesByProblemId(id)
-	if err != nil {
-		return model.ProblemData{}, errors.New("获取题目历史记录失败")
-	}
-
 	// 封装题目数据
 	pd := model.ProblemData{
 		Problem:   p,
 		Tags:      tags,
 		Testcases: testcases,
 		Solutions: solutions,
-		Histories: histories,
 	}
 
 	return pd, nil

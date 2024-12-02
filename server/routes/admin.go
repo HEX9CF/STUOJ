@@ -30,7 +30,7 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.POST("/problem/tag", handler_admin.AdminProblemAddTag)
 			adminPrivateRoute.DELETE("/problem/tag", handler_admin.AdminProblemRemoveTag)
 			adminPrivateRoute.POST("/problem/fps", handler_admin.AdminProblemParseFromFps)
-
+			adminPrivateRoute.GET("/history/problem/:id", handler_admin.AdminHistoryListOfProblem)
 		}
 		{
 			adminPrivateRoute.GET("/testcase/:id", handler_admin.AdminTestcaseInfo)

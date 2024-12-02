@@ -3,6 +3,7 @@ package handler_admin
 import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
+	"STUOJ/internal/service/history"
 	"STUOJ/internal/service/problem"
 	"STUOJ/utils"
 	"STUOJ/utils/fps"
@@ -28,7 +29,6 @@ func AdminProblemInfo(c *gin.Context) {
 	pid := uint64(id)
 	pds, err := problem.SelectById(pid)
 	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
@@ -40,7 +40,6 @@ func AdminProblemInfo(c *gin.Context) {
 func AdminProblemList(c *gin.Context) {
 	pds, err := problem.SelectAll()
 	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
@@ -61,7 +60,6 @@ func AdminProblemListOfStatus(c *gin.Context) {
 
 	pds, err := problem.SelectByStatus(s)
 	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
@@ -121,7 +119,6 @@ func AdminProblemAdd(c *gin.Context) {
 	}
 	p.Id, err = problem.Insert(p, uid)
 	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
@@ -212,7 +209,6 @@ func AdminProblemRemove(c *gin.Context) {
 	pid := uint64(id)
 	err = problem.DeleteByProblemId(pid, uid)
 	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
@@ -240,7 +236,6 @@ func AdminProblemAddTag(c *gin.Context) {
 	// 添加标签
 	err = problem.InsertTag(req.ProblemId, req.TagId)
 	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
@@ -269,7 +264,6 @@ func AdminProblemRemoveTag(c *gin.Context) {
 	// 删除标签
 	err = problem.DeleteTag(req.ProblemId, req.TagId)
 	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
@@ -306,4 +300,23 @@ func AdminProblemParseFromFps(c *gin.Context) {
 	p := fps.Parse(f)
 
 	c.JSON(http.StatusOK, model.RespOk("文件解析成功", p))
+}
+
+// 获取题目历史记录
+func AdminHistoryListOfProblem(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	pid := uint64(id)
+	histories, err := history.SelectHistoriesByProblemId(pid)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", histories))
 }
