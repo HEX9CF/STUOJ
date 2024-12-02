@@ -8,5 +8,4 @@ type ProblemData struct {
 	Tags      []entity.Tag      `json:"tags,omitempty"`
 	Testcases []entity.Testcase `json:"testcases,omitempty"`
 	Solutions []entity.Solution `json:"solutions,omitempty"`
-	Histories []entity.History  `json:"histories,omitempty"`
 }

@@ -7,18 +7,6 @@ import (
 	"time"
 )
 
-// 查询所有博客
-func SelectAll() ([]entity.Comment, error) {
-	var comments []entity.Comment
-
-	tx := db.Db.Find(&comments)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return comments, nil
-}
-
 // 根据ID查询评论
 func SelectCommentById(id uint64) (entity.Comment, error) {
 	var c entity.Comment

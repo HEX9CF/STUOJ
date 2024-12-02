@@ -10,6 +10,18 @@ import (
 	"strconv"
 )
 
+// 获取评论列表
+func AdminCommentList(c *gin.Context) {
+	comments, err := comment.SelectAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	// 返回结果
+	c.JSON(http.StatusOK, model.RespOk("OK", comments))
+}
+
 // 添加评论
 type ReqCommentAdd struct {
 	UserId  uint64               `json:"user_id,omitempty" binding:"required"`

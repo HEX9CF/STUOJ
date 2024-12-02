@@ -40,11 +40,11 @@ func GetStatisticsOfSubmitByPeriod(p model.Period) (model.MapCount, error) {
 		return model.MapCount{}, err
 	}
 
-	// 统计评论数量
-	cbds, err := dao.CountCommentsBetweenCreateTime(p.StartTime, p.EndTime)
+	// 统计博客数量
+	cbds, err := dao.CountBlogsBetweenCreateTime(p.StartTime, p.EndTime)
 	if err != nil {
 		log.Println(err)
-		return model.MapCount{}, errors.New("统计评论数量失败")
+		return model.MapCount{}, errors.New("统计博客数量失败")
 	}
 
 	mc := make(model.MapCount)
