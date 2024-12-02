@@ -14,7 +14,6 @@ import (
 func AdminBlogList(c *gin.Context) {
 	blogs, err := blog.SelectAll()
 	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}

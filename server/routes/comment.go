@@ -10,6 +10,7 @@ func InitCommentRoute(ginServer *gin.Engine) {
 	commentPublicRoute := ginServer.Group("/comment")
 	{
 		commentPublicRoute.GET("/user/:id", handler.CommentPublicListOfUser)
+		commentPublicRoute.GET("/blog/:id", handler.CommentPublicListOfBlog)
 	}
 	commentPrivateRoute := ginServer.Group("/comment")
 	{

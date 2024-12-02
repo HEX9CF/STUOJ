@@ -1,7 +1,7 @@
 package routes
 
 import (
-	handler_admin "STUOJ/server/handler-admin"
+	"STUOJ/server/handler-admin"
 	"STUOJ/server/middlewares"
 	"github.com/gin-gonic/gin"
 )
@@ -65,6 +65,7 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.DELETE("/blog/:id", handler_admin.AdminBlogRemove)
 		}
 		{
+			adminPrivateRoute.GET("/comment", handler_admin.AdminCommentList)
 			adminPrivateRoute.POST("/comment", handler_admin.AdminCommentAdd)
 			adminPrivateRoute.PUT("/comment", handler_admin.AdminCommentModify)
 			adminPrivateRoute.DELETE("/comment/:id", handler_admin.AdminCommentRemove)

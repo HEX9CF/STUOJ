@@ -31,6 +31,26 @@ func CommentPublicListOfUser(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", comments))
 }
 
+// 根据博客ID获取公开评论列表
+func CommentPublicListOfBlog(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+
+	uid := uint64(id)
+	comments, err := comment.SelectPublicByBlogId(uid)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", comments))
+}
+
 // 发表评论
 type ReqCommentAdd struct {
 	BlogId  uint64 `json:"blog_id,omitempty" binding:"required"`
