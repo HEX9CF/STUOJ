@@ -48,6 +48,7 @@ func TagList(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("OK", tags))

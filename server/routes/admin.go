@@ -32,6 +32,9 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.GET("/history/problem/:id", handler_admin.AdminHistoryListOfProblem)
 		}
 		{
+			adminPrivateRoute.DELETE("/record/:id", handler_admin.AdminRecordRemove)
+		}
+		{
 			adminPrivateRoute.GET("/testcase/:id", handler_admin.AdminTestcaseInfo)
 			adminPrivateRoute.POST("/testcase", handler_admin.AdminTestcaseAdd)
 			adminPrivateRoute.PUT("/testcase", handler_admin.AdminTestcaseModify)

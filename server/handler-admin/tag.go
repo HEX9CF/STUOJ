@@ -4,10 +4,11 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/tag"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 获取标签列表
@@ -15,6 +16,7 @@ func AdminTagList(c *gin.Context) {
 	tags, err := tag.SelectAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
 	}
 
 	// 返回数据

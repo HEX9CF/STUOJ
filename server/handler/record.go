@@ -26,6 +26,7 @@ func RecordInfo(c *gin.Context) {
 	r, err := record.SelectBySubmissionId(id_, sid, role <= entity.RoleUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("OK", r))
@@ -37,6 +38,7 @@ func RecordList(c *gin.Context) {
 	records, err := record.SelectAll(id_, role <= entity.RoleUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("OK", records))
