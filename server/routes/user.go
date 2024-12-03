@@ -3,6 +3,7 @@ package routes
 import (
 	"STUOJ/server/handler"
 	"STUOJ/server/middlewares"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,8 +20,8 @@ func InitUserRoute(ginServer *gin.Engine) {
 		userProtectedRoute.Use(middlewares.TokenAuthUser())
 
 		userProtectedRoute.GET("/current", handler.UserCurrentId)
-		userProtectedRoute.PUT("/modify", handler.UserModify)
-		userProtectedRoute.PUT("/password", handler.UserChangePassword)
-		userProtectedRoute.POST("/avatar", handler.ModifyUserAvatar)
+		userProtectedRoute.PUT("/modify/:id", handler.UserModify)
+		userProtectedRoute.PUT("/password/:id", handler.UserChangePassword)
+		userProtectedRoute.POST("/avatar/:id", handler.ModifyUserAvatar)
 	}
 }

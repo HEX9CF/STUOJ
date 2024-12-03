@@ -6,10 +6,11 @@ import (
 	"STUOJ/internal/service/user"
 	"STUOJ/utils"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 用户注册
@@ -117,21 +118,27 @@ type ReqUserModify struct {
 }
 
 func UserModify(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	uid := uint64(id)
+
+	role, id_ := utils.GetUserInfo(c)
 	var req ReqUserModify
 
 	// 参数绑定
-	err := c.ShouldBindBodyWithJSON(&req)
+	err = c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
-	// 获取用户id
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusUnauthorized, model.RespError("获取用户ID失败", nil))
+	if id_ != uid && role <= entity.RoleUser {
+		c.JSON(http.StatusUnauthorized, model.RespError("权限不足", nil))
 		return
 	}
 
@@ -158,21 +165,26 @@ type ReqUserChangePassword struct {
 }
 
 func UserChangePassword(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	uid := uint64(id)
+	role, id_ := utils.GetUserInfo(c)
 	var req ReqUserChangePassword
 
 	// 参数绑定
-	err := c.ShouldBindBodyWithJSON(&req)
+	err = c.ShouldBindBodyWithJSON(&req)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
-	// 获取用户id
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusUnauthorized, model.RespError("用户ID获取失败", nil))
+	if id_ != uid && role <= entity.RoleUser {
+		c.JSON(http.StatusUnauthorized, model.RespError("权限不足", nil))
 		return
 	}
 
@@ -189,6 +201,14 @@ func UserChangePassword(c *gin.Context) {
 
 // 修改用户头像
 func ModifyUserAvatar(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	uid := uint64(id)
+	role, id_ := utils.GetUserInfo(c)
 	// 获取文件
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -205,11 +225,9 @@ func ModifyUserAvatar(c *gin.Context) {
 		return
 	}
 
-	// 获取用户ID
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespOk("获取用户ID失败", nil))
+	if id_ != uid && role <= entity.RoleUser {
+		c.JSON(http.StatusUnauthorized, model.RespError("权限不足", nil))
+		return
 	}
 
 	// 更新头像

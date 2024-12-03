@@ -15,10 +15,8 @@ func InitAdminRoute(ginServer *gin.Engine) {
 
 		{
 			adminPrivateRoute.GET("/user", handler_admin.AdminUserList)
-			adminPrivateRoute.GET("/user/:id", handler_admin.AdminUserInfo)
 			adminPrivateRoute.GET("/user/role/:id", handler_admin.AdminUserListOfRole)
 			adminPrivateRoute.POST("/user", handler_admin.AdminUserAdd)
-			adminPrivateRoute.PUT("/user", handler_admin.AdminUserModify)
 			adminPrivateRoute.DELETE("/user/:id", handler_admin.AdminUserRemove)
 		}
 		{
