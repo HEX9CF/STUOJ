@@ -84,6 +84,8 @@ type ReqProblemAdd struct {
 }
 
 func AdminProblemAdd(c *gin.Context) {
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 	var req ReqProblemAdd
 
 	// 参数绑定
@@ -91,14 +93,6 @@ func AdminProblemAdd(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	// 获取用户ID
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
 
@@ -145,6 +139,8 @@ type ReqProblemModify struct {
 }
 
 func AdminProblemModify(c *gin.Context) {
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 	var req ReqProblemModify
 
 	// 参数绑定
@@ -152,13 +148,6 @@ func AdminProblemModify(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
 
@@ -191,18 +180,12 @@ func AdminProblemModify(c *gin.Context) {
 
 // 删除题目
 func AdminProblemRemove(c *gin.Context) {
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	// 获取用户ID
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
 

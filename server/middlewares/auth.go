@@ -131,13 +131,8 @@ func tokenAutoRefresh(c *gin.Context) error {
 		return nil
 	}
 
-	// 获取用户id
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, model.RespError("token无效，获取用户信息失败", nil))
-		c.Abort()
-		return err
-	}
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 
 	// 生成新token
 	token, err := utils.GenerateToken(uid)

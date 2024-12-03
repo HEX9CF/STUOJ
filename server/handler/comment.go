@@ -5,10 +5,11 @@ import (
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/comment"
 	"STUOJ/utils"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 根据用户ID获取公开评论列表
@@ -58,6 +59,8 @@ type ReqCommentAdd struct {
 }
 
 func CommentAdd(c *gin.Context) {
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 	var req ReqCommentAdd
 
 	// 参数绑定
@@ -65,13 +68,6 @@ func CommentAdd(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespOk("参数错误", nil))
-		return
-	}
-
-	// 获取用户ID
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
 
@@ -94,18 +90,12 @@ func CommentAdd(c *gin.Context) {
 
 // 删除评论
 func CommentRemove(c *gin.Context) {
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespOk("参数错误", nil))
-		return
-	}
-
-	// 获取用户ID
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
 

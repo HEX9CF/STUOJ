@@ -6,9 +6,10 @@ import (
 	"STUOJ/internal/service/judge"
 	"STUOJ/internal/service/language"
 	"STUOJ/utils"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 获取语言列表
@@ -30,6 +31,8 @@ type ReqJudgeSubmit struct {
 }
 
 func JudgeSubmit(c *gin.Context) {
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 	var req ReqJudgeSubmit
 
 	// 参数绑定
@@ -37,13 +40,6 @@ func JudgeSubmit(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	// 获取用户ID
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, model.RespError("用户ID获取失败", nil))
 		return
 	}
 

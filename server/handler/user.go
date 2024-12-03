@@ -101,12 +101,11 @@ func UserInfo(c *gin.Context) {
 
 // 获取当前用户id
 func UserCurrentId(c *gin.Context) {
-	id, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusUnauthorized, model.RespError("用户未登录", nil))
+	_, id := utils.GetUserInfo(c)
+	if id == 0 {
+		c.JSON(http.StatusUnauthorized, model.RespError("未登录", nil))
+		return
 	}
-
 	c.JSON(http.StatusOK, model.RespOk("OK", id))
 }
 
