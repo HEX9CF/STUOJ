@@ -132,7 +132,7 @@ func DeleteProblemById(id uint64) error {
 }
 
 // 统计题目数量
-func CountProblems() (int64, error) {
+func CountProblems() (uint64, error) {
 	var count int64
 
 	tx := db.Db.Model(&entity.Problem{}).Count(&count)
@@ -140,7 +140,7 @@ func CountProblems() (int64, error) {
 		return 0, tx.Error
 	}
 
-	return count, nil
+	return uint64(count), nil
 }
 
 // 根据创建时间统计用户数量

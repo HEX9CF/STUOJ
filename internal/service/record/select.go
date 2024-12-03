@@ -8,19 +8,36 @@ import (
 	"log"
 )
 
+type SubmissionPage struct {
+	Submissions []entity.Submission `json:"submissions"`
+	model.Page
+}
+
 // 查询所有提交记录（不返回源代码）
-func SelectAll(userId uint64, hideCode ...bool) ([]entity.Submission, error) {
+func SelectAll(page uint64, size uint64, userId uint64, hideCode ...bool) (SubmissionPage, error) {
 	// 获取提交信息
-	submissions, err := dao.SelectAllSubmissions()
+	submissions, err := dao.SelectAllSubmissions(page, size)
 	if err != nil {
 		log.Println(err)
-		return nil, errors.New("获取提交信息失败")
+		return SubmissionPage{}, errors.New("获取提交信息失败")
 	}
 	if len(hideCode) == 0 || hideCode[0] { // 隐藏源代码
 		hideSubmissionSourceCode(userId, submissions)
 	}
-
-	return submissions, nil
+	total, err := dao.CountSubmissions()
+	if err != nil {
+		log.Println(err)
+		return SubmissionPage{}, errors.New("获取提交记录总数失败")
+	}
+	sPage := SubmissionPage{
+		Submissions: submissions,
+		Page: model.Page{
+			Page:  page,
+			Size:  size,
+			Total: total,
+		},
+	}
+	return sPage, nil
 }
 
 // 根据提交ID查询提交记录
@@ -53,35 +70,63 @@ func SelectBySubmissionId(userId uint64, sid uint64, hideCode ...bool) (model.Re
 }
 
 // 根据题目ID查询提交记录（不返回源代码）
-func SelectByProblemId(userId uint64, problemId uint64, hideCode ...bool) ([]entity.Submission, error) {
+func SelectByProblemId(page uint64, size uint64, userId uint64, problemId uint64, hideCode ...bool) (SubmissionPage, error) {
 	// 获取提交信息
-	submissions, err := dao.SelectSubmissionsByProblemId(problemId)
+	submissions, err := dao.SelectSubmissionsByProblemId(page, size, problemId)
 	if err != nil {
 		log.Println(err)
-		return nil, errors.New("获取提交信息失败")
+		return SubmissionPage{}, errors.New("获取提交信息失败")
 	}
 
 	if len(hideCode) == 0 || hideCode[0] { // 隐藏源代码
 		hideSubmissionSourceCode(userId, submissions)
 	}
 
-	return submissions, nil
+	total, err := dao.CountSubmissionsByProblemId(problemId)
+	if err != nil {
+		log.Println(err)
+		return SubmissionPage{}, errors.New("获取提交记录总数失败")
+	}
+	sPage := SubmissionPage{
+		Submissions: submissions,
+		Page: model.Page{
+			Page:  page,
+			Size:  size,
+			Total: total,
+		},
+	}
+
+	return sPage, nil
 }
 
 // 根据用户ID查询提交记录（不返回源代码）
-func SelectByUserId(userId uint64, hideCode ...bool) ([]entity.Submission, error) {
+func SelectByUserId(page uint64, size uint64, userId uint64, hideCode ...bool) (SubmissionPage, error) {
 	// 获取提交信息
-	submissions, err := dao.SelectSubmissionsByUserId(userId)
+	submissions, err := dao.SelectSubmissionsByUserId(page, size, userId)
 	if err != nil {
 		log.Println(err)
-		return nil, errors.New("获取提交信息失败")
+		return SubmissionPage{}, errors.New("获取提交信息失败")
 	}
 
 	if len(hideCode) == 0 || hideCode[0] { // 隐藏源代码
 		hideSubmissionSourceCode(0, submissions)
 	}
 
-	return submissions, nil
+	total, err := dao.CountSubmissionsByUserId(userId)
+	if err != nil {
+		log.Println(err)
+		return SubmissionPage{}, errors.New("获取提交记录总数失败")
+	}
+	sPage := SubmissionPage{
+		Submissions: submissions,
+		Page: model.Page{
+			Page:  page,
+			Size:  size,
+			Total: total,
+		},
+	}
+
+	return sPage, nil
 }
 
 // 隐藏源代码

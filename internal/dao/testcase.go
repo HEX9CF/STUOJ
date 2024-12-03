@@ -75,7 +75,7 @@ func DeleteTestcasesByProblemId(pid uint64) error {
 }
 
 // 统计评测点数据数量
-func CountTestcases() (int64, error) {
+func CountTestcases() (uint64, error) {
 	var count int64
 
 	tx := db.Db.Model(&entity.Testcase{}).Count(&count)
@@ -83,5 +83,5 @@ func CountTestcases() (int64, error) {
 		return 0, tx.Error
 	}
 
-	return count, nil
+	return uint64(count), nil
 }

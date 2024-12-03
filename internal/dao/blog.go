@@ -122,7 +122,7 @@ func DeleteBlogById(id uint64) error {
 }
 
 // 统计博客数量
-func CountBlogs() (int64, error) {
+func CountBlogs() (uint64, error) {
 	var count int64
 
 	tx := db.Db.Model(&entity.Blog{}).Count(&count)
@@ -130,7 +130,7 @@ func CountBlogs() (int64, error) {
 		return 0, tx.Error
 	}
 
-	return count, nil
+	return uint64(count), nil
 }
 
 // 根据创建时间统计博客数量

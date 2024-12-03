@@ -34,8 +34,18 @@ func RecordInfo(c *gin.Context) {
 
 // 获取提交记录列表
 func RecordList(c *gin.Context) {
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	size, err := strconv.Atoi(c.Query("size"))
+	if err != nil {
+		size = 10
+	}
 	role, id_ := utils.GetUserInfo(c)
-	records, err := record.SelectAll(id_, role <= entity.RoleUser)
+
+	records, err := record.SelectAll(uint64(page), uint64(size), id_, role <= entity.RoleUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -46,6 +56,15 @@ func RecordList(c *gin.Context) {
 
 // 获取题目的提交记录列表
 func RecordListOfProblem(c *gin.Context) {
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	size, err := strconv.Atoi(c.Query("size"))
+	if err != nil {
+		size = 10
+	}
 	role, id_ := utils.GetUserInfo(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -55,7 +74,7 @@ func RecordListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	records, err := record.SelectByProblemId(id_, pid, role <= entity.RoleUser)
+	records, err := record.SelectByProblemId(uint64(page), uint64(size), id_, pid, role <= entity.RoleUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -66,6 +85,15 @@ func RecordListOfProblem(c *gin.Context) {
 
 // 获取用户的提交记录列表
 func RecordListOfUser(c *gin.Context) {
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	size, err := strconv.Atoi(c.Query("size"))
+	if err != nil {
+		size = 10
+	}
 	role, id_ := utils.GetUserInfo(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -75,7 +103,7 @@ func RecordListOfUser(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	records, err := record.SelectByUserId(uid, id_ != uid && role <= entity.RoleUser)
+	records, err := record.SelectByUserId(uint64(page), uint64(size), uid, id_ != uid && role <= entity.RoleUser)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
