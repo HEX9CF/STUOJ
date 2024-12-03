@@ -46,6 +46,10 @@ func TokenAuthUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		role, _ := c.Get("role")
 		switch role {
+		case entity.RoleVisitor:
+			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，未登录用户", nil))
+			c.Abort()
+			return
 		case entity.RoleBanned:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
@@ -64,6 +68,10 @@ func TokenAuthAdmin() gin.HandlerFunc {
 		role, _ := c.Get("role")
 		//log.Println(role)
 		switch role {
+		case entity.RoleVisitor:
+			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，未登录用户", nil))
+			c.Abort()
+			return
 		case entity.RoleBanned:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
@@ -87,6 +95,10 @@ func TokenAuthRoot() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		role, _ := c.Get("role")
 		switch role {
+		case entity.RoleVisitor:
+			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，未登录用户", nil))
+			c.Abort()
+			return
 		case entity.RoleBanned:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
