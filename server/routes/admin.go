@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"STUOJ/server/handler-admin"
+	handler_admin "STUOJ/server/handler-admin"
 	"STUOJ/server/middlewares"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -50,11 +51,6 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.POST("/solution", handler_admin.AdminSolutionAdd)
 			adminPrivateRoute.PUT("/solution", handler_admin.AdminSolutionModify)
 			adminPrivateRoute.DELETE("/solution/:id", handler_admin.AdminSolutionRemove)
-		}
-		{
-			adminPrivateRoute.GET("/record", handler_admin.AdminRecordList)
-			adminPrivateRoute.GET("/record/:id", handler_admin.AdminRecordInfo)
-			adminPrivateRoute.DELETE("/record/:id", handler_admin.AdminRecordRemove)
 		}
 		{
 			adminPrivateRoute.GET("/blog", handler_admin.AdminBlogList)
