@@ -83,7 +83,7 @@ func TokenAuthAdmin() gin.HandlerFunc {
 		default:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户权限不足", nil))
 			c.Abort()
-			break
+			return
 		}
 
 		// 放行
@@ -108,7 +108,7 @@ func TokenAuthRoot() gin.HandlerFunc {
 		default:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户权限不足", nil))
 			c.Abort()
-			break
+			return
 		}
 		// 放行
 		c.Next()
