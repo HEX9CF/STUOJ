@@ -2,6 +2,7 @@ package server
 
 import (
 	"STUOJ/internal/model"
+	"STUOJ/server/middlewares"
 	"STUOJ/server/routes"
 	"net/http"
 
@@ -18,6 +19,8 @@ func InitRoute() error {
 	ginServer.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, model.RespError("404 Not Found", nil))
 	})
+
+	ginServer.Use(middlewares.TokenGetInfo())
 
 	// 初始化路由
 	routes.InitUserRoute(ginServer)

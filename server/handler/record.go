@@ -1,16 +1,20 @@
 package handler
 
 import (
+	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/record"
-	"github.com/gin-gonic/gin"
+	"STUOJ/utils"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 获取提交记录信息（提交信息+评测结果）
 func RecordInfo(c *gin.Context) {
+	role, id_ := utils.GetUserInfo(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -19,9 +23,10 @@ func RecordInfo(c *gin.Context) {
 	}
 
 	sid := uint64(id)
-	r, err := record.SelectBySubmissionId(sid)
+	r, err := record.SelectBySubmissionId(id_, sid, role <= entity.RoleUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("OK", r))
@@ -29,9 +34,11 @@ func RecordInfo(c *gin.Context) {
 
 // 获取提交记录列表
 func RecordList(c *gin.Context) {
-	records, err := record.SelectAll()
+	role, id_ := utils.GetUserInfo(c)
+	records, err := record.SelectAll(id_, role <= entity.RoleUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("OK", records))
@@ -39,6 +46,7 @@ func RecordList(c *gin.Context) {
 
 // 获取题目的提交记录列表
 func RecordListOfProblem(c *gin.Context) {
+	role, id_ := utils.GetUserInfo(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -47,7 +55,7 @@ func RecordListOfProblem(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	records, err := record.SelectByProblemId(pid)
+	records, err := record.SelectByProblemId(id_, pid, role <= entity.RoleUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -58,6 +66,7 @@ func RecordListOfProblem(c *gin.Context) {
 
 // 获取用户的提交记录列表
 func RecordListOfUser(c *gin.Context) {
+	role, id_ := utils.GetUserInfo(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -66,7 +75,7 @@ func RecordListOfUser(c *gin.Context) {
 	}
 
 	uid := uint64(id)
-	records, err := record.SelectByUserId(uid)
+	records, err := record.SelectByUserId(uid, id_ != uid && role <= entity.RoleUser)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))

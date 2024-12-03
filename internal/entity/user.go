@@ -6,14 +6,15 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// 角色：0 封禁，1 普通用户，2 管理员，3 超级管理员
-type Role uint8
+// 角色：-1 访客 , 0 封禁，1 普通用户，2 管理员，3 超级管理员
+type Role int8
 
 const (
-	RoleBanned Role = 0
-	RoleUser   Role = 1
-	RoleAdmin  Role = 2
-	RoleRoot   Role = 3
+	RoleVisitor Role = -1
+	RoleBanned  Role = 0
+	RoleUser    Role = 1
+	RoleAdmin   Role = 2
+	RoleRoot    Role = 3
 )
 
 func (r Role) String() string {

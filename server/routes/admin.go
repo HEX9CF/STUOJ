@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"STUOJ/server/handler-admin"
+	handler_admin "STUOJ/server/handler-admin"
 	"STUOJ/server/middlewares"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,10 +15,8 @@ func InitAdminRoute(ginServer *gin.Engine) {
 
 		{
 			adminPrivateRoute.GET("/user", handler_admin.AdminUserList)
-			adminPrivateRoute.GET("/user/:id", handler_admin.AdminUserInfo)
 			adminPrivateRoute.GET("/user/role/:id", handler_admin.AdminUserListOfRole)
 			adminPrivateRoute.POST("/user", handler_admin.AdminUserAdd)
-			adminPrivateRoute.PUT("/user", handler_admin.AdminUserModify)
 			adminPrivateRoute.DELETE("/user/:id", handler_admin.AdminUserRemove)
 		}
 		{
@@ -31,6 +30,9 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.DELETE("/problem/tag", handler_admin.AdminProblemRemoveTag)
 			adminPrivateRoute.POST("/problem/fps", handler_admin.AdminProblemParseFromFps)
 			adminPrivateRoute.GET("/history/problem/:id", handler_admin.AdminHistoryListOfProblem)
+		}
+		{
+			adminPrivateRoute.DELETE("/record/:id", handler_admin.AdminRecordRemove)
 		}
 		{
 			adminPrivateRoute.GET("/testcase/:id", handler_admin.AdminTestcaseInfo)
@@ -50,11 +52,6 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.POST("/solution", handler_admin.AdminSolutionAdd)
 			adminPrivateRoute.PUT("/solution", handler_admin.AdminSolutionModify)
 			adminPrivateRoute.DELETE("/solution/:id", handler_admin.AdminSolutionRemove)
-		}
-		{
-			adminPrivateRoute.GET("/record", handler_admin.AdminRecordList)
-			adminPrivateRoute.GET("/record/:id", handler_admin.AdminRecordInfo)
-			adminPrivateRoute.DELETE("/record/:id", handler_admin.AdminRecordRemove)
 		}
 		{
 			adminPrivateRoute.GET("/blog", handler_admin.AdminBlogList)

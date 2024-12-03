@@ -9,21 +9,22 @@ import (
 )
 
 // 查询所有提交记录（不返回源代码）
-func SelectAll() ([]model.Record, error) {
+func SelectAll(userId uint64, hideCode ...bool) ([]entity.Submission, error) {
 	// 获取提交信息
 	submissions, err := dao.SelectAllSubmissions()
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("获取提交信息失败")
 	}
+	if len(hideCode) == 0 || hideCode[0] { // 隐藏源代码
+		hideSubmissionSourceCode(userId, submissions)
+	}
 
-	records := wrapRecords(submissions)
-
-	return records, nil
+	return submissions, nil
 }
 
 // 根据提交ID查询提交记录
-func SelectBySubmissionId(sid uint64) (model.Record, error) {
+func SelectBySubmissionId(userId uint64, sid uint64, hideCode ...bool) (model.Record, error) {
 	// 获取提交信息
 	s, err := dao.SelectSubmissionById(sid)
 	if err != nil {
@@ -38,6 +39,10 @@ func SelectBySubmissionId(sid uint64) (model.Record, error) {
 		return model.Record{}, errors.New("获取评测结果失败")
 	}
 
+	if (len(hideCode) == 0 || hideCode[0]) && userId != s.UserId { // 隐藏源代码
+		s.SourceCode = ""
+	}
+
 	// 封装提交记录
 	r := model.Record{
 		Submission: s,
@@ -48,7 +53,7 @@ func SelectBySubmissionId(sid uint64) (model.Record, error) {
 }
 
 // 根据题目ID查询提交记录（不返回源代码）
-func SelectByProblemId(problemId uint64) ([]model.Record, error) {
+func SelectByProblemId(userId uint64, problemId uint64, hideCode ...bool) ([]entity.Submission, error) {
 	// 获取提交信息
 	submissions, err := dao.SelectSubmissionsByProblemId(problemId)
 	if err != nil {
@@ -56,13 +61,15 @@ func SelectByProblemId(problemId uint64) ([]model.Record, error) {
 		return nil, errors.New("获取提交信息失败")
 	}
 
-	records := wrapRecords(submissions)
+	if len(hideCode) == 0 || hideCode[0] { // 隐藏源代码
+		hideSubmissionSourceCode(userId, submissions)
+	}
 
-	return records, nil
+	return submissions, nil
 }
 
 // 根据用户ID查询提交记录（不返回源代码）
-func SelectByUserId(userId uint64) ([]model.Record, error) {
+func SelectByUserId(userId uint64, hideCode ...bool) ([]entity.Submission, error) {
 	// 获取提交信息
 	submissions, err := dao.SelectSubmissionsByUserId(userId)
 	if err != nil {
@@ -70,30 +77,34 @@ func SelectByUserId(userId uint64) ([]model.Record, error) {
 		return nil, errors.New("获取提交信息失败")
 	}
 
-	records := wrapRecords(submissions)
+	if len(hideCode) == 0 || hideCode[0] { // 隐藏源代码
+		hideSubmissionSourceCode(0, submissions)
+	}
 
-	return records, nil
+	return submissions, nil
 }
 
 // 隐藏源代码
-func hideSubmissionSourceCode(submissions []entity.Submission) {
+func hideSubmissionSourceCode(userId uint64, submissions []entity.Submission) {
 	for i := range submissions {
-		submissions[i].SourceCode = ""
+		if submissions[i].UserId != userId {
+			submissions[i].SourceCode = ""
+		}
 	}
 }
 
 // 封装提交记录
-func wrapRecords(submissions []entity.Submission) []model.Record {
-	var records []model.Record
+// func wrapRecords(submissions []entity.Submission) []model.Record {
+// 	var records []model.Record
 
-	hideSubmissionSourceCode(submissions)
+// 	hideSubmissionSourceCode(submissions)
 
-	for _, s := range submissions {
-		r := model.Record{
-			Submission: s,
-		}
-		records = append(records, r)
-	}
+// 	for _, s := range submissions {
+// 		r := model.Record{
+// 			Submission: s,
+// 		}
+// 		records = append(records, r)
+// 	}
 
-	return records
-}
+// 	return records
+// }

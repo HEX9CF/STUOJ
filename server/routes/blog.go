@@ -3,6 +3,7 @@ package routes
 import (
 	"STUOJ/server/handler"
 	"STUOJ/server/middlewares"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,7 +13,6 @@ func InitBlogRoute(ginServer *gin.Engine) {
 		blogPublicRoute.GET("/", handler.BlogPublicList)
 		blogPublicRoute.GET("/:id", handler.BlogPublicInfo)
 		blogPublicRoute.GET("/user/:id", handler.BlogPublicListOfUser)
-		blogPublicRoute.GET("/draft", handler.BlogDraftListOfUser)
 		blogPublicRoute.GET("/problem/:id", handler.BlogPublicListOfProblem)
 		blogPublicRoute.POST("/title", handler.BlogPublicListOfTitle)
 	}
@@ -25,5 +25,7 @@ func InitBlogRoute(ginServer *gin.Engine) {
 		blogPrivateRoute.PUT("/", handler.BlogEdit)
 		blogPrivateRoute.PUT("/:id", handler.BlogSubmit)
 		blogPrivateRoute.DELETE("/:id", handler.BlogRemove)
+		blogPrivateRoute.GET("/draft", handler.BlogDraftListOfUser)
+
 	}
 }

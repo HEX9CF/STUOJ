@@ -5,10 +5,11 @@ import (
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/blog"
 	"STUOJ/utils"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 获取公开博客信息
@@ -63,13 +64,8 @@ func BlogPublicListOfUser(c *gin.Context) {
 
 // 当前用户博客草稿箱
 func BlogDraftListOfUser(c *gin.Context) {
-	// 获取用户ID
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
-		return
-	}
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 
 	// 查询博客草稿箱
 	bds, err := blog.SelectDraftByUserId(uid)
@@ -134,6 +130,8 @@ type ReqBlogSave struct {
 }
 
 func BlogSave(c *gin.Context) {
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 	var req ReqBlogSave
 
 	// 参数绑定
@@ -141,13 +139,6 @@ func BlogSave(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespOk("参数错误", nil))
-		return
-	}
-
-	// 获取用户ID
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
 
@@ -178,6 +169,8 @@ type ReqBlogEdit struct {
 }
 
 func BlogEdit(c *gin.Context) {
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 	var req ReqBlogEdit
 
 	// 参数绑定
@@ -185,13 +178,6 @@ func BlogEdit(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespOk("参数错误", nil))
-		return
-	}
-
-	// 获取用户ID
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
 
@@ -216,17 +202,12 @@ func BlogEdit(c *gin.Context) {
 
 // 提交博客
 func BlogSubmit(c *gin.Context) {
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	// 获取用户ID
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
 
@@ -242,18 +223,12 @@ func BlogSubmit(c *gin.Context) {
 
 // 删除博客
 func BlogRemove(c *gin.Context) {
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespOk("参数错误", nil))
-		return
-	}
-
-	// 获取用户ID
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError("获取用户ID失败", nil))
 		return
 	}
 

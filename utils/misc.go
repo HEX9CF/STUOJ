@@ -1,10 +1,12 @@
 package utils
 
 import (
+	"STUOJ/internal/entity"
 	"encoding/json"
 	"os"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"golang.org/x/exp/rand"
 )
 
@@ -36,4 +38,17 @@ func IsFileExists(filePath string) (bool, error) {
 		return false, err // 其他错误，返回false和错误
 	}
 	return true, nil // 文件存在，返回true和nil的error
+}
+
+func GetUserInfo(c *gin.Context) (entity.Role, uint64) {
+	role, exist := c.Get("role")
+	if !exist {
+		role = entity.RoleVisitor
+	}
+	id, exist := c.Get("id")
+	if !exist {
+		id = uint64(0)
+	}
+
+	return role.(entity.Role), id.(uint64)
 }

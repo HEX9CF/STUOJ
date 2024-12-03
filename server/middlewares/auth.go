@@ -6,41 +6,56 @@ import (
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
 	"STUOJ/utils"
-	"github.com/gin-gonic/gin"
+	"errors"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
-func TokenAuthUser() gin.HandlerFunc {
+func TokenGetInfo() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 验证token
-		err := tokenVerify(c)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		// 校验用户角色
 		role, err := getUserRole(c)
 		if err != nil {
 			log.Println(err)
 			return
 		}
+
+		var uid uint64
+		if role != entity.RoleVisitor {
+			err = tokenAutoRefresh(c)
+			if err != nil {
+				log.Println(err)
+			}
+			uid, err = utils.GetTokenUid(c)
+			if err != nil {
+				c.JSON(http.StatusUnauthorized, model.RespError("获取用户id失败", nil))
+				c.Abort()
+				return
+			}
+		}
+
+		c.Set("id", uid)
+		c.Set("role", role)
+		c.Next()
+	}
+}
+
+func TokenAuthUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role, _ := c.Get("role")
 		switch role {
+		case entity.RoleVisitor:
+			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，未登录用户", nil))
+			c.Abort()
+			return
 		case entity.RoleBanned:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
 			return
 		default:
 			break
-		}
-
-		// 自动刷新token
-		err = tokenAutoRefresh(c)
-		if err != nil {
-			log.Println(err)
-			return
 		}
 
 		// 放行
@@ -50,21 +65,13 @@ func TokenAuthUser() gin.HandlerFunc {
 
 func TokenAuthAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 验证token
-		err := tokenVerify(c)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		// 校验用户角色
-		role, err := getUserRole(c)
-		if err != nil {
-			log.Println(err)
-			return
-		}
+		role, _ := c.Get("role")
 		//log.Println(role)
 		switch role {
+		case entity.RoleVisitor:
+			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，未登录用户", nil))
+			c.Abort()
+			return
 		case entity.RoleBanned:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
@@ -76,13 +83,6 @@ func TokenAuthAdmin() gin.HandlerFunc {
 		default:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户权限不足", nil))
 			c.Abort()
-			break
-		}
-
-		// 自动刷新token
-		err = tokenAutoRefresh(c)
-		if err != nil {
-			log.Println(err)
 			return
 		}
 
@@ -93,20 +93,12 @@ func TokenAuthAdmin() gin.HandlerFunc {
 
 func TokenAuthRoot() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// 验证token
-		err := tokenVerify(c)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-		// 校验用户角色
-		role, err := getUserRole(c)
-		if err != nil {
-			log.Println(err)
-			return
-		}
+		role, _ := c.Get("role")
 		switch role {
+		case entity.RoleVisitor:
+			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，未登录用户", nil))
+			c.Abort()
+			return
 		case entity.RoleBanned:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户已被封禁", nil))
 			c.Abort()
@@ -116,16 +108,8 @@ func TokenAuthRoot() gin.HandlerFunc {
 		default:
 			c.JSON(http.StatusUnauthorized, model.RespError("拒绝访问，用户权限不足", nil))
 			c.Abort()
-			break
-		}
-
-		// 自动刷新token
-		err = tokenAutoRefresh(c)
-		if err != nil {
-			log.Println(err)
 			return
 		}
-
 		// 放行
 		c.Next()
 	}
@@ -147,13 +131,8 @@ func tokenAutoRefresh(c *gin.Context) error {
 		return nil
 	}
 
-	// 获取用户id
-	uid, err := utils.GetTokenUid(c)
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, model.RespError("token无效，获取用户信息失败", nil))
-		c.Abort()
-		return err
-	}
+	_, id_ := utils.GetUserInfo(c)
+	uid := uint64(id_)
 
 	// 生成新token
 	token, err := utils.GenerateToken(uid)
@@ -172,9 +151,7 @@ func getUserRole(c *gin.Context) (entity.Role, error) {
 	// 获取用户id
 	uid, err := utils.GetTokenUid(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model.RespError("token无效，获取用户信息失败", nil))
-		c.Abort()
-		return 0, err
+		return -1, err
 	}
 
 	// 获取用户信息
@@ -191,9 +168,7 @@ func getUserRole(c *gin.Context) (entity.Role, error) {
 func tokenVerify(c *gin.Context) error {
 	err := utils.VerifyToken(c)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, model.RespError("用户未登录或token过期，请重新登录", nil))
-		c.Abort()
-		return err
+		return errors.New("token无效")
 	}
 
 	return nil
