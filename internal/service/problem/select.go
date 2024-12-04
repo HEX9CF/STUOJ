@@ -59,8 +59,8 @@ func SelectAll() ([]model.ProblemData, error) {
 }
 
 // 根据状态查询题目数据
-func SelectByStatus(s entity.ProblemStatus) ([]model.ProblemData, error) {
-	problems, err := dao.SelectProblemsByStatus(s)
+func SelectByStatus(s entity.ProblemStatus, page uint64, size uint64) ([]model.ProblemData, error) {
+	problems, err := dao.SelectProblemsByStatus(s, page, size)
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("获取题目信息失败")
@@ -72,8 +72,8 @@ func SelectByStatus(s entity.ProblemStatus) ([]model.ProblemData, error) {
 }
 
 // 查询公开题目数据
-func SelectPublic() ([]model.ProblemData, error) {
-	problems, err := dao.SelectProblemsByStatus(entity.ProblemStatusPublic)
+func SelectPublic(page uint64, size uint64) ([]model.ProblemData, error) {
+	problems, err := dao.SelectProblemsByStatus(entity.ProblemStatusPublic, page, size)
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("获取题目信息失败")
@@ -85,8 +85,8 @@ func SelectPublic() ([]model.ProblemData, error) {
 }
 
 // 根据状态和标签查询题目
-func SelectPublicByTagId(tid uint64) ([]model.ProblemData, error) {
-	problems, err := dao.SelectProblemsByTagIdAndStatus(tid, entity.ProblemStatusPublic)
+func SelectPublicByTagId(tid uint64, page uint64, size uint64) ([]model.ProblemData, error) {
+	problems, err := dao.SelectProblemsByTagIdAndStatus(tid, entity.ProblemStatusPublic, page, size)
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("获取题目信息失败")
@@ -98,8 +98,8 @@ func SelectPublicByTagId(tid uint64) ([]model.ProblemData, error) {
 }
 
 // 根据状态和难度查询题目
-func SelectPublicByDifficulty(d entity.Difficulty) ([]model.ProblemData, error) {
-	problems, err := dao.SelectProblemsByDifficultyAndStatus(d, entity.ProblemStatusPublic)
+func SelectPublicByDifficulty(d entity.Difficulty, page uint64, size uint64) ([]model.ProblemData, error) {
+	problems, err := dao.SelectProblemsByDifficultyAndStatus(d, entity.ProblemStatusPublic, page, size)
 	if err != nil {
 		return nil, errors.New("获取题目信息失败")
 	}
@@ -110,8 +110,8 @@ func SelectPublicByDifficulty(d entity.Difficulty) ([]model.ProblemData, error) 
 }
 
 // 根据状态查询并根据标题模糊查询公开题目
-func SelectPublicLikeTitle(title string) ([]model.ProblemData, error) {
-	problems, err := dao.SelectProblemsLikeTitleByStatus(title, entity.ProblemStatusPublic)
+func SelectPublicLikeTitle(title string, page uint64, size uint64) ([]model.ProblemData, error) {
+	problems, err := dao.SelectProblemsLikeTitleByStatus(title, entity.ProblemStatusPublic, page, size)
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("获取题目信息失败")

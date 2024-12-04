@@ -33,7 +33,16 @@ func ProblemPublicInfo(c *gin.Context) {
 
 // 获取公开题目列表
 func ProblemPublicList(c *gin.Context) {
-	pds, err := problem.SelectPublic()
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	size, err := strconv.Atoi(c.Query("size"))
+	if err != nil {
+		size = 10
+	}
+	pds, err := problem.SelectPublic(uint64(page), uint64(size))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -56,6 +65,15 @@ func TagList(c *gin.Context) {
 
 // 根据标签获取公开题目列表
 func ProblemPublicListOfTagId(c *gin.Context) {
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	size, err := strconv.Atoi(c.Query("size"))
+	if err != nil {
+		size = 10
+	}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -64,7 +82,7 @@ func ProblemPublicListOfTagId(c *gin.Context) {
 	}
 
 	tid := uint64(id)
-	pds, err := problem.SelectPublicByTagId(tid)
+	pds, err := problem.SelectPublicByTagId(tid, uint64(page), uint64(size))
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
@@ -76,6 +94,15 @@ func ProblemPublicListOfTagId(c *gin.Context) {
 
 // 根据难度获取公开题目列表
 func ProblemPublicListOfDifficulty(c *gin.Context) {
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	size, err := strconv.Atoi(c.Query("size"))
+	if err != nil {
+		size = 10
+	}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -84,7 +111,7 @@ func ProblemPublicListOfDifficulty(c *gin.Context) {
 	}
 
 	d := entity.Difficulty(id)
-	pds, err := problem.SelectPublicByDifficulty(d)
+	pds, err := problem.SelectPublicByDifficulty(d, uint64(page), uint64(size))
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
@@ -100,15 +127,24 @@ type ReqProblemPublicListByTitle struct {
 
 // 根据标题获取公开题目列表
 func ProblemPublicListOfTitle(c *gin.Context) {
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	size, err := strconv.Atoi(c.Query("size"))
+	if err != nil {
+		size = 10
+	}
 	var req ReqProblemPublicListByTitle
-	err := c.BindJSON(&req)
+	err = c.BindJSON(&req)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
 
-	pds, err := problem.SelectPublicLikeTitle(req.Title)
+	pds, err := problem.SelectPublicLikeTitle(req.Title, uint64(page), uint64(size))
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))

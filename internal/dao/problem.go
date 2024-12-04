@@ -54,10 +54,10 @@ func SelectAllProblems() ([]entity.Problem, error) {
 }
 
 // 根据状态查询题目
-func SelectProblemsByStatus(s entity.ProblemStatus) ([]entity.Problem, error) {
+func SelectProblemsByStatus(s entity.ProblemStatus, page uint64, size uint64) ([]entity.Problem, error) {
 	var problems []entity.Problem
 
-	tx := db.Db.Where("status = ?", s).Find(&problems)
+	tx := db.Db.Offset(int((page-1)*size)).Limit(int(size)).Where("status = ?", s).Find(&problems)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -66,10 +66,10 @@ func SelectProblemsByStatus(s entity.ProblemStatus) ([]entity.Problem, error) {
 }
 
 // 根据状态和标签查询题目
-func SelectProblemsByTagIdAndStatus(tid uint64, s entity.ProblemStatus) ([]entity.Problem, error) {
+func SelectProblemsByTagIdAndStatus(tid uint64, s entity.ProblemStatus, page uint64, size uint64) ([]entity.Problem, error) {
 	var problems []entity.Problem
 
-	tx := db.Db.Where("status = ? AND id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id = ?)", s, tid).Find(&problems)
+	tx := db.Db.Offset(int((page-1)*size)).Limit(int(size)).Where("status = ? AND id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id = ?)", s, tid).Find(&problems)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -78,10 +78,10 @@ func SelectProblemsByTagIdAndStatus(tid uint64, s entity.ProblemStatus) ([]entit
 }
 
 // 根据状态和难度查询题目
-func SelectProblemsByDifficultyAndStatus(d entity.Difficulty, s entity.ProblemStatus) ([]entity.Problem, error) {
+func SelectProblemsByDifficultyAndStatus(d entity.Difficulty, s entity.ProblemStatus, page uint64, size uint64) ([]entity.Problem, error) {
 	var problems []entity.Problem
 
-	tx := db.Db.Where("status = ? AND difficulty = ?", s, d).Find(&problems)
+	tx := db.Db.Offset(int((page-1)*size)).Limit(int(size)).Where("status = ? AND difficulty = ?", s, d).Find(&problems)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -90,10 +90,10 @@ func SelectProblemsByDifficultyAndStatus(d entity.Difficulty, s entity.ProblemSt
 }
 
 // 根据状态查询并根据标题模糊查询题目
-func SelectProblemsLikeTitleByStatus(title string, s entity.ProblemStatus) ([]entity.Problem, error) {
+func SelectProblemsLikeTitleByStatus(title string, s entity.ProblemStatus, page uint64, size uint64) ([]entity.Problem, error) {
 	var problems []entity.Problem
 
-	tx := db.Db.Where("status = ? AND title like ?", s, "%"+title+"%").Find(&problems)
+	tx := db.Db.Offset(int((page-1)*size)).Limit(int(size)).Where("status = ? AND title like ?", s, "%"+title+"%").Find(&problems)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}

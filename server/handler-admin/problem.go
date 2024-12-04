@@ -49,6 +49,15 @@ func AdminProblemList(c *gin.Context) {
 
 // 根据状态获取题目列表
 func AdminProblemListOfStatus(c *gin.Context) {
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	size, err := strconv.Atoi(c.Query("size"))
+	if err != nil {
+		size = 10
+	}
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -58,7 +67,7 @@ func AdminProblemListOfStatus(c *gin.Context) {
 
 	s := entity.ProblemStatus(id)
 
-	pds, err := problem.SelectByStatus(s)
+	pds, err := problem.SelectByStatus(s, uint64(page), uint64(size))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
