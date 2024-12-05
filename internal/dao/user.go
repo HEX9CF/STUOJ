@@ -85,7 +85,7 @@ func DeleteUserById(id uint64) error {
 }
 
 // 统计用户数量
-func CountUsers() (int64, error) {
+func CountUsers() (uint64, error) {
 	var count int64
 
 	tx := db.Db.Model(&entity.User{}).Count(&count)
@@ -93,7 +93,7 @@ func CountUsers() (int64, error) {
 		return 0, tx.Error
 	}
 
-	return count, nil
+	return uint64(count), nil
 }
 
 // 根据角色统计用户数量

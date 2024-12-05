@@ -16,57 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 获取题目信息
-func AdminProblemInfo(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	// 获取题目信息
-	pid := uint64(id)
-	pds, err := problem.SelectById(pid)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
-}
-
-// 获取题目列表
-func AdminProblemList(c *gin.Context) {
-	pds, err := problem.SelectAll()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
-}
-
-// 根据状态获取题目列表
-func AdminProblemListOfStatus(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	s := entity.ProblemStatus(id)
-
-	pds, err := problem.SelectByStatus(s)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
-}
-
 // 添加题目
 type ReqProblemAdd struct {
 	Title        string               `json:"title" binding:"required"`

@@ -21,10 +21,10 @@ func InsertSubmission(s entity.Submission) (uint64, error) {
 }
 
 // 查询所有提交记录
-func SelectAllSubmissions() ([]entity.Submission, error) {
+func SelectAllSubmissions(page uint64, size uint64) ([]entity.Submission, error) {
 	var submissions []entity.Submission
 
-	tx := db.Db.Find(&submissions)
+	tx := db.Db.Offset(int((page - 1) * size)).Limit(int(size)).Find(&submissions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -45,10 +45,10 @@ func SelectSubmissionById(id uint64) (entity.Submission, error) {
 }
 
 // 根据用户ID查询提交记录（不返回源代码）
-func SelectSubmissionsByUserId(userId uint64) ([]entity.Submission, error) {
+func SelectSubmissionsByUserId(page uint64, size uint64, userId uint64) ([]entity.Submission, error) {
 	var submissions []entity.Submission
 
-	tx := db.Db.Where("user_id = ?", userId).Find(&submissions)
+	tx := db.Db.Offset(int((page-1)*size)).Limit(int(size)).Where("user_id = ?", userId).Find(&submissions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -57,10 +57,10 @@ func SelectSubmissionsByUserId(userId uint64) ([]entity.Submission, error) {
 }
 
 // 根据题目ID查询提交记录（不返回源代码）
-func SelectSubmissionsByProblemId(problemId uint64) ([]entity.Submission, error) {
+func SelectSubmissionsByProblemId(page uint64, size uint64, problemId uint64) ([]entity.Submission, error) {
 	var submissions []entity.Submission
 
-	tx := db.Db.Where("problem_id = ?", problemId).Find(&submissions)
+	tx := db.Db.Offset(int((page-1)*size)).Limit(int(size)).Where("problem_id = ?", problemId).Find(&submissions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -99,7 +99,7 @@ func DeleteSubmissionById(id uint64) error {
 }
 
 // 统计提交信息数量
-func CountSubmissions() (int64, error) {
+func CountSubmissions() (uint64, error) {
 	var count int64
 
 	tx := db.Db.Model(&entity.Submission{}).Count(&count)
@@ -107,7 +107,28 @@ func CountSubmissions() (int64, error) {
 		return 0, tx.Error
 	}
 
-	return count, nil
+	return uint64(count), nil
+}
+
+func CountSubmissionsByProblemId(problemId uint64) (uint64, error) {
+	var count int64
+
+	tx := db.Db.Model(&entity.Submission{}).Where("problem_id = ?", problemId).Count(&count)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+
+	return uint64(count), nil
+}
+
+func CountSubmissionsByUserId(userId uint64) (uint64, error) {
+	var count int64
+
+	tx := db.Db.Model(&entity.Submission{}).Where("user_id = ?", userId).Count(&count)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+	return uint64(count), nil
 }
 
 // 按评测状态统计提交信息数量

@@ -5,13 +5,22 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"errors"
-	"log"
 )
 
+type ProblemPage struct {
+	Problems []entity.Problem `json:"problems"`
+	model.Page
+}
+
 // 根据ID查询题目数据
-func SelectById(id uint64) (model.ProblemData, error) {
+func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
+	condition := dao.ProblemWhere{}
+	condition.Id.Set(id)
+	if len(admin) == 0 || !admin[0] {
+		condition.Status.Set(entity.ProblemStatusPublic)
+	}
 	// 获取题目信息
-	p, err := dao.SelectProblemById(id)
+	p, err := dao.SelectProblem(condition, 1, 10)
 	if err != nil {
 		return model.ProblemData{}, errors.New("获取题目信息失败")
 	}
@@ -36,7 +45,7 @@ func SelectById(id uint64) (model.ProblemData, error) {
 
 	// 封装题目数据
 	pd := model.ProblemData{
-		Problem:   p,
+		Problem:   p[0],
 		Tags:      tags,
 		Testcases: testcases,
 		Solutions: solutions,
@@ -45,105 +54,29 @@ func SelectById(id uint64) (model.ProblemData, error) {
 	return pd, nil
 }
 
-// 查询所有题目数据
-func SelectAll() ([]model.ProblemData, error) {
-	problems, err := dao.SelectAllProblems()
+func SelectProblem(condition dao.ProblemWhere, page uint64, size uint64) (ProblemPage, error) {
+	problems, err := dao.SelectProblem(condition, page, size)
 	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取题目信息失败")
+		return ProblemPage{}, errors.New("获取题目信息失败")
 	}
 
-	pds := wrapProblemDatas(problems)
+	hideProblemContent(problems)
 
-	return pds, nil
-}
-
-// 根据状态查询题目数据
-func SelectByStatus(s entity.ProblemStatus) ([]model.ProblemData, error) {
-	problems, err := dao.SelectProblemsByStatus(s)
+	count, err := dao.CountProblems(condition)
 	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取题目信息失败")
+		return ProblemPage{}, errors.New("获取题目总数失败")
 	}
 
-	pds := wrapProblemDatas(problems)
-
-	return pds, nil
-}
-
-// 查询公开题目数据
-func SelectPublic() ([]model.ProblemData, error) {
-	problems, err := dao.SelectProblemsByStatus(entity.ProblemStatusPublic)
-	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取题目信息失败")
+	pPage := ProblemPage{
+		Problems: problems,
+		Page: model.Page{
+			Page:  page,
+			Size:  size,
+			Total: count,
+		},
 	}
 
-	pds := wrapProblemDatas(problems)
-
-	return pds, nil
-}
-
-// 根据状态和标签查询题目
-func SelectPublicByTagId(tid uint64) ([]model.ProblemData, error) {
-	problems, err := dao.SelectProblemsByTagIdAndStatus(tid, entity.ProblemStatusPublic)
-	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取题目信息失败")
-	}
-
-	pds := wrapProblemDatas(problems)
-
-	return pds, nil
-}
-
-// 根据状态和难度查询题目
-func SelectPublicByDifficulty(d entity.Difficulty) ([]model.ProblemData, error) {
-	problems, err := dao.SelectProblemsByDifficultyAndStatus(d, entity.ProblemStatusPublic)
-	if err != nil {
-		return nil, errors.New("获取题目信息失败")
-	}
-
-	pds := wrapProblemDatas(problems)
-
-	return pds, nil
-}
-
-// 根据状态查询并根据标题模糊查询公开题目
-func SelectPublicLikeTitle(title string) ([]model.ProblemData, error) {
-	problems, err := dao.SelectProblemsLikeTitleByStatus(title, entity.ProblemStatusPublic)
-	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取题目信息失败")
-	}
-
-	pds := wrapProblemDatas(problems)
-
-	return pds, nil
-}
-
-// 根据题目ID查询公开题目数据
-func SelectPublicByProblemId(pid uint64) (model.ProblemData, error) {
-	p, err := dao.SelectProblemByIdAndStatus(pid, entity.ProblemStatusPublic)
-	if err != nil {
-		log.Println(err)
-		return model.ProblemData{}, errors.New("获取题目信息失败")
-	}
-
-	// 获取题目标签
-	tags, err := dao.SelectTagsByProblemId(pid)
-	if err != nil {
-		log.Println(err)
-		return model.ProblemData{}, errors.New("获取题目标签失败")
-	}
-
-	// 初始化题目信息
-	pd := model.ProblemData{
-		Problem: p,
-		Tags:    tags,
-	}
-
-	return pd, nil
+	return pPage, nil
 }
 
 func hideProblemContent(problems []entity.Problem) {
