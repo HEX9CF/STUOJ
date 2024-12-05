@@ -46,6 +46,34 @@ func ProblemList(c *gin.Context) {
 	if err != nil {
 		size = 10
 	}
+	condition := parseProblemWhere(c)
+
+	if role < entity.RoleAdmin {
+		condition.Status.Set(entity.ProblemStatusPublic)
+	}
+
+	pds, err := problem.Select(condition, uint64(page), uint64(size))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", pds))
+}
+
+// 获取标签列表
+func TagList(c *gin.Context) {
+	tags, err := tag.SelectAll()
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.RespOk("OK", tags))
+}
+
+func parseProblemWhere(c *gin.Context) dao.ProblemWhere {
 	condition := dao.ProblemWhere{}
 
 	if c.Query("title") != "" {
@@ -75,27 +103,5 @@ func ProblemList(c *gin.Context) {
 			condition.Status.Set(entity.ProblemStatus(status))
 		}
 	}
-	if role < entity.RoleAdmin {
-		condition.Status.Set(entity.ProblemStatusPublic)
-	}
-
-	pds, err := problem.Select(condition, uint64(page), uint64(size))
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
-}
-
-// 获取标签列表
-func TagList(c *gin.Context) {
-	tags, err := tag.SelectAll()
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", tags))
+	return condition
 }
