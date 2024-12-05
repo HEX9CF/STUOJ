@@ -7,6 +7,11 @@ import (
 	"errors"
 )
 
+type ProblemPage struct {
+	Problems []entity.Problem `json:"problems"`
+	model.Page
+}
+
 // 根据ID查询题目数据
 func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 	condition := dao.ProblemWhere{}
@@ -49,15 +54,29 @@ func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 	return pd, nil
 }
 
-func SelectProblem(condition dao.ProblemWhere, page uint64, size uint64) ([]model.ProblemData, error) {
+func SelectProblem(condition dao.ProblemWhere, page uint64, size uint64) (ProblemPage, error) {
 	problems, err := dao.SelectProblem(condition, page, size)
 	if err != nil {
-		return []model.ProblemData{}, errors.New("获取题目信息失败")
+		return ProblemPage{}, errors.New("获取题目信息失败")
 	}
 
-	pds := wrapProblemDatas(problems)
+	hideProblemContent(problems)
 
-	return pds, nil
+	count, err := dao.CountProblems(condition)
+	if err != nil {
+		return ProblemPage{}, errors.New("获取题目总数失败")
+	}
+
+	pPage := ProblemPage{
+		Problems: problems,
+		Page: model.Page{
+			Page:  page,
+			Size:  size,
+			Total: count,
+		},
+	}
+
+	return pPage, nil
 }
 
 func hideProblemContent(problems []entity.Problem) {
