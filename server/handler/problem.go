@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/problem"
 	"STUOJ/internal/service/tag"
+	"STUOJ/utils"
 	"log"
 	"net/http"
 	"strconv"
@@ -12,8 +14,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 获取公开题目信息
-func ProblemPublicInfo(c *gin.Context) {
+// 获取题目信息
+func ProblemInfo(c *gin.Context) {
+	role, _ := utils.GetUserInfo(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -22,7 +25,7 @@ func ProblemPublicInfo(c *gin.Context) {
 	}
 
 	pid := uint64(id)
-	pd, err := problem.SelectPublicByProblemId(pid)
+	pd, err := problem.SelectById(pid, role >= entity.RoleAdmin)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -31,8 +34,9 @@ func ProblemPublicInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", pd))
 }
 
-// 获取公开题目列表
-func ProblemPublicList(c *gin.Context) {
+// 获取题目列表
+func ProblemList(c *gin.Context) {
+	role, _ := utils.GetUserInfo(c)
 	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
@@ -42,7 +46,40 @@ func ProblemPublicList(c *gin.Context) {
 	if err != nil {
 		size = 10
 	}
-	pds, err := problem.SelectPublic(uint64(page), uint64(size))
+	condition := dao.ProblemWhere{}
+
+	if c.Query("title") != "" {
+		condition.Title.Set(c.Query("title"))
+	}
+	if c.Query("difficulty") != "" {
+		difficulty, err := strconv.Atoi(c.Query("difficulty"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Difficulty.Set(entity.Difficulty(difficulty))
+		}
+	}
+	if c.Query("tag") != "" {
+		tag, err := strconv.Atoi(c.Query("tag"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Tag.Set(uint64(tag))
+		}
+	}
+	if c.Query("status") != "" {
+		status, err := strconv.Atoi(c.Query("status"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Status.Set(entity.ProblemStatus(status))
+		}
+	}
+	if role < entity.RoleAdmin {
+		condition.Status.Set(entity.ProblemStatusPublic)
+	}
+
+	pds, err := problem.SelectProblem(condition, uint64(page), uint64(size))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -61,95 +98,4 @@ func TagList(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, model.RespOk("OK", tags))
-}
-
-// 根据标签获取公开题目列表
-func ProblemPublicListOfTagId(c *gin.Context) {
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-	size, err := strconv.Atoi(c.Query("size"))
-	if err != nil {
-		size = 10
-	}
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	tid := uint64(id)
-	pds, err := problem.SelectPublicByTagId(tid, uint64(page), uint64(size))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
-}
-
-// 根据难度获取公开题目列表
-func ProblemPublicListOfDifficulty(c *gin.Context) {
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-	size, err := strconv.Atoi(c.Query("size"))
-	if err != nil {
-		size = 10
-	}
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	d := entity.Difficulty(id)
-	pds, err := problem.SelectPublicByDifficulty(d, uint64(page), uint64(size))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
-}
-
-type ReqProblemPublicListByTitle struct {
-	Title string `json:"title"`
-}
-
-// 根据标题获取公开题目列表
-func ProblemPublicListOfTitle(c *gin.Context) {
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-	size, err := strconv.Atoi(c.Query("size"))
-	if err != nil {
-		size = 10
-	}
-	var req ReqProblemPublicListByTitle
-	err = c.BindJSON(&req)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	pds, err := problem.SelectPublicLikeTitle(req.Title, uint64(page), uint64(size))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", pds))
 }

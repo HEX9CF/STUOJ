@@ -15,7 +15,7 @@ func GetStatistics() (model.ProblemStatistics, error) {
 	var stats model.ProblemStatistics
 
 	// 统计题目数量
-	stats.ProblemCount, err = dao.CountProblems()
+	stats.ProblemCount, err = dao.CountProblems(dao.ProblemWhere{})
 	if err != nil {
 		log.Println(err)
 		return model.ProblemStatistics{}, errors.New("统计题目数量失败")
