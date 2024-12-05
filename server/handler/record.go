@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/record"
@@ -45,7 +46,9 @@ func RecordList(c *gin.Context) {
 	}
 	role, id_ := utils.GetUserInfo(c)
 
-	records, err := record.SelectAll(uint64(page), uint64(size), id_, role <= entity.RoleUser)
+	condition := parseRecordWhere(c)
+
+	records, err := record.Select(condition, uint64(page), uint64(size), id_, role <= entity.RoleUser)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -54,61 +57,46 @@ func RecordList(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", records))
 }
 
-// 获取题目的提交记录列表
-func RecordListOfProblem(c *gin.Context) {
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
+func parseRecordWhere(c *gin.Context) dao.SubmissionWhere {
+	condition := dao.SubmissionWhere{}
+	if c.Query("problem") != "" {
+		problem, err := strconv.Atoi(c.Query("problem"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.ProblemId.Set(uint64(problem))
+		}
 	}
-	size, err := strconv.Atoi(c.Query("size"))
-	if err != nil {
-		size = 10
+	if c.Query("user") != "" {
+		user, err := strconv.Atoi(c.Query("user"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.UserId.Set(uint64(user))
+		}
 	}
-	role, id_ := utils.GetUserInfo(c)
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
+	if c.Query("language") != "" {
+		language, err := strconv.Atoi(c.Query("language"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.LanguageId.Set(uint64(language))
+		}
 	}
-
-	pid := uint64(id)
-	records, err := record.SelectByProblemId(uint64(page), uint64(size), id_, pid, role <= entity.RoleUser)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", records))
-}
-
-// 获取用户的提交记录列表
-func RecordListOfUser(c *gin.Context) {
-	page, err := strconv.Atoi(c.Query("page"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-	size, err := strconv.Atoi(c.Query("size"))
-	if err != nil {
-		size = 10
-	}
-	role, id_ := utils.GetUserInfo(c)
-	id, err := strconv.Atoi(c.Param("id"))
+	timePreiod, err := utils.GetPeriod(c)
 	if err != nil {
 		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
+	} else {
+		condition.StartTime.Set(timePreiod.StartTime)
+		condition.EndTime.Set(timePreiod.EndTime)
 	}
-
-	uid := uint64(id)
-	records, err := record.SelectByUserId(uint64(page), uint64(size), uid, id_ != uid && role <= entity.RoleUser)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
+	if c.Query("status") != "" {
+		status, err := strconv.Atoi(c.Query("status"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Status.Set(uint64(status))
+		}
 	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", records))
+	return condition
 }

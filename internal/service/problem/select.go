@@ -60,7 +60,7 @@ func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 	return pd, nil
 }
 
-func SelectProblem(condition dao.ProblemWhere, page uint64, size uint64) (ProblemPage, error) {
+func Select(condition dao.ProblemWhere, page uint64, size uint64) (ProblemPage, error) {
 	problems, err := dao.SelectProblem(condition, page, size)
 	if err != nil {
 		return ProblemPage{}, errors.New("获取题目信息失败")

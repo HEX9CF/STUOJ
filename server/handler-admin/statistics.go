@@ -1,6 +1,7 @@
 package handler_admin
 
 import (
+	"STUOJ/internal/dao"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/blog"
 	"STUOJ/internal/service/comment"
@@ -10,8 +11,9 @@ import (
 	"STUOJ/internal/service/tag"
 	"STUOJ/internal/service/user"
 	"STUOJ/utils"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 获取用户统计信息
@@ -147,14 +149,9 @@ func AdminStatisticsJudge(c *gin.Context) {
 
 // 获取提交记录提交信息
 func AdminStatisticsRecord(c *gin.Context) {
-	p, err := utils.GetPeriod(c)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, model.RespError(err.Error(), nil))
-		return
-	}
 
 	// 获取提交记录统计信息
-	stats, err := record.GetStatistics(p)
+	stats, err := record.GetStatistics(dao.SubmissionWhere{})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
