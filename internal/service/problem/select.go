@@ -31,16 +31,22 @@ func SelectById(id uint64, admin ...bool) (model.ProblemData, error) {
 		return model.ProblemData{}, errors.New("获取题目标签失败")
 	}
 
-	// 获取评测点数据
-	testcases, err := dao.SelectTestcasesByProblemId(id)
-	if err != nil {
-		return model.ProblemData{}, errors.New("获取评测点数据失败")
-	}
+	var testcases []entity.Testcase
+	var solutions []entity.Solution
 
-	// 获取题解数据
-	solutions, err := dao.SelectSolutionsByProblemId(id)
-	if err != nil {
-		return model.ProblemData{}, errors.New("获取题解数据失败")
+	if len(admin) > 0 && admin[0] {
+
+		// 获取评测点数据
+		testcases, err = dao.SelectTestcasesByProblemId(id)
+		if err != nil {
+			return model.ProblemData{}, errors.New("获取评测点数据失败")
+		}
+
+		// 获取题解数据
+		solutions, err = dao.SelectSolutionsByProblemId(id)
+		if err != nil {
+			return model.ProblemData{}, errors.New("获取题解数据失败")
+		}
 	}
 
 	// 封装题目数据
