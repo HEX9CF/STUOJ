@@ -40,7 +40,7 @@ func SelectProblemById(id uint64) (entity.Problem, error) {
 
 func SelectProblem(condition ProblemWhere, page uint64, size uint64) ([]entity.Problem, error) {
 	var problems []entity.Problem
-	where := generateWhereCondition(condition)
+	where := generateProblemWhereCondition(condition)
 	tx := db.Db.Offset(int((page - 1) * size)).Limit(int(size))
 	tx = where(tx)
 	tx = tx.Find(&problems)
@@ -85,7 +85,7 @@ func DeleteProblemById(id uint64) error {
 func CountProblems(condition ProblemWhere) (uint64, error) {
 	var count int64
 
-	where := generateWhereCondition(condition)
+	where := generateProblemWhereCondition(condition)
 
 	tx := db.Db.Model(&entity.Problem{})
 	tx = where(tx)
@@ -109,7 +109,7 @@ func CountProblemsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]m
 	return countByDate, nil
 }
 
-func generateWhereCondition(con ProblemWhere) func(*gorm.DB) *gorm.DB {
+func generateProblemWhereCondition(con ProblemWhere) func(*gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		whereClause := map[string]interface{}{}
 

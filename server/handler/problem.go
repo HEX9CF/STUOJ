@@ -79,7 +79,7 @@ func ProblemList(c *gin.Context) {
 		condition.Status.Set(entity.ProblemStatusPublic)
 	}
 
-	pds, err := problem.SelectProblem(condition, uint64(page), uint64(size))
+	pds, err := problem.Select(condition, uint64(page), uint64(size))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

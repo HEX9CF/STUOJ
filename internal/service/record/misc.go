@@ -10,17 +10,12 @@ import (
 )
 
 // 提交记录统计
-func GetStatistics(p model.Period) (model.RecordStatistics, error) {
+func GetStatistics(condition dao.SubmissionWhere) (model.RecordStatistics, error) {
 	var err error
 	var stats model.RecordStatistics
 
-	// 检查时间范围
-	if p.StartTime.After(p.EndTime) {
-		return model.RecordStatistics{}, errors.New("开始时间不能晚于结束时间")
-	}
-
 	// 统计提交记录数量
-	stats.SubmissionCount, err = dao.CountSubmissions()
+	stats.SubmissionCount, err = dao.CountSubmissions(condition)
 	if err != nil {
 		log.Println(err)
 		return model.RecordStatistics{}, errors.New("统计提交记录数量失败")

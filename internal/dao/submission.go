@@ -5,7 +5,18 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"time"
+
+	"gorm.io/gorm"
 )
+
+type SubmissionWhere struct {
+	ProblemId  model.Field[uint64]
+	UserId     model.Field[uint64]
+	LanguageId model.Field[uint64]
+	StartTime  model.Field[time.Time]
+	EndTime    model.Field[time.Time]
+	Status     model.Field[uint64]
+}
 
 // 插入提交记录
 func InsertSubmission(s entity.Submission) (uint64, error) {
@@ -21,10 +32,13 @@ func InsertSubmission(s entity.Submission) (uint64, error) {
 }
 
 // 查询所有提交记录
-func SelectAllSubmissions(page uint64, size uint64) ([]entity.Submission, error) {
+func SelectSubmissions(condition SubmissionWhere, page uint64, size uint64) ([]entity.Submission, error) {
 	var submissions []entity.Submission
 
-	tx := db.Db.Offset(int((page - 1) * size)).Limit(int(size)).Find(&submissions)
+	where := generateSubmissionWhereCondition(condition)
+	tx := db.Db.Offset(int((page - 1) * size)).Limit(int(size))
+	tx = where(tx)
+	tx = tx.Find(&submissions)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -42,30 +56,6 @@ func SelectSubmissionById(id uint64) (entity.Submission, error) {
 	}
 
 	return s, nil
-}
-
-// 根据用户ID查询提交记录（不返回源代码）
-func SelectSubmissionsByUserId(page uint64, size uint64, userId uint64) ([]entity.Submission, error) {
-	var submissions []entity.Submission
-
-	tx := db.Db.Offset(int((page-1)*size)).Limit(int(size)).Where("user_id = ?", userId).Find(&submissions)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return submissions, nil
-}
-
-// 根据题目ID查询提交记录（不返回源代码）
-func SelectSubmissionsByProblemId(page uint64, size uint64, problemId uint64) ([]entity.Submission, error) {
-	var submissions []entity.Submission
-
-	tx := db.Db.Offset(int((page-1)*size)).Limit(int(size)).Where("problem_id = ?", problemId).Find(&submissions)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return submissions, nil
 }
 
 // 更新提交记录
@@ -99,35 +89,16 @@ func DeleteSubmissionById(id uint64) error {
 }
 
 // 统计提交信息数量
-func CountSubmissions() (uint64, error) {
+func CountSubmissions(condition SubmissionWhere) (uint64, error) {
 	var count int64
-
-	tx := db.Db.Model(&entity.Submission{}).Count(&count)
+	where := generateSubmissionWhereCondition(condition)
+	tx := db.Db.Model(&entity.Submission{})
+	tx = where(tx)
+	tx = tx.Count(&count)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
 
-	return uint64(count), nil
-}
-
-func CountSubmissionsByProblemId(problemId uint64) (uint64, error) {
-	var count int64
-
-	tx := db.Db.Model(&entity.Submission{}).Where("problem_id = ?", problemId).Count(&count)
-	if tx.Error != nil {
-		return 0, tx.Error
-	}
-
-	return uint64(count), nil
-}
-
-func CountSubmissionsByUserId(userId uint64) (uint64, error) {
-	var count int64
-
-	tx := db.Db.Model(&entity.Submission{}).Where("user_id = ?", userId).Count(&count)
-	if tx.Error != nil {
-		return 0, tx.Error
-	}
 	return uint64(count), nil
 }
 
@@ -165,4 +136,31 @@ func CountSubmissionsBetweenCreateTime(startTime time.Time, endTime time.Time) (
 	}
 
 	return countByDate, nil
+}
+
+func generateSubmissionWhereCondition(con SubmissionWhere) func(*gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		whereClause := map[string]interface{}{}
+
+		if con.ProblemId.Exist() {
+			whereClause["problem_id"] = con.ProblemId.Value()
+		}
+		if con.UserId.Exist() {
+			whereClause["user_id"] = con.UserId.Value()
+		}
+		if con.LanguageId.Exist() {
+			whereClause["language_id"] = con.LanguageId.Value()
+		}
+		if con.Status.Exist() {
+			whereClause["status"] = con.Status.Value()
+		}
+		where := db.Where(whereClause)
+		if con.StartTime.Exist() {
+			where.Where("create_time >= ?", con.StartTime.Value())
+		}
+		if con.EndTime.Exist() {
+			where.Where("create_time <= ?", con.EndTime.Value())
+		}
+		return where
+	}
 }
