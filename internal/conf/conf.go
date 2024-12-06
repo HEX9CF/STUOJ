@@ -20,7 +20,10 @@ func InitConfig() error {
 	}
 	if !v {
 		Conf.Default()
-		utils.WriteYaml(&Conf, "config.yaml")
+		err = utils.WriteYaml(&Conf, "config.yaml")
+		if err != nil {
+			return err
+		}
 	}
 	err = utils.ReadYaml(&Conf, "config.yaml")
 	if err != nil {
