@@ -3,9 +3,15 @@ package blog
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"errors"
 	"log"
 )
+
+type BlogPage struct {
+	Blogs []entity.Blog `json:"blogs"`
+	model.Page
+}
 
 // 根据ID查询博客
 func SelectById(id uint64, userId uint64, admin ...bool) (entity.Blog, error) {
@@ -20,11 +26,11 @@ func SelectById(id uint64, userId uint64, admin ...bool) (entity.Blog, error) {
 	return b, nil
 }
 
-func Select(condition dao.BlogWhere, userId uint64, page uint64, size uint64, admin ...bool) ([]entity.Blog, error) {
+func Select(condition dao.BlogWhere, userId uint64, page uint64, size uint64, admin ...bool) (BlogPage, error) {
 	blogs, err := dao.SelectBlogs(condition, page, size)
 	if err != nil {
 		log.Println(err)
-		return nil, errors.New("获取博客失败")
+		return BlogPage{}, errors.New("获取博客失败")
 	}
 	if len(admin) == 0 || !admin[0] {
 		var publicBlogs []entity.Blog
@@ -38,7 +44,20 @@ func Select(condition dao.BlogWhere, userId uint64, page uint64, size uint64, ad
 
 	hideBlogContent(blogs)
 
-	return blogs, nil
+	count, err := dao.CountBlogs(condition)
+	if err != nil {
+		log.Println(err)
+		return BlogPage{}, errors.New("获取统计失败")
+	}
+	bPage := BlogPage{
+		Blogs: blogs,
+		Page: model.Page{
+			Total: count,
+			Size:  size,
+			Page:  page,
+		},
+	}
+	return bPage, nil
 }
 
 // 不返回正文
