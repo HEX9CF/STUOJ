@@ -3,8 +3,8 @@ package model
 import "fmt"
 
 type Page struct {
-	Page  uint64 `json:"page"`
-	Size  uint64 `json:"size"`
+	Page  uint64 `json:"page,omitempty"`
+	Size  uint64 `json:"size,omitempty"`
 	Total uint64 `json:"total"`
 }
 
