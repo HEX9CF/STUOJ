@@ -29,7 +29,7 @@ func GetStatistics() (model.ProblemStatistics, error) {
 	}
 
 	// 统计题解数量
-	stats.SolutionCount, err = dao.CountBlogs()
+	stats.SolutionCount, err = dao.CountBlogs(dao.BlogWhere{})
 	if err != nil {
 		log.Println(err)
 		return model.ProblemStatistics{}, errors.New("统计题解数量失败")

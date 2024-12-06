@@ -217,7 +217,7 @@ func AdminStatisticsRecordOfSubmit(c *gin.Context) {
 // 获取博客统计信息
 func AdminStatisticsBlog(c *gin.Context) {
 	// 获取博客统计信息
-	stats, err := blog.GetStatistics()
+	stats, err := blog.GetStatistics(dao.BlogWhere{})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return

@@ -5,7 +5,19 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"time"
+
+	"gorm.io/gorm"
 )
+
+type BlogWhere struct {
+	Id        model.Field[uint64]
+	UserId    model.Field[uint64]
+	ProblemId model.Field[uint64]
+	Title     model.Field[string]
+	Status    model.Field[entity.BlogStatus]
+	StartTime model.Field[time.Time]
+	EndTime   model.Field[time.Time]
+}
 
 // 插入博客
 func InsertBlog(b entity.Blog) (uint64, error) {
@@ -29,71 +41,14 @@ func SelectBlogById(id uint64) (entity.Blog, error) {
 	return b, nil
 }
 
-// 根据ID查询博客
-func SelectBlogByIdAndStatus(id uint64, s entity.BlogStatus) (entity.Blog, error) {
-	var b entity.Blog
-
-	tx := db.Db.Where("id = ? AND status = ?", id, s).First(&b)
-	if tx.Error != nil {
-		return entity.Blog{}, tx.Error
-	}
-
-	return b, nil
-}
-
-// 查询所有博客
-func SelectAllBlogs() ([]entity.Blog, error) {
+func SelectBlogs(condition BlogWhere, page uint64, size uint64) ([]entity.Blog, error) {
 	var blogs []entity.Blog
 
-	tx := db.Db.Find(&blogs)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
+	where := generateBlogWhereCondition(condition)
 
-	return blogs, nil
-}
-
-// 按状态查询博客
-func SelectBlogsByStatus(s entity.BlogStatus) ([]entity.Blog, error) {
-	var blogs []entity.Blog
-
-	tx := db.Db.Where("status = ?", s).Find(&blogs)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return blogs, nil
-}
-
-// 根据用户ID查询博客
-func SelectBlogsByUserIdAndStatus(uid uint64, s entity.BlogStatus) ([]entity.Blog, error) {
-	var blogs []entity.Blog
-
-	tx := db.Db.Where("user_id = ? AND status = ?", uid, s).Find(&blogs)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return blogs, nil
-}
-
-// 根据题目ID查询博客
-func SelectBlogsByProblemIdAndStatus(pid uint64, s entity.BlogStatus) ([]entity.Blog, error) {
-	var blogs []entity.Blog
-
-	tx := db.Db.Where("problem_id = ? AND status = ?", pid, s).Find(&blogs)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return blogs, nil
-}
-
-// 根据状态查询并根据标题模糊查询博客
-func SelectBlogsLikeTitleByStatus(title string, s entity.BlogStatus) ([]entity.Blog, error) {
-	var blogs []entity.Blog
-
-	tx := db.Db.Where("status = ? AND title like ?", s, "%"+title+"%").Find(&blogs)
+	tx := db.Db.Offset(int((page - 1) * size)).Limit(int(size))
+	tx = where(tx)
+	tx = tx.Find(&blogs)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -122,10 +77,13 @@ func DeleteBlogById(id uint64) error {
 }
 
 // 统计博客数量
-func CountBlogs() (uint64, error) {
+func CountBlogs(condition BlogWhere) (uint64, error) {
 	var count int64
 
-	tx := db.Db.Model(&entity.Blog{}).Count(&count)
+	where := generateBlogWhereCondition(condition)
+	tx := db.Db.Model(&entity.Blog{})
+	tx = where(tx)
+	tx = tx.Count(&count)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
@@ -143,4 +101,34 @@ func CountBlogsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]mode
 	}
 
 	return counts, nil
+}
+
+func generateBlogWhereCondition(con BlogWhere) func(*gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		whereClause := map[string]interface{}{}
+		if con.Id.Exist() {
+			whereClause["id"] = con.Id.Value()
+		}
+		if con.ProblemId.Exist() {
+			whereClause["problem_id"] = con.ProblemId.Value()
+		}
+		if con.UserId.Exist() {
+			whereClause["user_id"] = con.UserId.Value()
+		}
+		if con.Status.Exist() {
+			whereClause["status"] = con.Status.Value()
+		}
+		where := db.Where(whereClause)
+
+		if con.Title.Exist() {
+			where = where.Where("title LIKE ?", "%"+con.Title.Value()+"%")
+		}
+		if con.StartTime.Exist() {
+			where.Where("create_time >= ?", con.StartTime.Value())
+		}
+		if con.EndTime.Exist() {
+			where.Where("create_time <= ?", con.EndTime.Value())
+		}
+		return where
+	}
 }

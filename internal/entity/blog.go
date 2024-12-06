@@ -2,14 +2,15 @@ package entity
 
 import "time"
 
-// 0 被屏蔽，1 公开，2 草稿，3 待审核
+// 1 被屏蔽，2 草稿,3 待审核，4 公开，5 公告
 type BlogStatus uint8
 
 const (
-	BLogStatusBanned BlogStatus = 0
-	BlogStatusPublic BlogStatus = 1
+	BLogStatusBanned BlogStatus = 1
 	BlogStatusDraft  BlogStatus = 2
 	BLogStatusReview BlogStatus = 3
+	BlogStatusPublic BlogStatus = 4
+	BlogStatusNotice BlogStatus = 5
 )
 
 func (s BlogStatus) String() string {
@@ -22,6 +23,8 @@ func (s BlogStatus) String() string {
 		return "草稿"
 	case BLogStatusReview:
 		return "待审核"
+	case BlogStatusNotice:
+		return "公告"
 	default:
 		return "未知"
 	}

@@ -10,22 +10,17 @@ import (
 func InitBlogRoute(ginServer *gin.Engine) {
 	blogPublicRoute := ginServer.Group("/blog")
 	{
-		blogPublicRoute.GET("/", handler.BlogPublicList)
-		blogPublicRoute.GET("/:id", handler.BlogPublicInfo)
-		blogPublicRoute.GET("/user/:id", handler.BlogPublicListOfUser)
-		blogPublicRoute.GET("/problem/:id", handler.BlogPublicListOfProblem)
-		blogPublicRoute.POST("/title", handler.BlogPublicListOfTitle)
+		blogPublicRoute.GET("/", handler.BlogList)
+		blogPublicRoute.GET("/:id", handler.BlogInfo)
 	}
 	blogPrivateRoute := ginServer.Group("/blog")
 	{
 		// 使用中间件
 		blogPrivateRoute.Use(middlewares.TokenAuthUser())
 
-		blogPrivateRoute.POST("/", handler.BlogSave)
+		blogPrivateRoute.POST("/", handler.BlogUpload)
 		blogPrivateRoute.PUT("/", handler.BlogEdit)
 		blogPrivateRoute.PUT("/:id", handler.BlogSubmit)
 		blogPrivateRoute.DELETE("/:id", handler.BlogRemove)
-		blogPrivateRoute.GET("/draft", handler.BlogDraftListOfUser)
-
 	}
 }
