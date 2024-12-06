@@ -8,111 +8,32 @@ import (
 )
 
 // 根据ID查询博客
-func SelectById(id uint64) (entity.Blog, error) {
+func SelectById(id uint64, userId uint64, admin ...bool) (entity.Blog, error) {
 	b, err := dao.SelectBlogById(id)
 	if err != nil {
 		log.Println(err)
 		return entity.Blog{}, errors.New("获取博客失败")
 	}
-
+	if b.Status != entity.BlogStatusPublic && (len(admin) == 0 || !admin[0]) {
+		return entity.Blog{}, errors.New("该博客未公开")
+	}
 	return b, nil
 }
 
-// 根据ID查询公开博客
-func SelectPublicById(id uint64) (entity.Blog, error) {
-	b, err := dao.SelectBlogByIdAndStatus(id, entity.BlogStatusPublic)
-	if err != nil {
-		log.Println(err)
-		return entity.Blog{}, errors.New("获取博客失败")
-	}
-
-	return b, nil
-}
-
-// 查询所有博客
-func SelectAll() ([]entity.Blog, error) {
-	blogs, err := dao.SelectAllBlogs()
+func Select(condition dao.BlogWhere, userId uint64, page uint64, size uint64, admin ...bool) ([]entity.Blog, error) {
+	blogs, err := dao.SelectBlogs(condition, page, size)
 	if err != nil {
 		log.Println(err)
 		return nil, errors.New("获取博客失败")
 	}
-
-	hideBlogContent(blogs)
-
-	return blogs, nil
-}
-
-// 根据状态查询博客
-func SelectByStatus(s entity.BlogStatus) ([]entity.Blog, error) {
-	blogs, err := dao.SelectBlogsByStatus(s)
-	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取博客失败")
-	}
-
-	hideBlogContent(blogs)
-
-	return blogs, nil
-}
-
-// 查询公开博客
-func SelectPublic() ([]entity.Blog, error) {
-	blogs, err := dao.SelectBlogsByStatus(entity.BlogStatusPublic)
-	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取博客失败")
-	}
-
-	hideBlogContent(blogs)
-
-	return blogs, nil
-}
-
-// 根据用户ID查询公开博客
-func SelectPublicByUserId(uid uint64) ([]entity.Blog, error) {
-	blogs, err := dao.SelectBlogsByUserIdAndStatus(uid, entity.BlogStatusPublic)
-	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取博客失败")
-	}
-
-	hideBlogContent(blogs)
-
-	return blogs, nil
-}
-
-// 根据用户ID查询博客草稿箱
-func SelectDraftByUserId(uid uint64) ([]entity.Blog, error) {
-	blogs, err := dao.SelectBlogsByUserIdAndStatus(uid, entity.BlogStatusDraft)
-	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取博客失败")
-	}
-
-	hideBlogContent(blogs)
-
-	return blogs, nil
-}
-
-// 根据题目ID查询博客
-func SelectPublicByProblemId(pid uint64) ([]entity.Blog, error) {
-	blogs, err := dao.SelectBlogsByProblemIdAndStatus(pid, entity.BlogStatusPublic)
-	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取博客失败")
-	}
-
-	hideBlogContent(blogs)
-
-	return blogs, nil
-}
-
-// 根据状态查询并根据标题模糊查询公开博客
-func SelectPublicLikeTitle(title string) ([]entity.Blog, error) {
-	blogs, err := dao.SelectBlogsLikeTitleByStatus(title, entity.BlogStatusPublic)
-	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取博客失败")
+	if len(admin) == 0 || !admin[0] {
+		var publicBlogs []entity.Blog
+		for _, blog := range blogs {
+			if blog.Status >= entity.BlogStatusPublic || blog.UserId == userId {
+				publicBlogs = append(publicBlogs, blog)
+			}
+		}
+		blogs = publicBlogs
 	}
 
 	hideBlogContent(blogs)
