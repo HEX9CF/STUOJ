@@ -74,15 +74,18 @@ func DeleteCommentById(id uint64) error {
 }
 
 // 统计评论数量
-func CountComments() (int64, error) {
+func CountComments(condition CommentWhere) (uint64, error) {
 	var count int64
+	where := generateCommentWhereCondition(condition)
 
-	tx := db.Db.Model(&entity.Comment{}).Count(&count)
+	tx := db.Db.Model(&entity.Comment{})
+	tx = where(tx)
+	tx = tx.Count(&count)
 	if tx.Error != nil {
 		return 0, tx.Error
 	}
 
-	return count, nil
+	return uint64(count), nil
 }
 
 // 根据创建时间统计博客数量
