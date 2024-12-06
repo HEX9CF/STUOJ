@@ -14,8 +14,7 @@ func InitAdminRoute(ginServer *gin.Engine) {
 		adminPrivateRoute.Use(middlewares.TokenAuthAdmin())
 
 		{
-			adminPrivateRoute.GET("/user", handler_admin.AdminUserList)
-			adminPrivateRoute.GET("/user/role/:id", handler_admin.AdminUserListOfRole)
+			adminPrivateRoute.GET("/user", handler_admin.UserList)
 			adminPrivateRoute.POST("/user", handler_admin.AdminUserAdd)
 			adminPrivateRoute.DELETE("/user/:id", handler_admin.AdminUserRemove)
 		}
