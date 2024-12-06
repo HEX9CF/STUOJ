@@ -2,12 +2,12 @@ package entity
 
 import "time"
 
-// 状态：0 被屏蔽，1 公开，2 草稿，3 待审核
+// 状态：1 被屏蔽, 2 公开
 type CommentStatus uint8
 
 const (
-	CommentStatusBanned CommentStatus = 0
-	CommentStatusPublic CommentStatus = 1
+	CommentStatusBanned CommentStatus = 1
+	CommentStatusPublic CommentStatus = 2
 )
 
 func (s CommentStatus) String() string {

@@ -26,7 +26,7 @@ func DeleteById(id uint64) error {
 }
 
 // 根据ID删除评论（检查用户ID）
-func DeleteByIdCheckUserId(id uint64, uid uint64) error {
+func DeleteByIdCheckUserId(id uint64, uid uint64, admin ...bool) error {
 	// 查询评论
 	c0, err := dao.SelectCommentById(id)
 	if err != nil {
@@ -36,7 +36,7 @@ func DeleteByIdCheckUserId(id uint64, uid uint64) error {
 
 	// 检查权限
 	log.Println(c0.UserId, uid)
-	if c0.UserId != uid {
+	if c0.UserId != uid && (len(admin) == 0 || !admin[0]) {
 		return errors.New("没有权限，只能删除自己的评论")
 	}
 
