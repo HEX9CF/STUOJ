@@ -3,9 +3,15 @@ package user
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"errors"
 	"log"
 )
+
+type UserPage struct {
+	Users []entity.User `json:"users"`
+	model.Page
+}
 
 // 根据ID查询用户
 func SelectById(id uint64) (entity.User, error) {
@@ -22,28 +28,30 @@ func SelectById(id uint64) (entity.User, error) {
 }
 
 // 查询所有用户
-func SelectAll() ([]entity.User, error) {
-	users, err := dao.SelectAllUsers()
+func Select(condition dao.UserWhere, page uint64, size uint64) (UserPage, error) {
+	users, err := dao.SelectUsers(condition, page, size)
 	if err != nil {
 		log.Println(err)
-		return nil, errors.New("查询用户失败")
+		return UserPage{}, errors.New("查询用户失败")
 	}
 
 	hidePassword(users)
 
-	return users, nil
-}
-
-// 根据角色ID查询用户
-func SelectByRole(r entity.Role) ([]entity.User, error) {
-	users, err := dao.SelectUsersByRole(r)
+	count, err := dao.CountUsers(condition)
 	if err != nil {
-		return nil, errors.New("查询用户失败")
+		log.Println(err)
+		return UserPage{}, errors.New("查询统计失败")
+	}
+	uPage := UserPage{
+		Users: users,
+		Page: model.Page{
+			Total: count,
+			Page:  page,
+			Size:  size,
+		},
 	}
 
-	hidePassword(users)
-
-	return users, nil
+	return uPage, nil
 }
 
 // 不返回密码
