@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/comment"
@@ -11,46 +12,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
-// 根据用户ID获取公开评论列表
-func CommentPublicListOfUser(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	uid := uint64(id)
-	comments, err := comment.SelectPublicByUserId(uid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", comments))
-}
-
-// 根据博客ID获取公开评论列表
-func CommentPublicListOfBlog(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	uid := uint64(id)
-	comments, err := comment.SelectPublicByBlogId(uid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", comments))
-}
 
 // 发表评论
 type ReqCommentAdd struct {
@@ -88,9 +49,29 @@ func CommentAdd(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("发布成功，返回评论ID", cmt.Id))
 }
 
+func CommentList(c *gin.Context) {
+	role, userId := utils.GetUserInfo(c)
+	page, err := strconv.Atoi(c.Query("page"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
+		return
+	}
+	size, err := strconv.Atoi(c.Query("size"))
+	if err != nil {
+		size = 10
+	}
+	condition := parseCommentWhere(c)
+	commonts, err := comment.Select(condition, userId, uint64(page), uint64(size), role >= entity.RoleAdmin)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
+		return
+	}
+	c.JSON(http.StatusOK, model.RespOk("查询成功", commonts))
+}
+
 // 删除评论
 func CommentRemove(c *gin.Context) {
-	_, id_ := utils.GetUserInfo(c)
+	role, id_ := utils.GetUserInfo(c)
 	uid := uint64(id_)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -101,7 +82,7 @@ func CommentRemove(c *gin.Context) {
 
 	// 删除评论
 	cid := uint64(id)
-	err = comment.DeleteByIdCheckUserId(cid, uid)
+	err = comment.DeleteByIdCheckUserId(cid, uid, role >= entity.RoleAdmin)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return
@@ -109,4 +90,42 @@ func CommentRemove(c *gin.Context) {
 
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
+}
+
+func parseCommentWhere(c *gin.Context) dao.CommentWhere {
+	condition := dao.CommentWhere{}
+
+	if c.Query("user") != "" {
+		user, err := strconv.Atoi(c.Query("user"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.UserId.Set(uint64(user))
+		}
+	}
+	if c.Query("blog") != "" {
+		blog, err := strconv.Atoi(c.Query("blog"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.BlogId.Set(uint64(blog))
+		}
+	}
+	if c.Query("status") != "" {
+		status, err := strconv.Atoi(c.Query("status"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Status.Set(entity.CommentStatus(status))
+		}
+	}
+	timePreiod, err := utils.GetPeriod(c)
+	if err != nil {
+		log.Println(err)
+	} else {
+		condition.StartTime.Set(timePreiod.StartTime)
+		condition.EndTime.Set(timePreiod.EndTime)
+	}
+
+	return condition
 }

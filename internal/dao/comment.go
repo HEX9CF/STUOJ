@@ -5,7 +5,17 @@ import (
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"time"
+
+	"gorm.io/gorm"
 )
+
+type CommentWhere struct {
+	UserId    model.Field[uint64]
+	BlogId    model.Field[uint64]
+	Status    model.Field[entity.CommentStatus]
+	StartTime model.Field[time.Time]
+	EndTime   model.Field[time.Time]
+}
 
 // 根据ID查询评论
 func SelectCommentById(id uint64) (entity.Comment, error) {
@@ -19,59 +29,13 @@ func SelectCommentById(id uint64) (entity.Comment, error) {
 	return c, nil
 }
 
-// 查询所有评论
-func SelectAllComments() ([]entity.Comment, error) {
+// 查询评论
+func SelectComments(condition CommentWhere, page uint64, size uint64) ([]entity.Comment, error) {
 	var comments []entity.Comment
-
-	tx := db.Db.Find(&comments)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return comments, nil
-}
-
-// 根据博客ID查询评论
-func SelectCommentsByBlogId(bid uint64) ([]entity.Comment, error) {
-	var comments []entity.Comment
-
-	tx := db.Db.Where("blog_id = ?", bid).Find(&comments)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return comments, nil
-}
-
-// 按状态查询评论
-func SelectCommentsByStatus(s entity.CommentStatus) ([]entity.Comment, error) {
-	var comments []entity.Comment
-
-	tx := db.Db.Where("status = ?", s).Find(&comments)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return comments, nil
-}
-
-// 根据用户ID查询评论
-func SelectCommentsByUserIdAndStatus(uid uint64, s entity.CommentStatus) ([]entity.Comment, error) {
-	var comments []entity.Comment
-
-	tx := db.Db.Where("user_id = ? AND status = ?", uid, s).Find(&comments)
-	if tx.Error != nil {
-		return nil, tx.Error
-	}
-
-	return comments, nil
-}
-
-// 根据博客ID查询评论
-func SelectCommentsByBlogIdAndStatus(bid uint64, s entity.CommentStatus) ([]entity.Comment, error) {
-	var comments []entity.Comment
-
-	tx := db.Db.Where("blog_id = ? AND status = ?", bid, s).Find(&comments)
+	where := generateCommentWhereCondition(condition)
+	tx := db.Db.Offset(int((page - 1) * size)).Limit(int(size))
+	tx = where(tx)
+	tx = tx.Find(&comments)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
@@ -131,4 +95,28 @@ func CountCommentsBetweenCreateTime(startTime time.Time, endTime time.Time) ([]m
 	}
 
 	return counts, nil
+}
+
+func generateCommentWhereCondition(con CommentWhere) func(*gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		whereClause := map[string]interface{}{}
+
+		if con.UserId.Exist() {
+			whereClause["user_id"] = con.UserId.Value()
+		}
+		if con.BlogId.Exist() {
+			whereClause["blog_id"] = con.BlogId.Value()
+		}
+		if con.Status.Exist() {
+			whereClause["status"] = con.Status.Value()
+		}
+		where := db.Where(whereClause)
+		if con.StartTime.Exist() {
+			where.Where("create_time >= ?", con.StartTime.Value())
+		}
+		if con.EndTime.Exist() {
+			where.Where("create_time <= ?", con.EndTime.Value())
+		}
+		return where
+	}
 }
