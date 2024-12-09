@@ -155,14 +155,14 @@ func getUserRole(c *gin.Context) (entity.Role, error) {
 	}
 
 	// 获取用户信息
-	user, err := user.SelectById(uid)
+	u, err := user.SelectById(uid)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, model.RespError("token无效，获取用户信息失败", nil))
 		c.Abort()
 		return 0, err
 	}
 
-	return user.Role, nil
+	return u.Role, nil
 }
 
 func tokenVerify(c *gin.Context) error {
