@@ -26,7 +26,7 @@ func DeleteById(id uint64) error {
 }
 
 // 根据ID删除博客（检查用户ID）
-func DeleteByIdCheckUserId(id uint64, uid uint64) error {
+func DeleteByIdCheckUserId(id uint64, uid uint64, admin ...bool) error {
 	// 查询博客
 	b0, err := dao.SelectBlogById(id)
 	if err != nil {
@@ -35,7 +35,7 @@ func DeleteByIdCheckUserId(id uint64, uid uint64) error {
 	}
 
 	// 检查权限
-	if b0.UserId != uid {
+	if b0.UserId != uid && (len(admin) == 0 || !admin[0]) {
 		return errors.New("没有权限，只能删除自己的博客")
 	}
 

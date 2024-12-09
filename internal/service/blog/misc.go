@@ -9,19 +9,19 @@ import (
 )
 
 // 统计博客数量
-func GetStatistics() (model.BlogStatistics, error) {
+func GetStatistics(conditon dao.BlogWhere) (model.BlogStatistics, error) {
 	var err error
 	var stats model.BlogStatistics
 
 	// 统计博客数量
-	stats.BlogCount, err = dao.CountBlogs()
+	stats.BlogCount, err = dao.CountBlogs(conditon)
 	if err != nil {
 		log.Println(err)
 		return model.BlogStatistics{}, errors.New("统计博客数量失败")
 	}
 
 	// 统计评论数量
-	stats.CommentCount, err = dao.CountBlogs()
+	stats.CommentCount, err = dao.CountBlogs(conditon)
 	if err != nil {
 		log.Println(err)
 		return model.BlogStatistics{}, errors.New("统计评论数量失败")

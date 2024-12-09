@@ -3,6 +3,7 @@ package model
 const (
 	RoleProblem uint8 = 1
 	RoleAvatar  uint8 = 2
+	RoleBlog    uint8 = 3
 )
 
 const (
@@ -14,14 +15,19 @@ const (
 const (
 	YukiAvatarAlbum  uint8 = 1
 	YukiProblemAlbum uint8 = 2
+	YukiBlogAlbum    uint8 = 3
 )
 
 func GetAlbumName(role uint8) string {
 	switch role {
 	case RoleAvatar:
 		return "avatar"
-	default:
+	case RoleProblem:
 		return "problem"
+	case RoleBlog:
+		return "blog"
+	default:
+		return "unknown"
 	}
 }
 
@@ -44,9 +50,7 @@ type YukiAlbum struct {
 
 type YukiImageList struct {
 	Image []YukiImage `json:"image,omitempty"`
-	Page  uint64      `json:"page,omitempty"`
-	Size  uint64      `json:"size,omitempty"`
-	Total uint64      `json:"total"`
+	Page
 }
 
 type YukiFormat struct {

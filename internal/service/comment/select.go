@@ -3,38 +3,44 @@ package comment
 import (
 	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
+	"STUOJ/internal/model"
 	"errors"
 	"log"
 )
 
-func SelectAll() ([]entity.Comment, error) {
-	comments, err := dao.SelectAllComments()
-	if err != nil {
-		log.Println(err)
-		return nil, errors.New("获取评论失败")
-	}
-
-	return comments, nil
+type CommentPage struct {
+	Comments []entity.Comment `json:"comments"`
+	model.Page
 }
 
-// 根据用户ID查询公开评论
-func SelectPublicByUserId(uid uint64) ([]entity.Comment, error) {
-	comments, err := dao.SelectCommentsByUserIdAndStatus(uid, entity.CommentStatusPublic)
+func Select(condition dao.CommentWhere, userId uint64, page uint64, size uint64, admin ...bool) (CommentPage, error) {
+	comments, err := dao.SelectComments(condition, page, size)
 	if err != nil {
 		log.Println(err)
-		return nil, errors.New("获取评论失败")
+		return CommentPage{}, errors.New("获取评论失败")
 	}
-
-	return comments, nil
-}
-
-// 根据博客ID查询公开评论
-func SelectPublicByBlogId(bid uint64) ([]entity.Comment, error) {
-	comments, err := dao.SelectCommentsByBlogIdAndStatus(bid, entity.CommentStatusPublic)
+	if len(admin) == 0 || !admin[0] {
+		var publicComment []entity.Comment
+		for _, comment := range comments {
+			if comment.Status >= entity.CommentStatusPublic || comment.UserId == userId {
+				publicComment = append(publicComment, comment)
+			}
+		}
+		comments = publicComment
+	}
+	count, err := dao.CountComments(condition)
 	if err != nil {
 		log.Println(err)
-		return nil, errors.New("获取评论失败")
+		return CommentPage{}, errors.New("获取统计失败")
+	}
+	cPage := CommentPage{
+		Comments: comments,
+		Page: model.Page{
+			Page:  page,
+			Size:  size,
+			Total: count,
+		},
 	}
 
-	return comments, nil
+	return cPage, nil
 }

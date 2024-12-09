@@ -1,6 +1,7 @@
 package handler_admin
 
 import (
+	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/user"
@@ -12,27 +13,18 @@ import (
 )
 
 // 获取用户列表
-func AdminUserList(c *gin.Context) {
-	users, err := user.SelectAll()
+func UserList(c *gin.Context) {
+	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", users))
-}
-
-// 根据角色获取用户列表
-func AdminUserListOfRole(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
-
-	rid := entity.Role(id)
-	users, err := user.SelectByRole(rid)
+	size, err := strconv.Atoi(c.Query("size"))
+	if err != nil {
+		size = 10
+	}
+	condition := parseUserWhere(c)
+	users, err := user.Select(condition, uint64(page), uint64(size))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -131,4 +123,18 @@ func AdminUserModifyRole(c *gin.Context) {
 
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("修改成功", nil))
+}
+
+func parseUserWhere(c *gin.Context) dao.UserWhere {
+	condition := dao.UserWhere{}
+	if c.Query("role") != "" {
+		role, err := strconv.Atoi(c.Query("role"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Role.Set(entity.Role(role))
+		}
+	}
+
+	return condition
 }

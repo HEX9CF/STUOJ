@@ -26,15 +26,18 @@ func Insert(b entity.Blog) (uint64, error) {
 	return b.Id, nil
 }
 
-// 保存草稿
-func SaveDraft(b entity.Blog) (uint64, error) {
+func BlogUpload(b entity.Blog, admin ...bool) (uint64, error) {
 	var err error
 
 	updateTime := time.Now()
 	b.UpdateTime = updateTime
 	b.CreateTime = updateTime
 
-	b.Status = entity.BlogStatusDraft
+	if len(admin) == 0 || !admin[0] || b.Status == 0 {
+		if b.Status > entity.BLogStatusReview || b.Status == 0 {
+			b.Status = entity.BlogStatusDraft
+		}
+	}
 
 	// 插入博客
 	b.Id, err = dao.InsertBlog(b)

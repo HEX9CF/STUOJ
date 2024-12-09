@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"STUOJ/internal/dao"
 	"STUOJ/internal/entity"
 	"STUOJ/internal/model"
 	"STUOJ/internal/service/blog"
@@ -12,8 +13,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 获取公开博客信息
-func BlogPublicInfo(c *gin.Context) {
+func BlogInfo(c *gin.Context) {
+	role, userId := utils.GetUserInfo(c)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		log.Println(err)
@@ -22,7 +23,7 @@ func BlogPublicInfo(c *gin.Context) {
 	}
 
 	bid := uint64(id)
-	b, err := blog.SelectPublicById(bid)
+	b, err := blog.SelectById(bid, userId, role >= entity.RoleAdmin)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -31,90 +32,20 @@ func BlogPublicInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", b))
 }
 
-// 获取公开博客列表
-func BlogPublicList(c *gin.Context) {
-	blogs, err := blog.SelectPublic()
+func BlogList(c *gin.Context) {
+	role, userId := utils.GetUserInfo(c)
+	condition := parseBlogWhere(c)
+	page, err := strconv.Atoi(c.Query("page"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", blogs))
-}
-
-// 根据用户ID获取公开博客列表
-func BlogPublicListOfUser(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
 		return
 	}
-
-	uid := uint64(id)
-	bds, err := blog.SelectPublicByUserId(uid)
+	size, err := strconv.Atoi(c.Query("size"))
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
+		size = 10
 	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", bds))
-}
-
-// 当前用户博客草稿箱
-func BlogDraftListOfUser(c *gin.Context) {
-	_, id_ := utils.GetUserInfo(c)
-	uid := uint64(id_)
-
-	// 查询博客草稿箱
-	bds, err := blog.SelectDraftByUserId(uid)
+	blogs, err := blog.Select(condition, userId, uint64(page), uint64(size), role >= entity.RoleAdmin)
 	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", bds))
-}
-
-// 根据题目ID获取公开博客列表
-func BlogPublicListOfProblem(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	pid := uint64(id)
-	bds, err := blog.SelectPublicByProblemId(pid)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
-		return
-	}
-
-	c.JSON(http.StatusOK, model.RespOk("OK", bds))
-}
-
-// 根据标题获取公开题目列表
-type ReqBlogPublicListByTitle struct {
-	Title string `json:"title"`
-}
-
-func BlogPublicListOfTitle(c *gin.Context) {
-	var req ReqBlogPublicListByTitle
-	err := c.BindJSON(&req)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, model.RespError("参数错误", nil))
-		return
-	}
-
-	blogs, err := blog.SelectPublicLikeTitle(req.Title)
-	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
 	}
@@ -124,13 +55,14 @@ func BlogPublicListOfTitle(c *gin.Context) {
 
 // 保存博客
 type ReqBlogSave struct {
-	ProblemId uint64 `json:"problem_id,omitempty" binding:"required"`
-	Title     string `json:"title,omitempty" binding:"required"`
-	Content   string `json:"content,omitempty" binding:"required"`
+	ProblemId uint64            `json:"problem_id,omitempty" binding:"required"`
+	Title     string            `json:"title,omitempty" binding:"required"`
+	Content   string            `json:"content,omitempty" binding:"required"`
+	Status    entity.BlogStatus `json:"status,omitempty" binding:"required"`
 }
 
-func BlogSave(c *gin.Context) {
-	_, id_ := utils.GetUserInfo(c)
+func BlogUpload(c *gin.Context) {
+	role, id_ := utils.GetUserInfo(c)
 	uid := uint64(id_)
 	var req ReqBlogSave
 
@@ -147,10 +79,11 @@ func BlogSave(c *gin.Context) {
 		ProblemId: req.ProblemId,
 		Title:     req.Title,
 		Content:   req.Content,
+		Status:    req.Status,
 	}
 
 	// 插入博客
-	b.Id, err = blog.SaveDraft(b)
+	b.Id, err = blog.BlogUpload(b, role >= entity.RoleAdmin)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return
@@ -162,14 +95,15 @@ func BlogSave(c *gin.Context) {
 
 // 编辑博客
 type ReqBlogEdit struct {
-	Id        uint64 `json:"id,omitempty" binding:"required"`
-	ProblemId uint64 `json:"problem_id,omitempty" binding:"required"`
-	Title     string `json:"title,omitempty" binding:"required"`
-	Content   string `json:"content,omitempty" binding:"required"`
+	Id        uint64            `json:"id,omitempty" binding:"required"`
+	ProblemId uint64            `json:"problem_id,omitempty" binding:"required"`
+	Title     string            `json:"title,omitempty" binding:"required"`
+	Content   string            `json:"content,omitempty" binding:"required"`
+	Status    entity.BlogStatus `json:"status,omitempty" binding:"required"`
 }
 
 func BlogEdit(c *gin.Context) {
-	_, id_ := utils.GetUserInfo(c)
+	role, id_ := utils.GetUserInfo(c)
 	uid := uint64(id_)
 	var req ReqBlogEdit
 
@@ -187,10 +121,11 @@ func BlogEdit(c *gin.Context) {
 		ProblemId: req.ProblemId,
 		Title:     req.Title,
 		Content:   req.Content,
+		Status:    req.Status,
 	}
 
 	// 修改博客
-	err = blog.EditByIdCheckUserId(b)
+	err = blog.EditByIdCheckUserId(b, role >= entity.RoleAdmin)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return
@@ -202,7 +137,7 @@ func BlogEdit(c *gin.Context) {
 
 // 提交博客
 func BlogSubmit(c *gin.Context) {
-	_, id_ := utils.GetUserInfo(c)
+	role, id_ := utils.GetUserInfo(c)
 	uid := uint64(id_)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -212,7 +147,7 @@ func BlogSubmit(c *gin.Context) {
 	}
 
 	bid := uint64(id)
-	err = blog.SubmitByIdCheckUserId(bid, uid)
+	err = blog.SubmitByIdCheckUserId(bid, uid, role >= entity.RoleAdmin)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))
 		return
@@ -223,7 +158,7 @@ func BlogSubmit(c *gin.Context) {
 
 // 删除博客
 func BlogRemove(c *gin.Context) {
-	_, id_ := utils.GetUserInfo(c)
+	role, id_ := utils.GetUserInfo(c)
 	uid := uint64(id_)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -234,7 +169,7 @@ func BlogRemove(c *gin.Context) {
 
 	// 删除博客
 	bid := uint64(id)
-	err = blog.DeleteByIdCheckUserId(bid, uid)
+	err = blog.DeleteByIdCheckUserId(bid, uid, role >= entity.RoleAdmin)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.RespOk(err.Error(), nil))
 		return
@@ -242,4 +177,44 @@ func BlogRemove(c *gin.Context) {
 
 	// 返回结果
 	c.JSON(http.StatusOK, model.RespOk("删除成功", nil))
+}
+
+func parseBlogWhere(c *gin.Context) dao.BlogWhere {
+	condition := dao.BlogWhere{}
+	if c.Query("title") != "" {
+		condition.Title.Set(c.Query("title"))
+	}
+	if c.Query("status") != "" {
+		status, err := strconv.Atoi(c.Query("status"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.Status.Set(entity.BlogStatus(status))
+		}
+	}
+	if c.Query("user") != "" {
+		user, err := strconv.Atoi(c.Query("user"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.UserId.Set(uint64(user))
+		}
+	}
+	if c.Query("problem") != "" {
+		problem, err := strconv.Atoi(c.Query("problem"))
+		if err != nil {
+			log.Println(err)
+		} else {
+			condition.ProblemId.Set(uint64(problem))
+		}
+	}
+	timePreiod, err := utils.GetPeriod(c)
+	if err != nil {
+		log.Println(err)
+	} else {
+		condition.StartTime.Set(timePreiod.StartTime)
+		condition.EndTime.Set(timePreiod.EndTime)
+	}
+
+	return condition
 }
