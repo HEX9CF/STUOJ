@@ -14,7 +14,7 @@ STUOJ 是汕头大学疾风算法协会的 ACM-ICPC 在线代码评测系统，�
 
 ## API 文档
 
-- Apifox：[https://apifox.com/apidoc/shared-431b8879-dd14-41f8-a011-613050aee4f4](https://apifox.com/apidoc/shared-431b8879-dd14-41f8-a011-613050aee4f4)
+- Apifox：[https://stuoj-api.apifox.cn](https://stuoj-api.apifox.cn)
 
 ## 系统架构
 
