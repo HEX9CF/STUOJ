@@ -30,6 +30,7 @@ func InitRoute() error {
 	routes.InitBlogRoute(ginServer)
 	routes.InitCommentRoute(ginServer)
 	routes.InitAdminRoute(ginServer)
+	routes.InitMiscRoute(ginServer)
 
 	return nil
 }
