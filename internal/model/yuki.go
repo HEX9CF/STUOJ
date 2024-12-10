@@ -20,11 +20,11 @@ const (
 
 func GetAlbumName(role uint8) string {
 	switch role {
-	case RoleAvatar:
+	case YukiAvatarAlbum:
 		return "avatar"
-	case RoleProblem:
+	case YukiProblemAlbum:
 		return "problem"
-	case RoleBlog:
+	case YukiBlogAlbum:
 		return "blog"
 	default:
 		return "unknown"
