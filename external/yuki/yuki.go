@@ -11,11 +11,11 @@ import (
 func InitYukiImage() error {
 	config = conf.Conf.YukiImage
 	preUrl = config.Host + ":" + config.Port + "/api/v1"
+	log.Println("Connecting to yuki-image service: " + preUrl)
 	_, err := GetAlbumList()
 	if err != nil {
 		return err
 	}
-	log.Println("Successfully connected to yuki-image.")
 	return nil
 }
 

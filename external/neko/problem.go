@@ -4,6 +4,7 @@ import (
 	"STUOJ/internal/model"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -28,7 +29,7 @@ func GenerateProblem(pi model.NekoProblemInstruction) (model.NekoProblem, error)
 		return model.NekoProblem{}, err
 	}
 	if resp.Code == 0 {
-		return model.NekoProblem{}, err
+		return model.NekoProblem{}, errors.New(resp.Msg)
 	}
 
 	// 解析题目

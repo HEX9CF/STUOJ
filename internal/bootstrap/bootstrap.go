@@ -7,6 +7,7 @@ func Init() {
 	// 异步初始化
 	go initJudge0()
 	go initYuki()
+	go initNeko()
 
 	initServer()
 }

@@ -11,5 +11,5 @@ func initConfig() {
 		log.Println("Init config failed!")
 		panic(err)
 	}
-	log.Println("Init config success!")
+	log.Println("Init config success.")
 }

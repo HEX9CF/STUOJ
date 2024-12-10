@@ -8,10 +8,10 @@ import (
 	"net/http"
 )
 
-func InitNeko() error {
+func InitNekoAcm() error {
 	config = conf.Conf.NekoAcm
 	preUrl = config.Host + ":" + config.Port
-	log.Println("Successfully connected to NekoACM service.")
+	log.Println("Connecting to NekoAcm service: " + preUrl)
 	return nil
 }
 
