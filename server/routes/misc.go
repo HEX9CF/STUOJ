@@ -8,9 +8,9 @@ import (
 )
 
 func InitMiscRoute(ginServer *gin.Engine) {
-	miscRoute := ginServer.Group("/misc")
+	uploadRoute := ginServer.Group("/upload")
 	{
-		miscRoute.Use(middlewares.TokenAuthUser())
-		miscRoute.POST("/uploadimage", handler.UploadImage)
+		uploadRoute.Use(middlewares.TokenAuthUser())
+		uploadRoute.POST("/image", handler.UploadImage)
 	}
 }
