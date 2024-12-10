@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/mitchellh/mapstructure"
-	"log"
 )
 
 // 生成测试用例
@@ -33,18 +32,12 @@ func GenerateTestcase(ti model.NekoTestcaseInstruction) (model.NekoTestcase, err
 		return model.NekoTestcase{}, errors.New(resp.Msg)
 	}
 
-	// 打印 resp.Data 以调试
-	log.Printf("resp.Data: %+v\n", resp.Data)
-
-	// 解析题目
+	// 解析测试用例
 	var t model.NekoTestcase
 	err = mapstructure.Decode(resp.Data, &t)
 	if err != nil {
 		return model.NekoTestcase{}, err
 	}
-
-	// 打印 t 以调试
-	log.Printf("t: %+v\n", t)
 
 	return t, nil
 }
