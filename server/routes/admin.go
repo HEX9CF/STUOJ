@@ -26,6 +26,7 @@ func InitAdminRoute(ginServer *gin.Engine) {
 			adminPrivateRoute.DELETE("/problem/tag", handler_admin.AdminProblemRemoveTag)
 			adminPrivateRoute.POST("/problem/fps", handler_admin.AdminProblemParseFromFps)
 			adminPrivateRoute.GET("/history/problem/:id", handler_admin.AdminHistoryListOfProblem)
+			adminPrivateRoute.POST("/problem/generate", handler_admin.AdminProblemGenerate)
 		}
 		{
 			adminPrivateRoute.DELETE("/record/:id", handler_admin.AdminRecordRemove)
