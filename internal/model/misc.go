@@ -29,3 +29,25 @@ func (f *Field[T]) Set(value interface{}) error {
 	}
 	return fmt.Errorf("cannot set value of type %T to field of type %T", value, f.value)
 }
+
+type FieldList[T any] struct {
+	exist bool
+	value []T
+}
+
+func (f *FieldList[T]) Exist() bool {
+	return f.exist
+}
+
+func (f *FieldList[T]) Value() []T {
+	return f.value
+}
+
+func (f *FieldList[T]) Set(value interface{}) error {
+	if v, ok := value.([]T); ok {
+		f.exist = true
+		f.value = v
+		return nil
+	}
+	return fmt.Errorf("cannot set value of type %T to field of type %T", value, f.value)
+}
