@@ -18,11 +18,13 @@ STUOJ 是汕头大学疾风算法协会的 ACM-ICPC 在线代码评测系统，�
 
 ## 系统架构
 
-- 后端架构：Gin + Gorm
-- 前端架构：Vue + Element Plus
+- 后端：Gin + Gorm
+- 前端：Vue + Element Plus
 - 数据库：MySQL
 - 代码沙箱: Judge0
 - 图床服务: yuki-image
+- AI题目生成：NekoACM
+- 题目文件格式：FPS
 
 ## 系统功能
 
@@ -93,69 +95,72 @@ STUOJ 是汕头大学疾风算法协会的 ACM-ICPC 在线代码评测系统，�
 | 删除评论     | DELETE | /comment/:id      | 用户  | 用户可以删除评论。        |
 
 ### 管理面板
-| 功能名称       | 请求方法   | 路由路径                                | 操作者   | 功能简述              |
-|------------|--------|-------------------------------------|-------|-------------------|
-| 获取用户列表     | GET    | /admin/user                         | 管理员   | 管理员可以获取用户列表。      |
-| 获取用户详情     | GET    | /admin/user/:id                     | 管理员   | 管理员可以获取用户的详细信息。   |
-| 根据角色获取用户列表 | GET    | /admin/user/role/:id                | 管理员   | 管理员可以根据角色获取用户列表。  |
-| 添加用户       | POST   | /admin/user                         | 管理员   | 管理员可以添加用户。        |
-| 修改用户信息     | PUT    | /admin/user                         | 管理员   | 管理员可以修改用户信息。      |
-| 删除用户       | DELETE | /admin/user/:id                     | 管理员   | 管理员可以删除用户。        |
-| 获取题目列表     | GET    | /admin/problem                      | 管理员   | 管理员可以获取题目列表。      |
-| 根据状态获取题目列表 | GET    | /admin/problem/status/:id           | 管理员   | 管理员可以根据状态获取题目列表。  |
-| 获取题目详情     | GET    | /admin/problem/:id                  | 管理员   | 管理员可以获取题目的详细信息。   |
-| 添加题目       | POST   | /admin/problem                      | 管理员   | 管理员可以添加题目。        |
-| 修改题目       | PUT    | /admin/problem                      | 管理员   | 管理员可以修改题目。        |
-| 删除题目       | DELETE | /admin/problem/:id                  | 管理员   | 管理员可以删除题目。        |
-| 添加题目标签     | POST   | /admin/problem/tag                  | 管理员   | 管理员可以给题目添加标签。     |
-| 删除题目标签     | DELETE | /admin/problem/tag                  | 管理员   | 管理员可以删除题目的标签。     |
-| 从FPS文件解析题目 | POST   | /admin/problem/fps                  | 管理员   | 管理员可以从FPS文件解析题目。  |
-| 获取题目历史记录   | GET    | /admin/history/problem/:id          | 管理员   | 管理员可以获取题目的历史记录。   |
-| 获取评测点详情    | GET    | /admin/testcase/:id                 | 管理员   | 管理员可以获取评测点的详细信息。  |
-| 添加评测点      | POST   | /admin/testcase                     | 管理员   | 管理员可以添加评测点。       |
-| 修改评测点      | PUT    | /admin/testcase                     | 管理员   | 管理员可以修改评测点。       |
-| 删除评测点      | DELETE | /admin/testcase/:id                 | 管理员   | 管理员可以删除评测点。       |
-| 生成评测点数据    | POST   | /admin/testcase/datamake            | 管理员   | 管理员可以生成评测点数据。     |
-| 获取标签列表     | GET    | /admin/tag                          | 管理员   | 管理员可以获取标签列表。      |
-| 添加标签       | POST   | /admin/tag                          | 管理员   | 管理员可以添加标签。        |
-| 修改标签       | PUT    | /admin/tag                          | 管理员   | 管理员可以修改标签。        |
-| 删除标签       | DELETE | /admin/tag/:id                      | 管理员   | 管理员可以删除标签。        |
-| 获取题解       | GET    | /admin/solution/:id                 | 管理员   | 管理员可以获取解答的详细信息。   |
-| 添加题解       | POST   | /admin/solution                     | 管理员   | 管理员可以添加解答。        |
-| 修改题解       | PUT    | /admin/solution                     | 管理员   | 管理员可以修改解答。        |
-| 删除题解       | DELETE | /admin/solution/:id                 | 管理员   | 管理员可以删除解答。        |
-| 获取提交记录列表   | GET    | /admin/record                       | 管理员   | 管理员可以获取提交记录列表。    |
-| 获取提交记录详情   | GET    | /admin/record/:id                   | 管理员   | 管理员可以获取提交记录的详细信息。 |
-| 删除提交记录     | DELETE | /admin/record/:id                   | 管理员   | 管理员可以删除提交记录。      |
-| 获取博客列表     | GET    | /admin/blog                         | 管理员   | 管理员可以获取博客列表。      |
-| 根据状态获取博客列表 | GET    | /admin/blog/status/:id              | 管理员   | 管理员可以根据状态获取博客列表。  |
-| 获取博客详情     | GET    | /admin/blog/:id                     | 管理员   | 管理员可以获取博客的详细信息。   |
-| 添加博客       | POST   | /admin/blog                         | 管理员   | 管理员可以添加博客。        |
-| 修改博客       | PUT    | /admin/blog                         | 管理员   | 管理员可以修改博客。        |
-| 删除博客       | DELETE | /admin/blog/:id                     | 管理员   | 管理员可以删除博客。        |
-| 获取评论列表     | GET    | /admin/comment                      | 管理员   | 管理员可以获取评论列表。      |
-| 添加评论       | POST   | /admin/comment                      | 管理员   | 管理员可以添加评论。        |
-| 修改评论       | PUT    | /admin/comment                      | 管理员   | 管理员可以修改评论。        |
-| 删除评论       | DELETE | /admin/comment/:id                  | 管理员   | 管理员可以删除评论。        |
-| 获取用户统计数据   | GET    | /admin/statistics/user              | 管理员   | 管理员可以获取用户统计数据。    |
-| 获取角色统计数据   | GET    | /admin/statistics/user/role         | 管理员   | 管理员可以获取角色统计数据。    |
-| 获取注册统计数据   | GET    | /admin/statistics/user/register     | 管理员   | 管理员可以获取注册统计数据。    |
-| 获取标签统计数据   | GET    | /admin/statistics/tag               | 管理员   | 管理员可以获取标签统计数据。    |
-| 获取题目统计数据   | GET    | /admin/statistics/problem           | 管理员   | 管理员可以获取题目统计数据。    |
-| 获取题目插入统计数据 | GET    | /admin/statistics/problem/insert    | 管理员   | 管理员可以获取题目插入统计数据。  |
-| 获取题目更新统计数据 | GET    | /admin/statistics/problem/update    | 管理员   | 管理员可以获取题目更新统计数据。  |
-| 获取题目删除统计数据 | GET    | /admin/statistics/problem/delete    | 管理员   | 管理员可以获取题目删除统计数据。  |
-| 获取评测统计数据   | GET    | /admin/statistics/judge             | 管理员   | 管理员可以获取评测统计数据。    |
-| 获取提交记录统计数据 | GET    | /admin/statistics/record            | 管理员   | 管理员可以获取提交记录统计数据。  |
-| 获取提交统计数据   | GET    | /admin/statistics/record/submit     | 管理员   | 管理员可以获取提交统计数据。    |
-| 获取编程语言统计数据 | GET    | /admin/statistics/record/language   | 管理员   | 管理员可以获取编程语言统计数据。  |
-| 获取提交状态统计数据 | GET    | /admin/statistics/submission/status | 管理员   | 管理员可以获取提交状态统计数据。  |
-| 获取评测状态统计数据 | GET    | /admin/statistics/judgement/status  | 管理员   | 管理员可以获取评测状态统计数据。  |
-| 获取博客统计数据   | GET    | /admin/statistics/blog              | 管理员   | 管理员可以获取博客统计数据。    |
-| 获取博客提交统计数据 | GET    | /admin/statistics/blog/submit       | 管理员   | 管理员可以获取博客提交统计数据。  |
-| 获取评论提交统计数据 | GET    | /admin/statistics/comment/submit    | 管理员   | 管理员可以获取评论提交统计数据。  |
-| 修改用户角色     | PUT    | /admin/user/role                    | 超级管理员 | 超级管理员可以修改用户角色。    |
-| 获取系统配置     | GET    | /admin/config                       | 超级管理员 | 超级管理员可以获取系统配置。    |
+| 功能名称       | 请求方法   | 路由路径                                | 操作者   | 功能简述                    |
+|------------|--------|-------------------------------------|-------|-------------------------|
+| 获取用户列表     | GET    | /admin/user                         | 管理员   | 管理员可以获取用户列表。            |
+| 获取用户详情     | GET    | /admin/user/:id                     | 管理员   | 管理员可以获取用户的详细信息。         |
+| 根据角色获取用户列表 | GET    | /admin/user/role/:id                | 管理员   | 管理员可以根据角色获取用户列表。        |
+| 添加用户       | POST   | /admin/user                         | 管理员   | 管理员可以添加用户。              |
+| 修改用户信息     | PUT    | /admin/user                         | 管理员   | 管理员可以修改用户信息。            |
+| 删除用户       | DELETE | /admin/user/:id                     | 管理员   | 管理员可以删除用户。              |
+| 获取题目列表     | GET    | /admin/problem                      | 管理员   | 管理员可以获取题目列表。            |
+| 根据状态获取题目列表 | GET    | /admin/problem/status/:id           | 管理员   | 管理员可以根据状态获取题目列表。        |
+| 获取题目详情     | GET    | /admin/problem/:id                  | 管理员   | 管理员可以获取题目的详细信息。         |
+| 添加题目       | POST   | /admin/problem                      | 管理员   | 管理员可以添加题目。              |
+| 修改题目       | PUT    | /admin/problem                      | 管理员   | 管理员可以修改题目。              |
+| 删除题目       | DELETE | /admin/problem/:id                  | 管理员   | 管理员可以删除题目。              |
+| 添加题目标签     | POST   | /admin/problem/tag                  | 管理员   | 管理员可以给题目添加标签。           |
+| 删除题目标签     | DELETE | /admin/problem/tag                  | 管理员   | 管理员可以删除题目的标签。           |
+| 从FPS文件解析题目 | POST   | /admin/problem/fps                  | 管理员   | 管理员可以从FPS文件解析题目。        |
+| AI生成题目     | POST   | /admin/problem/generate             | 管理员   | 大模型根据提供的题目信息或题解出题       |
+| 获取题目历史记录   | GET    | /admin/history/problem/:id          | 管理员   | 管理员可以获取题目的历史记录。         |
+| 获取评测点详情    | GET    | /admin/testcase/:id                 | 管理员   | 管理员可以获取评测点的详细信息。        |
+| 添加评测点      | POST   | /admin/testcase                     | 管理员   | 管理员可以添加评测点。             |
+| 修改评测点      | PUT    | /admin/testcase                     | 管理员   | 管理员可以修改评测点。             |
+| 删除评测点      | DELETE | /admin/testcase/:id                 | 管理员   | 管理员可以删除评测点。             |
+| 生成评测点数据    | POST   | /admin/testcase/datamake            | 管理员   | 管理员可以生成评测点数据。           |
+| AI生成测试用例   | POST   | /admin/testcase/generate            | 管理员   | 大模型根据提供的题目信息或题解生成测试数据   |
+| 获取标签列表     | GET    | /admin/tag                          | 管理员   | 管理员可以获取标签列表。            |
+| 添加标签       | POST   | /admin/tag                          | 管理员   | 管理员可以添加标签。              |
+| 修改标签       | PUT    | /admin/tag                          | 管理员   | 管理员可以修改标签。              |
+| 删除标签       | DELETE | /admin/tag/:id                      | 管理员   | 管理员可以删除标签。              |
+| 获取题解       | GET    | /admin/solution/:id                 | 管理员   | 管理员可以获取解答的详细信息。         |
+| 添加题解       | POST   | /admin/solution                     | 管理员   | 管理员可以添加解答。              |
+| 修改题解       | PUT    | /admin/solution                     | 管理员   | 管理员可以修改解答。              |
+| 删除题解       | DELETE | /admin/solution/:id                 | 管理员   | 管理员可以删除解答。              |
+| AI生成题解代码   | POST   | /solution                           | 管理员   | 大模型根据提供的题目信息生成指定编程语言的题解 |
+| 获取提交记录列表   | GET    | /admin/record                       | 管理员   | 管理员可以获取提交记录列表。          |
+| 获取提交记录详情   | GET    | /admin/record/:id                   | 管理员   | 管理员可以获取提交记录的详细信息。       |
+| 删除提交记录     | DELETE | /admin/record/:id                   | 管理员   | 管理员可以删除提交记录。            |
+| 获取博客列表     | GET    | /admin/blog                         | 管理员   | 管理员可以获取博客列表。            |
+| 根据状态获取博客列表 | GET    | /admin/blog/status/:id              | 管理员   | 管理员可以根据状态获取博客列表。        |
+| 获取博客详情     | GET    | /admin/blog/:id                     | 管理员   | 管理员可以获取博客的详细信息。         |
+| 添加博客       | POST   | /admin/blog                         | 管理员   | 管理员可以添加博客。              |
+| 修改博客       | PUT    | /admin/blog                         | 管理员   | 管理员可以修改博客。              |
+| 删除博客       | DELETE | /admin/blog/:id                     | 管理员   | 管理员可以删除博客。              |
+| 获取评论列表     | GET    | /admin/comment                      | 管理员   | 管理员可以获取评论列表。            |
+| 添加评论       | POST   | /admin/comment                      | 管理员   | 管理员可以添加评论。              |
+| 修改评论       | PUT    | /admin/comment                      | 管理员   | 管理员可以修改评论。              |
+| 删除评论       | DELETE | /admin/comment/:id                  | 管理员   | 管理员可以删除评论。              |
+| 获取用户统计数据   | GET    | /admin/statistics/user              | 管理员   | 管理员可以获取用户统计数据。          |
+| 获取角色统计数据   | GET    | /admin/statistics/user/role         | 管理员   | 管理员可以获取角色统计数据。          |
+| 获取注册统计数据   | GET    | /admin/statistics/user/register     | 管理员   | 管理员可以获取注册统计数据。          |
+| 获取标签统计数据   | GET    | /admin/statistics/tag               | 管理员   | 管理员可以获取标签统计数据。          |
+| 获取题目统计数据   | GET    | /admin/statistics/problem           | 管理员   | 管理员可以获取题目统计数据。          |
+| 获取题目插入统计数据 | GET    | /admin/statistics/problem/insert    | 管理员   | 管理员可以获取题目插入统计数据。        |
+| 获取题目更新统计数据 | GET    | /admin/statistics/problem/update    | 管理员   | 管理员可以获取题目更新统计数据。        |
+| 获取题目删除统计数据 | GET    | /admin/statistics/problem/delete    | 管理员   | 管理员可以获取题目删除统计数据。        |
+| 获取评测统计数据   | GET    | /admin/statistics/judge             | 管理员   | 管理员可以获取评测统计数据。          |
+| 获取提交记录统计数据 | GET    | /admin/statistics/record            | 管理员   | 管理员可以获取提交记录统计数据。        |
+| 获取提交统计数据   | GET    | /admin/statistics/record/submit     | 管理员   | 管理员可以获取提交统计数据。          |
+| 获取编程语言统计数据 | GET    | /admin/statistics/record/language   | 管理员   | 管理员可以获取编程语言统计数据。        |
+| 获取提交状态统计数据 | GET    | /admin/statistics/submission/status | 管理员   | 管理员可以获取提交状态统计数据。        |
+| 获取评测状态统计数据 | GET    | /admin/statistics/judgement/status  | 管理员   | 管理员可以获取评测状态统计数据。        |
+| 获取博客统计数据   | GET    | /admin/statistics/blog              | 管理员   | 管理员可以获取博客统计数据。          |
+| 获取博客提交统计数据 | GET    | /admin/statistics/blog/submit       | 管理员   | 管理员可以获取博客提交统计数据。        |
+| 获取评论提交统计数据 | GET    | /admin/statistics/comment/submit    | 管理员   | 管理员可以获取评论提交统计数据。        |
+| 修改用户角色     | PUT    | /admin/user/role                    | 超级管理员 | 超级管理员可以修改用户角色。          |
+| 获取系统配置     | GET    | /admin/config                       | 超级管理员 | 超级管理员可以获取系统配置。          |
 
 ## UML
 

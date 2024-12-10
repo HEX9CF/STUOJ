@@ -55,6 +55,5 @@ func InitDatabase() error {
 				return err
 			}
 	*/
-	log.Println("Database init success!")
 	return nil
 }
