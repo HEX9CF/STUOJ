@@ -253,6 +253,7 @@ func AdminHistoryListOfProblem(c *gin.Context) {
 	c.JSON(http.StatusOK, model.RespOk("OK", histories))
 }
 
+// 生成题目
 func AdminProblemGenerate(c *gin.Context) {
 	var req model.NekoProblemInstruction
 
