@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -88,12 +89,19 @@ func parseProblemWhere(c *gin.Context) dao.ProblemWhere {
 		}
 	}
 	if c.Query("tag") != "" {
-		tag, err := strconv.Atoi(c.Query("tag"))
-		if err != nil {
-			log.Println(err)
-		} else {
-			condition.Tag.Set(uint64(tag))
+		tagsQuery := c.Query("tag")           // 获取URL参数 "ids"
+		tags := strings.Split(tagsQuery, ",") // 将字符串分割成字符串切片
+
+		// 假设我们需要将字符串切片转换为int切片
+		var tagsInt []uint64
+		for _, tagStr := range tags {
+			id, err := strconv.Atoi(tagStr)
+			if err != nil {
+				continue
+			}
+			tagsInt = append(tagsInt, uint64(id))
 		}
+		condition.Tag.Set(tagsInt)
 	}
 	if c.Query("status") != "" {
 		status, err := strconv.Atoi(c.Query("status"))

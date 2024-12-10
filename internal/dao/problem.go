@@ -14,7 +14,7 @@ type ProblemWhere struct {
 	Title      model.Field[string]
 	Difficulty model.Field[entity.Difficulty]
 	Status     model.Field[entity.ProblemStatus]
-	Tag        model.Field[uint64]
+	Tag        model.FieldList[uint64]
 }
 
 // 插入题目
@@ -125,7 +125,7 @@ func generateProblemWhereCondition(con ProblemWhere) func(*gorm.DB) *gorm.DB {
 
 		where := db.Where(whereClause)
 		if con.Tag.Exist() {
-			where = where.Where("id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id = ?)", con.Tag.Value())
+			where = where.Where("id IN (SELECT problem_id FROM tbl_problem_tag WHERE tag_id In(?) GROUP BY problem_id HAVING COUNT(DISTINCT tag_id) =?)", con.Tag.Value(), len(con.Tag.Value()))
 		}
 		if con.Title.Exist() {
 			where = where.Where("title LIKE ?", "%"+con.Title.Value()+"%")
