@@ -8,6 +8,6 @@ type JudgeConf struct {
 
 func (j *JudgeConf) Default() {
 	j.Host = "judge0"
-	j.Port = ":2358"
+	j.Port = "2358"
 	j.Token = ""
 }

@@ -9,11 +9,6 @@ import (
 	"net/http"
 )
 
-var (
-	config conf.JudgeConf
-	preUrl string
-)
-
 func InitJudge() error {
 	config = conf.Conf.Judge
 	preUrl = config.Host + ":" + config.Port
