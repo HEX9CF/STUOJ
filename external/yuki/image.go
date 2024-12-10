@@ -69,6 +69,9 @@ func UploadImage(path string, role uint8) (model.YukiImage, error) {
 	if err != nil {
 		return model.YukiImage{}, err
 	}
+	if resp.StatusCode != http.StatusCreated {
+		return model.YukiImage{}, errors.New(responses.Message)
+	}
 	var image model.YukiImage
 	err = mapstructure.Decode(responses.Data, &image)
 	if err != nil {
