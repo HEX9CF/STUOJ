@@ -66,3 +66,9 @@ type NekoSolutionInstruction struct {
 	Solution     string   `json:"solution,omitempty" binding:"omitempty"`
 	Language     string   `json:"language,omitempty" binding:"omitempty"`
 }
+
+type NekoResponse struct {
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
+}
