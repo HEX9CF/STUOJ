@@ -13,7 +13,7 @@ import (
 
 func InitNekoAcm() error {
 	config = conf.Conf.NekoAcm
-	preUrl = config.Host + ":" + config.Port
+	preUrl = config.Host + ":" + config.Port + "/api"
 	log.Println("Connecting to NekoAcm service: " + preUrl)
 
 	// 发送请求
