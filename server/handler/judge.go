@@ -52,7 +52,8 @@ func JudgeSubmit(c *gin.Context) {
 	}
 
 	// 提交代码
-	s.Id, err = judge.Submit(s)
+	//s.Id, err = judge.AsyncSubmit(s)
+	s.Id, err = judge.WaitSubmit(s)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, model.RespError(err.Error(), nil))

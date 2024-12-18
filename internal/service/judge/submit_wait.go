@@ -12,7 +12,8 @@ import (
 	"time"
 )
 
-func Submit(s entity.Submission) (uint64, error) {
+// 等待提交
+func WaitSubmit(s entity.Submission) (uint64, error) {
 	var err error
 
 	updateTime := time.Now()
@@ -28,7 +29,7 @@ func Submit(s entity.Submission) (uint64, error) {
 	}
 
 	// 获取评测点
-	testcases, err := dao.SelectTestcasesByProblemId(s.ProblemId)
+	ts, err := dao.SelectTestcasesByProblemId(s.ProblemId)
 	if err != nil {
 		log.Println(err)
 		return 0, errors.New("获取评测点数据失败")
@@ -41,40 +42,32 @@ func Submit(s entity.Submission) (uint64, error) {
 		return 0, errors.New("插入提交信息失败")
 	}
 
-	// 异步提交
-	go asyncSubmit(s, p, testcases)
-
-	return s.Id, nil
-}
-
-// 异步提交
-func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 	s.Status = entity.JudgeStatusAC
-	chJudgement := make(chan entity.Judgement)
 
 	// 提交评测点
 	for _, t := range ts {
-		// 异步评测
-		go asyncJudge(s, p, t, chJudgement)
-	}
-
-	for _, _ = range ts {
-		// 接收评测点结果
-		j := <-chJudgement
+		j, err := waitJudge(s, p, t)
+		if err != nil {
+			log.Println(err)
+			s.Status = entity.JudgeStatusIE
+			continue
+		}
 		//log.Println(j)
 
 		// 更新提交更新时间
-		err := dao.UpdateSubmissionUpdateTimeById(j.SubmissionId)
+		err = dao.UpdateSubmissionUpdateTimeById(j.SubmissionId)
 		if err != nil {
 			log.Println(err)
-			return
+			s.Status = entity.JudgeStatusIE
+			continue
 		}
 
 		// 更新评测点结果
 		err = dao.UpdateJudgementById(j)
 		if err != nil {
 			log.Println(err)
-			return
+			s.Status = entity.JudgeStatusIE
+			continue
 		}
 
 		// 更新提交数据
@@ -90,15 +83,17 @@ func asyncSubmit(s entity.Submission, p entity.Problem, ts []entity.Testcase) {
 
 	// 更新提交信息
 	s.UpdateTime = time.Now()
-	err := dao.UpdateSubmissionById(s)
+	err = dao.UpdateSubmissionById(s)
 	if err != nil {
 		log.Println(err)
-		return
+		return 0, errors.New("更新提交信息失败")
 	}
+
+	return s.Id, nil
 }
 
-// 异步评测
-func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch chan entity.Judgement) {
+// 等待评测
+func waitJudge(s entity.Submission, p entity.Problem, t entity.Testcase) (entity.Judgement, error) {
 	var err error
 
 	// 初始化评测点结果对象
@@ -111,16 +106,15 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 	// 更新提交更新时间
 	err = dao.UpdateSubmissionUpdateTimeById(j.SubmissionId)
 	if err != nil {
-		log.Println(err)
-		return
+		j.Status = entity.JudgeStatusIE
+		return j, err
 	}
 
 	// 插入评测点结果
 	j.Id, err = dao.InsertJudgement(j)
 	if err != nil {
-		log.Println(err)
-		ch <- j
-		return
+		j.Status = entity.JudgeStatusIE
+		return j, err
 	}
 
 	// 初始化评测点评测对象
@@ -139,8 +133,7 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 	if err != nil {
 		log.Println(err)
 		j.Status = entity.JudgeStatusIE
-		ch <- j
-		return
+		return j, err
 	}
 	//log.Println(result)
 
@@ -151,8 +144,7 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 		if err != nil {
 			log.Println(err)
 			j.Status = entity.JudgeStatusIE
-			ch <- j
-			return
+			return j, err
 		}
 	}
 
@@ -165,35 +157,6 @@ func asyncJudge(s entity.Submission, p entity.Problem, t entity.Testcase, ch cha
 	j.Message = result.Message
 	j.Status = entity.JudgeStatus(result.Status.Id)
 	//log.Println(j)
-
-	// 发送评测点结果到通道
-	ch <- j
-}
-
-func TestRun(s entity.Submission, stdin string) (entity.Judgement, error) {
-	js := model.JudgeSubmission{
-		SourceCode: s.SourceCode,
-		LanguageId: s.LanguageId,
-		Stdin:      stdin,
-	}
-
-	res, err := judge0.Submit(js)
-	if err != nil {
-		log.Println(err)
-		return entity.Judgement{}, errors.New("提交失败")
-	}
-
-	time, err := strconv.ParseFloat(res.Time, 64)
-	if err != nil {
-		log.Println(err)
-		return entity.Judgement{}, errors.New("时间解析失败")
-	}
-
-	j := entity.Judgement{
-		Stdout: res.Stdout,
-		Time:   time,
-		Memory: uint64(res.Memory),
-	}
 
 	return j, nil
 }
