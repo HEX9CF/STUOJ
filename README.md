@@ -23,7 +23,7 @@ STUOJ 是汕头大学疾风算法协会的 ACM-ICPC 在线代码评测系统，�
 - 数据库：MySQL
 - 代码沙箱: Judge0
 - 图床服务: yuki-image
-- AI题目生成：NekoACM
+- AI题目生成：[NekoACM](https://github.com/HEX9CF/NekoACM)
 - 题目文件格式：FPS
 
 ## 系统功能
