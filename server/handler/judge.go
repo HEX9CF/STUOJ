@@ -68,7 +68,7 @@ func JudgeSubmit(c *gin.Context) {
 type ReqJudgeTestRun struct {
 	LanguageId uint64 `json:"language_id" binding:"required"`
 	SourceCode string `json:"source_code" binding:"required"`
-	Stdin      string `json:"stdin" binding:"required"`
+	Stdin      string `json:"stdin"`
 }
 
 func JudgeTestRun(c *gin.Context) {
